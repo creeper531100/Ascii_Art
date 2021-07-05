@@ -1,3 +1,5 @@
+#include <chrono>
+#include "ConsoleShow.h"
 #include "ImgHandle.h"
 
 void ConsoleShow::init() {
@@ -5,37 +7,44 @@ void ConsoleShow::init() {
 	this->dwBytesWritten = 0;
 }
 
+void ConsoleShow::handle_console(wchar_t** screen, cv::Size& dsize, HANDLE* hConsole) {
+	*screen = new wchar_t[dsize.area()];
+	*hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+	SetConsoleActiveScreenBuffer(*hConsole);
+}
+
+void ConsoleShow::video_interval(chrono::time_point<chrono::system_clock>* c_start) {
+	std::this_thread::sleep_until(*c_start + chrono::microseconds(this->frame_interval));
+	wstring info = to_wstring(frame_interval);
+	SetConsoleTitle(info.c_str());
+	*c_start = chrono::system_clock::now();
+}
+
 void ConsoleShow::ascii() {
+	this->init();
+	auto start = chrono::system_clock::now();
 	super::gray_ascii_art([&]() {
 		for (int i = 0; i < super::dsize.area(); i++) {
 			this->screen[i] = super::lv[super::img.at<uchar>(i) / 4];
 		}
 		WriteConsoleOutputCharacter(this->handle, this->screen, super::dsize.area(), { 0, 0 }, &this->dwBytesWritten);
+		this->video_interval(&start);
 	});
 }
 
 void ConsoleShow::braille() {
+	this->init();
 	this->init_word();
+	auto start = chrono::system_clock::now();
 	super::gray_ascii_art([&]() {
 		this->braille_create();
-		wstring basic_string;
-		for (int i = 3; i < this->braille_handle->size(); i += 4) {
-			for (int j = 0; j < super::dsize.height; j++) {
-				basic_string.push_back(this->map_pairs[this->braille_handle->at(i - 3)[j] + this->braille_handle->at(i - 2)[j] + this->braille_handle->at(i - 1)[j] + this->braille_handle->at(i)[j]]);
+		for (int i = 3, pixel = 0; i < this->braille_string->size(); i += 4) {
+			for (int j = 0; j < super::dsize.height; j++, pixel++) {
+				this->screen[pixel] = this->map_pairs[this->braille_string->at(i - 3)[j] + this->braille_string->at(i - 2)[j] + this->braille_string->at(i - 1)[j] + this->braille_string->at(i)[j]];
 			}
 		}
-		WriteConsoleOutputCharacterW(this->handle, basic_string.c_str(), super::dsize.area(), { 0, 0 }, &this->dwBytesWritten);
-		delete this->braille_handle;
+		WriteConsoleOutputCharacterW(this->handle, this->screen, super::dsize.area(), { 0, 0 }, &this->dwBytesWritten);
+		delete this->braille_string;
+		this->video_interval(&start);
 	});
 }
-
-ConsoleShow::ConsoleShow(const Mat& mat, const Size& size2_i):
-ImgHandle(mat, size2_i), screen(nullptr), handle(nullptr), dwBytesWritten(0) {
-	this->init();
-}
-
-ConsoleShow::ConsoleShow(const VideoCapture& video_capture, const Size& size2_i):
-ImgHandle(video_capture, size2_i), screen(nullptr), handle(nullptr), dwBytesWritten(0) {
-	this->init();
-}
-

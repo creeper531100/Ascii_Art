@@ -1,4 +1,6 @@
 ﻿#include <map>
+
+#include "ConsoleShow.h"
 #include "ImgHandle.h"
 
 void ConsoleShow::init_word() {

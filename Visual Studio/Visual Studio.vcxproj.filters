@@ -39,7 +39,7 @@
     <ClCompile Include="InitWord.cpp">
       <Filter>來源檔案\Console</Filter>
     </ClCompile>
-    <ClCompile Include="VideoOutput.cpp">
+    <ClCompile Include="VideoCollageOtput.cpp">
       <Filter>來源檔案\Output</Filter>
     </ClCompile>
     <ClCompile Include="disable.cpp">
@@ -49,6 +49,12 @@
   <ItemGroup>
     <ClInclude Include="ImgHandle.h">
       <Filter>來源檔案\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleShow.h">
+      <Filter>來源檔案\Console</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoCollageOtput.h">
+      <Filter>來源檔案\Output</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

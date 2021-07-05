@@ -10,12 +10,12 @@ ImgHandle::ImgHandle(VideoCapture handle, Size dsize) {
 	this->video_capture = handle;
 	this->dsize = dsize;
 	this->type = 1;
+	this->frame_FPS = this->video_capture.get(CAP_PROP_FPS);
+	this->frame_interval = (1 / this->frame_FPS) * 1000000;
 }
 
-void handle_console(wchar_t** screen, cv::Size& dsize, HANDLE* hConsole) {
-	*screen = new wchar_t[dsize.area()];
-	*hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-	SetConsoleActiveScreenBuffer(*hConsole);
+void ImgHandle::video_written_handle(string save_path, Size set_size) {
+	this->writer = VideoWriter(save_path, this->encoding, this->frame_FPS, set_size);
 }
 
 void ImgHandle::basic_handle(ColorConversionCodes&& color) {
@@ -44,7 +44,7 @@ void ImgHandle::braille_create() {
 		}
 		vec_len->at(i) = deep;
 	}
-	this->braille_handle = vec_len;
+	this->braille_string = vec_len;
 }
 
 void ImgHandle::gray_ascii_art(function<void()>&& func) {
@@ -55,6 +55,7 @@ void ImgHandle::gray_ascii_art(function<void()>&& func) {
 	else {
 		while (1) {
 			this->video_capture >> this->img;
+			if (this->img.empty()) break;
 			this->basic_handle(COLOR_BGR2GRAY);
 			func();
 		}

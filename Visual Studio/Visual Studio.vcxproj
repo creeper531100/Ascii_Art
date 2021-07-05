@@ -144,10 +144,12 @@
     <ClCompile Include="ImgHandle.cpp" />
     <ClCompile Include="InitWord.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="VideoOutput.cpp" />
+    <ClCompile Include="VideoCollageOtput.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ConsoleShow.h" />
     <ClInclude Include="ImgHandle.h" />
+    <ClInclude Include="VideoCollageOtput.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
