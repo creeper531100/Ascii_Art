@@ -22,6 +22,9 @@
     <Filter Include="來源檔案\Core">
       <UniqueIdentifier>{46ad03e8-1044-4730-a84f-4c1dd05cceb0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="來源檔案\disable">
+      <UniqueIdentifier>{96b40d9d-3b9a-4dd6-a054-c82f0b54e84b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -38,6 +41,9 @@
     </ClCompile>
     <ClCompile Include="VideoOutput.cpp">
       <Filter>來源檔案\Output</Filter>
+    </ClCompile>
+    <ClCompile Include="disable.cpp">
+      <Filter>來源檔案\disable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

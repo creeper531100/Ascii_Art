@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ConsoleShow.cpp" />
+    <ClCompile Include="disable.cpp" />
     <ClCompile Include="ImgHandle.cpp" />
     <ClCompile Include="InitWord.cpp" />
     <ClCompile Include="main.cpp" />

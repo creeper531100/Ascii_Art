@@ -16,18 +16,17 @@ class ImgHandle abstract {
 private:
 	int type;
 	void basic_handle(ColorConversionCodes&& color);
-	
 protected:
 	Mat img;
 	void braille_create();
-	vector<vector<string>> braille_handle;
+	vector<vector<string>> *braille_handle;
 	VideoCapture video_capture;
 	Size dsize;
 	string lv = " .'`^,:;l!i><~+_--?][}{)(|/rxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
 public:
 	ImgHandle(Mat, Size);
 	ImgHandle(VideoCapture, Size);
-	void gray_ascii_art(function<void()>);
+	void gray_ascii_art(function<void()>&&);
 };
 
 

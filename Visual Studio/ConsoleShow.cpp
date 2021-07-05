@@ -19,12 +19,13 @@ void ConsoleShow::braille() {
 	super::gray_ascii_art([&]() {
 		this->braille_create();
 		wstring basic_string;
-		for (int i = 3; i < this->braille_handle.size(); i += 4) {
+		for (int i = 3; i < this->braille_handle->size(); i += 4) {
 			for (int j = 0; j < super::dsize.height; j++) {
-				basic_string.push_back(this->map_pairs[this->braille_handle[i - 3][j] + this->braille_handle[i - 2][j] + this->braille_handle[i - 1][j] + this->braille_handle[i][j]]);
+				basic_string.push_back(this->map_pairs[this->braille_handle->at(i - 3)[j] + this->braille_handle->at(i - 2)[j] + this->braille_handle->at(i - 1)[j] + this->braille_handle->at(i)[j]]);
 			}
 		}
 		WriteConsoleOutputCharacterW(this->handle, basic_string.c_str(), super::dsize.area(), { 0, 0 }, &this->dwBytesWritten);
+		delete this->braille_handle;
 	});
 }
 
