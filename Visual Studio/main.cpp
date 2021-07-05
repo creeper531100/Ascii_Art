@@ -11,9 +11,11 @@ using namespace cv;
 int main() {
 	//ConsoleShow mat(VideoCapture("D:\\動漫\\點兔子.mp4"), Size(237, 64));
 	//ConsoleShow mat(VideoCapture("D:\\動漫\\廢物天使.mp4"), Size(240, 120));
-	VideoCollageOutput cap(VideoCapture("C:\\Users\\creep\\OneDrive\\桌面\\路邊停車\\Ascii\\範例影片\\test.mp4")
-		, Size(240, 67));
-	cap.ascii_collage_output("D:\\dick.mp4");
+	//VideoCollageOutput cap(VideoCapture("C:\\Users\\creep\\OneDrive\\桌面\\路邊停車\\Ascii\\範例影片\\test.mp4")//, Size(240, 67));
+	string path;
+	cin >> path;
+	VideoCollageOutput cap(VideoCapture(path), Size(480, 240));
+	cap.braille(path);
 }
 
 
