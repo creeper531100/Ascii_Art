@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="來源檔案">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="標頭檔">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="資源檔">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="來源檔案\Console">
+      <UniqueIdentifier>{43504923-1961-448c-b317-62021327f3fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="來源檔案\Output">
+      <UniqueIdentifier>{a620fbf8-8fe9-490e-ac4f-2596ad7fbbe6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="來源檔案\Core">
+      <UniqueIdentifier>{46ad03e8-1044-4730-a84f-4c1dd05cceb0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsoleShow.cpp">
+      <Filter>來源檔案\Console</Filter>
+    </ClCompile>
+    <ClCompile Include="ImgHandle.cpp">
+      <Filter>來源檔案\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="InitWord.cpp">
+      <Filter>來源檔案\Console</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoOutput.cpp">
+      <Filter>來源檔案\Output</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ImgHandle.h">
+      <Filter>來源檔案\Core</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
