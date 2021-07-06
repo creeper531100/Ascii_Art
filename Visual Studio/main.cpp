@@ -17,6 +17,7 @@ int main() {
 	cin >> path;
 	BasicEffectOutput basic_effect(forward<string>(path));
 	basic_effect.thresholding_output(THRESH_BINARY);
+
 }
 
 

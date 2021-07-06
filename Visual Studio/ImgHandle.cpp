@@ -2,14 +2,19 @@
 
 ImgHandle::ImgHandle(string&& path, Size dsize) {
 	this->filename = path;
-	if (path.find(".png") != std::string::npos) {
+	vector<string> img_extension = { ".jpg", ".JPG", ".png", ".PNG", ".tiff"};
+	vector<string> video_extension = { ".mp4", ".mp3", ".gif" };
+
+	auto is_file = [path](vector<string> file_type) { return std::find_if(file_type.begin(), file_type.end(), [&](string index) { return path.find(index) != std::string::npos; }) != file_type.end(); };
+	if (is_file(img_extension)) {
 		this->img = imread(path);
 		cout << "Video Resize Size: " << this->img.size().height << "x" << this->img.size().width << endl;
 		if (dsize.height == -1)
 			dsize = this->img.size();
 		this->dsize = dsize;
 		this->type = IMG;
-	} else if (path.find(".mp4") != std::string::npos) {
+	}
+	else if (is_file(video_extension)) {
 		this->cap = VideoCapture(path);
 		Size size_i = Size(cap.get(CAP_PROP_FRAME_WIDTH), cap.get(CAP_PROP_FRAME_HEIGHT));
 		if (dsize.height == -1)
@@ -20,13 +25,14 @@ ImgHandle::ImgHandle(string&& path, Size dsize) {
 		this->video_size = size_i;
 		this->dsize = dsize;
 		this->type = VIDEO;
-	} else {
+	}
+	else {
 		cerr << "不支援此檔案" << endl;
 	}
 }
 
 void ImgHandle::video_written_handle(Size set_size) {
-	if (set_size.height == -1) 
+	if (set_size.height == -1)
 		set_size = this->dsize;
 	cout << "Video Resize Size: " << this->dsize.width << "x" << this->dsize.height << endl;
 	cout << "Video Output Size: " << set_size.width << "x" << set_size.height << endl;
@@ -41,7 +47,7 @@ void ImgHandle::basic_handle(ColorConversionCodes&& color) {
 
 void ImgHandle::braille_create(int&& brightness_threshold) {
 	vector<vector<string>>* vec_len = new vector<vector<string>>(this->dsize.height);
-	for(int i = 0; i < this->dsize.height; i++) {
+	for (int i = 0; i < this->dsize.height; i++) {
 		vector<string>deep(this->dsize.width);
 		for (int j = 1, k = 0; j < this->dsize.width; j += 2, k++) {
 			if (this->img.at<uchar>(i, j - 1) > brightness_threshold) {
@@ -75,7 +81,7 @@ void ImgHandle::gray_ascii_art(function<void()>&& func) {
 		this->basic_handle(COLOR_BGR2GRAY);
 		func();
 	}
-	else if (type == VIDEO){
+	else if (type == VIDEO) {
 		time_t t_start = time(NULL);
 		while (1) {
 			this->cap >> this->img;
