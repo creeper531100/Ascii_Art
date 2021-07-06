@@ -40,9 +40,9 @@ void ImgHandle::video_written_handle(Size set_size) {
 	this->writer = VideoWriter("tempvideo.mp4", this->encoding, this->frame_FPS, set_size);
 }
 
-void ImgHandle::basic_handle(ColorConversionCodes&& color) {
+void ImgHandle::img_handle(ColorConversionCodes& color) {
 	cv::resize(this->img, this->img, this->dsize, 0, 0, INTER_CUBIC);
-	cv::cvtColor(this->img, this->img, color);
+	color == COLOR_BGR2BGR565 ? void() : cv::cvtColor(this->img, this->img, color);
 }
 
 void ImgHandle::braille_create(int&& brightness_threshold) {
@@ -76,9 +76,9 @@ void ImgHandle::print_output_info(time_t t_start) {
 	system("pause");
 }
 
-void ImgHandle::gray_ascii_art(function<void()>&& func) {
+void ImgHandle::basic_handle(function<void()>&& func, ColorConversionCodes&& color) {
 	if (type == IMG) {
-		this->basic_handle(COLOR_BGR2GRAY);
+		this->img_handle(color);
 		func();
 	}
 	else if (type == VIDEO) {
@@ -86,7 +86,7 @@ void ImgHandle::gray_ascii_art(function<void()>&& func) {
 		while (1) {
 			this->cap >> this->img;
 			if (this->img.empty()) break;
-			this->basic_handle(COLOR_BGR2GRAY);
+			this->img_handle(color);
 			func();
 		}
 		this->writer.release();
@@ -94,3 +94,5 @@ void ImgHandle::gray_ascii_art(function<void()>&& func) {
 	}
 }
 
+void ImgHandle::ascii() {}
+void ImgHandle::braille() {}

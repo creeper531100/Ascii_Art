@@ -7,16 +7,33 @@
 class BasicEffectOutput : public ImgHandle {
 private:
 	using super = ImgHandle;
+	int count = 0;
 public:
 	using super::super;
 	
-	void thresholding_output(ThresholdTypes threshold_type, int brightness_threshold = -1) {
+	void thresholding(int threshold_type = THRESH_BINARY, int thresh = -1) {
 		super::type == IMG ? void() : super::video_written_handle();
-		super::gray_ascii_art([&]() {
+		super::basic_handle([&]() {
 			Mat threshold_mat;
-			if (brightness_threshold = -1) brightness_threshold = mean(this->img).val[0];
-			threshold(this->img, threshold_mat, brightness_threshold, 255, threshold_type);
+			if (thresh = -1) thresh = mean(super::img).val[0];
+			threshold(super::img, threshold_mat, thresh, 255, threshold_type);
 			super::type == IMG ? (void)imwrite("output_pic.png", threshold_mat) : super::writer.write(threshold_mat);
+			printf("進度: %f%%\r", (this->count++ / super::frame_total) * 100);
+		}, COLOR_BGR2GRAY);
+	}
+
+	void relief(int offset = 128, int effect = 1) {
+		super::type == IMG ? void() : super::video_written_handle();
+		super::basic_handle([&]() {
+		Mat relief2(super::img.size(), CV_8UC3);
+		for (int i = effect; i < super::dsize.area() - effect; i++) {
+			for (int j = 0; j < 3; j++) {
+				int res2 = this->img.at<Vec3b>(i + effect)[j] - this->img.at<Vec3b>(i - effect)[j] + offset;
+				relief2.at<Vec3b>(i)[j] = cv::saturate_cast<uchar>(res2);
+			}
+		}
+		printf("進度: %f%%\r", (this->count++ / super::frame_total) * 100);
+		super::type == IMG ? (void)imwrite("output_pic.png", relief2) : super::writer.write(relief2);
 		});
 	}
 };

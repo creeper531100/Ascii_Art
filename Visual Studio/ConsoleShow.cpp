@@ -23,20 +23,20 @@ void ConsoleShow::video_interval(chrono::time_point<chrono::system_clock>* c_sta
 void ConsoleShow::ascii() {
 	this->init();
 	auto start = chrono::system_clock::now();
-	super::gray_ascii_art([&]() {
+	super::basic_handle([&]() {
 		for (int i = 0; i < super::dsize.area(); i++) {
 			this->screen[i] = super::lv[super::img.at<uchar>(i) / 4];
 		}
 		WriteConsoleOutputCharacter(this->handle, this->screen, super::dsize.area(), { 0, 0 }, &this->dwBytesWritten);
 		this->video_interval(&start);
-	});
+	}, COLOR_BGR2GRAY);
 }
 
 void ConsoleShow::braille() {
 	this->init();
 	this->init_word();
 	auto start = chrono::system_clock::now();
-	super::gray_ascii_art([&]() {
+	super::basic_handle([&]() {
 		this->braille_create(mean(this->img).val[0]);
 		for (int i = 3, pixel = 0; i < this->braille_string->size(); i += 4) {
 			for (int j = 0; j < super::dsize.height; j++, pixel++) {
@@ -46,5 +46,5 @@ void ConsoleShow::braille() {
 		WriteConsoleOutputCharacterW(this->handle, this->screen, super::dsize.area(), { 0, 0 }, &this->dwBytesWritten);
 		delete this->braille_string;
 		this->video_interval(&start);
-	});
+	}, COLOR_BGR2GRAY);
 }

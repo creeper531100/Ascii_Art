@@ -10,16 +10,51 @@ using namespace std;
 using namespace cv;
 
 int main() {
-	//ConsoleShow mat(VideoCapture("D:\\動漫\\點兔子.mp4"), Size(237, 64));
-	//ConsoleShow mat(VideoCapture("D:\\動漫\\廢物天使.mp4"), Size(240, 120));
-	//CollageOutput cap(VideoCapture("C:\\Users\\creep\\OneDrive\\桌面\\路邊停車\\Ascii\\範例影片\\test.mp4")//, Size(240, 67)); //480, 240
-	string path;
-	cin >> path;
-	BasicEffectOutput basic_effect(forward<string>(path));
-	basic_effect.thresholding_output(THRESH_BINARY);
+	int sw = 0;
+	string path = "";
+	int setting = -1;
 
+	cout << "AsciiArt新藝術\n----------------------------------\n(0).預覽AsciiArt, (1).預覽BrailleArt \n(2).輸出AsciiArt, (3).輸出BrailleArt \n(4).輸出帥臉, (5).輸出浮雕照\n----------------------------------\n選擇功能: "; cin >> sw;
+	cout << "輸入網址或圖片位置: "; cin >> path;
+	if (path.find("https") != std::string::npos) {
+		remove("HTC.mp4");
+		system(("youtube-dl -o HTC.%(ext)s -f mp4 " + path).c_str());
+		path = "HTC.mp4";
+	}
+	
+	ImgHandle* img_handle;
+		
+	switch (sw) {
+	case 0:
+		img_handle = new ConsoleShow(forward<string>(path), Size(237, 64));
+		img_handle->ascii();
+		break;
+	case 1:
+		img_handle = new ConsoleShow(forward<string>(path), Size(240, 120));
+		img_handle->braille();
+		break;
+	case 2:
+		img_handle = new CollageOutput(forward<string>(path), Size(240, 67));
+		img_handle->ascii();
+		break;
+	case 3:
+		img_handle = new CollageOutput(forward<string>(path), Size(480, 240));
+		img_handle->braille();
+		break;
+	case 4:
+		img_handle = new BasicEffectOutput(forward<string>(path));
+		img_handle->call_obj_member<BasicEffectOutput>(&BasicEffectOutput::thresholding, vector<int>(2) = { THRESH_BINARY, -1 });
+		break;
+	case 5:
+		img_handle = new BasicEffectOutput(forward<string>(path));
+		img_handle->call_obj_member<BasicEffectOutput>(&BasicEffectOutput::relief, vector<int>(2) = { 128, 1 });
+		break;
+	}
 }
 
+//ConsoleShow mat(VideoCapture("D:\\動漫\\點兔子.mp4"), Size(237, 64));
+//ConsoleShow mat(VideoCapture("D:\\動漫\\廢物天使.mp4"), Size(240, 120));
+//CollageOutput cap(VideoCapture("C:\\Users\\creep\\OneDrive\\桌面\\路邊停車\\Ascii\\範例影片\\test.mp4")//, Size(240, 67)); //480, 240
 
 /*
  * string folder_path;

@@ -11,9 +11,9 @@ private:
 	vector<string> split(string split_str, string&& delimiter);
 	void init_ascii();
 	void init_braille();
+	void ascii() override;
+	void braille() override;
 public:
 	using super::super;
-	void ascii();
-	void braille();
 };
 #endif

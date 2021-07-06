@@ -31,7 +31,7 @@ void CollageOutput::init_braille() {
 void CollageOutput::ascii() {
 	super::type == IMG ? void() : super::video_written_handle(Size(super::dsize.width * 8, super::dsize.height * 16 - 16));
 	this->init_ascii();
-	super::gray_ascii_art([&]() {
+	super::basic_handle([&]() {
 		Mat vertical, horizontal;
 		for (int i = 0; i < super::dsize.area(); i++) {
 			if (i % super::dsize.width == 0) {
@@ -43,13 +43,13 @@ void CollageOutput::ascii() {
 		}
 		printf("進度: %f%%\r", (this->count++ / super::frame_total) * 100);
 		super::type == IMG ? (void)imwrite("output_pic.png", vertical) : super::writer.write(vertical);
-	});
+	}, COLOR_BGR2GRAY);
 }
 
 void CollageOutput::braille() {
 	super::type == IMG ? void() : super::video_written_handle(Size(super::dsize.width * 4 + 8, super::dsize.height * 4));
 	this->init_braille();
-	super::gray_ascii_art([&]() {
+	super::basic_handle([&]() {
 		Mat vertical, horizontal;
 		this->braille_create(mean(this->img).val[0]);
 		for (int i = 3; i < this->braille_string->size(); i += 4) {
@@ -63,5 +63,5 @@ void CollageOutput::braille() {
 		delete this->braille_string;
 		printf("進度: %f%%\r", (this->count++ / super::frame_total) * 100);
 		super::type == IMG ? (void)imwrite("output_pic.png", vertical) : super::writer.write(vertical);
-	});
+	}, COLOR_BGR2GRAY);
 }
