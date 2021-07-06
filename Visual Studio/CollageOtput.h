@@ -2,7 +2,7 @@
 #include "ImgHandle.h"
 #ifndef VIDEO_COLLAGE_OUTPUT 
 #define VIDEO_COLLAGE_OUTPUT
-class VideoCollageOutput final : public ImgHandle {
+class CollageOutput final : public ImgHandle {
 private:
 	using super = ImgHandle;
 	vector<Mat>* ascii_mat_arr = new vector<Mat>(65);
@@ -13,7 +13,7 @@ private:
 	void init_braille();
 public:
 	using super::super;
-	void ascii(string filename);
-	void braille(string filename);
+	void ascii();
+	void braille();
 };
 #endif

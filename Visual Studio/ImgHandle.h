@@ -24,17 +24,19 @@ protected:
 	double frame_FPS;
 	double frame_total;
 	int frame_interval;
-	void braille_create();
+	Size video_size;
+
+	void braille_create(int&&);
 	vector<vector<string>> *braille_string;
 	VideoCapture cap;
 	string run;
 	Size dsize;
 	string lv = " .'`^,:;l!i><~+_--?][}{)(|/rxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
 public:
-	ImgHandle(Mat, Size);
-	ImgHandle(VideoCapture, Size);
-	void video_written_handle(string filename, Size set_size);
-	void print_output_info(time_t t_start);
+	ImgHandle(string&& , Size dsize = Size(-1, -1));
+	void video_written_handle(Size set_size = Size(-1, -1));
+	void print_output_info(time_t);
 	void gray_ascii_art(function<void()>&&);
 };
+
 #endif

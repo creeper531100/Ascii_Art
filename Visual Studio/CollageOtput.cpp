@@ -1,6 +1,6 @@
-﻿#include "VideoCollageOtput.h"
+﻿#include "CollageOtput.h"
 
-vector<string> VideoCollageOutput::split(string split_str, string&& delimiter) {
+vector<string> CollageOutput::split(string split_str, string&& delimiter) {
 	//分割特定字元
 	int pos_start = 0, pos_end, delim_len = delimiter.length();
 	vector<string> res;
@@ -15,12 +15,12 @@ vector<string> VideoCollageOutput::split(string split_str, string&& delimiter) {
 	return res;
 }
 
-void VideoCollageOutput::init_ascii() {
+void CollageOutput::init_ascii() {
 	for (int i = 0; i <= 64; i++)
 		this->ascii_mat_arr->at(i) = imread("font\\font\\" + to_string(i) + ".png");
 }
 
-void VideoCollageOutput::init_braille() {
+void CollageOutput::init_braille() {
 	vector<string> file_names;
 	glob("font\\braille", file_names);
 	for (auto& row : file_names) {
@@ -28,8 +28,8 @@ void VideoCollageOutput::init_braille() {
 	}
 }
 
-void VideoCollageOutput::ascii(string filename) {
-	super::type == IMG ? void() : super::video_written_handle(filename, Size(super::dsize.width * 8, super::dsize.height * 16 - 16));
+void CollageOutput::ascii() {
+	super::type == IMG ? void() : super::video_written_handle(Size(super::dsize.width * 8, super::dsize.height * 16 - 16));
 	this->init_ascii();
 	super::gray_ascii_art([&]() {
 		Mat vertical, horizontal;
@@ -46,12 +46,12 @@ void VideoCollageOutput::ascii(string filename) {
 	});
 }
 
-void VideoCollageOutput::braille(string filename) {
-	super::type == IMG ? void() : super::video_written_handle(filename, Size(super::dsize.width * 4 + 8, super::dsize.height * 4));
+void CollageOutput::braille() {
+	super::type == IMG ? void() : super::video_written_handle(Size(super::dsize.width * 4 + 8, super::dsize.height * 4));
 	this->init_braille();
 	super::gray_ascii_art([&]() {
 		Mat vertical, horizontal;
-		this->braille_create();
+		this->braille_create(mean(this->img).val[0]);
 		for (int i = 3; i < this->braille_string->size(); i += 4) {
 			horizontal = this->braile_mat_arr["kkkk.png"];
 			for (int j = 0; j < super::dsize.height; j++)

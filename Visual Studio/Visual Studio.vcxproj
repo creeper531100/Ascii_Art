@@ -140,17 +140,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BasicEffectOutput.cpp" />
     <ClCompile Include="ConsoleShow.cpp" />
     <ClCompile Include="disable.cpp" />
     <ClCompile Include="ImgHandle.cpp" />
     <ClCompile Include="InitWord.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="VideoCollageOtput.cpp" />
+    <ClCompile Include="CollageOtput.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BasicEffectOutput.h" />
     <ClInclude Include="ConsoleShow.h" />
     <ClInclude Include="ImgHandle.h" />
-    <ClInclude Include="VideoCollageOtput.h" />
+    <ClInclude Include="CollageOtput.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

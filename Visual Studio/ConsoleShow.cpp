@@ -37,7 +37,7 @@ void ConsoleShow::braille() {
 	this->init_word();
 	auto start = chrono::system_clock::now();
 	super::gray_ascii_art([&]() {
-		this->braille_create();
+		this->braille_create(mean(this->img).val[0]);
 		for (int i = 3, pixel = 0; i < this->braille_string->size(); i += 4) {
 			for (int j = 0; j < super::dsize.height; j++, pixel++) {
 				this->screen[pixel] = this->map_pairs[this->braille_string->at(i - 3)[j] + this->braille_string->at(i - 2)[j] + this->braille_string->at(i - 1)[j] + this->braille_string->at(i)[j]];
