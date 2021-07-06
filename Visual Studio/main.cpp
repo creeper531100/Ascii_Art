@@ -49,5 +49,7 @@ int main() {
 		img_handle = new BasicEffectOutput(forward<string>(path));
 		img_handle->call_obj_member<BasicEffectOutput>(&BasicEffectOutput::relief, vector<int>(2) = { 128, 1 });
 		break;
+	default: 
+		cout << "很遺憾失敗了" << endl;
 	}
 }
