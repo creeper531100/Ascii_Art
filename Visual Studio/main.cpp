@@ -14,7 +14,7 @@ int main() {
 	string path = "";
 	int setting = -1;
 
-	cout << "AsciiArt新藝術\n----------------------------------\n(0).預覽AsciiArt, (1).預覽BrailleArt \n(2).輸出AsciiArt, (3).輸出BrailleArt \n(4).輸出帥臉, (5).輸出浮雕照\n----------------------------------\n選擇功能: "; cin >> sw;
+	cout << "AsciiArt新藝術\n----------------------------------\n(0).預覽 AsciiArt (1).預覽 BrailleArt \n(2).輸出 AsciiArt (3).輸出 BrailleArt \n(4).輸出帥臉 (5).輸出浮雕照\n----------------------------------\n選擇功能: "; cin >> sw;
 	cout << "輸入網址或圖片位置: "; cin >> path;
 	if (path.find("https") != std::string::npos) {
 		remove("HTC.mp4");
