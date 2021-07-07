@@ -11,7 +11,10 @@ private:
 public:
 	using super::super;
 	
-	void thresholding(int threshold_type = THRESH_BINARY, int thresh = -1) {
+	void thresholding(vector<int> arg = { THRESH_BINARY , -1, COLOR_BGR2GRAY }) {
+		int threshold_type = arg[0];
+		int thresh = arg[1];
+		int color = arg[2];
 		super::type == IMG ? void() : super::video_written_handle();
 		super::basic_handle([&]() {
 			Mat threshold_mat;
@@ -19,10 +22,13 @@ public:
 			threshold(super::img, threshold_mat, thresh, 255, threshold_type);
 			super::type == IMG ? (void)imwrite("output_pic.png", threshold_mat) : super::writer.write(threshold_mat);
 			printf("進度: %f%%\r", (this->count++ / super::frame_total) * 100);
-		}, COLOR_BGR2GRAY);
+		}, ColorConversionCodes(forward<int>(color)));
 	}
 
-	void relief(int offset = 128, int effect = 1) {
+	void relief(vector<int> arg = { 128 , 1 }) {
+		int offset = arg[0];
+		int effect = arg[1];
+		
 		super::type == IMG ? void() : super::video_written_handle();
 		super::basic_handle([&]() {
 		Mat relief2(super::img.size(), CV_8UC3);

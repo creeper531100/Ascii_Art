@@ -26,8 +26,34 @@ protected:
 	double frame_total;
 	int frame_interval;
 	Size video_size;
-	void braille_create(int&&);
-	vector<vector<string>> *braille_string;
+	//void braille_create_disable(int&&);
+	//vector<vector<string>> *braille_string_disable;
+
+
+	vector<vector<string>> braille_string;
+	void braille_create(int&& brightness_threshold) {
+		vector<vector<string>> deep_arr;
+		for (int i = 0; i < this->dsize.height; i++) {
+			vector<string> deep;
+			for (int j = 1; j < this->dsize.width; j += 2) {
+				if (this->img.at<uchar>(i, j - 1) > brightness_threshold) {
+					if (this->img.at<uchar>(i, j) > brightness_threshold)
+						deep.emplace_back("m");
+					else
+						deep.emplace_back("y");
+				}
+				else {
+					if (this->img.at<uchar>(i, j) > brightness_threshold)
+						deep.emplace_back("z");
+					else
+						deep.emplace_back("k");
+				}
+			}
+			deep_arr.emplace_back(deep);
+		}
+		this->braille_string = deep_arr;
+	}
+	
 	VideoCapture cap;
 	string run;
 	string lv = " .'`^,:;l!i><~+_--?][}{)(|/rxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
@@ -42,10 +68,9 @@ public:
 	Size dsize;
 
 	template<typename T>
-	void call_obj_member(void (T::* mem)(int, int), vector<int> argv) {
+	void call_obj_member(void (T::* mem)(vector<int>), vector<int> argv) {
 		T* t = new T(forward<string>(this->filename), this->dsize);
-		(t->*mem)(argv[0], argv[1]);
-		delete this;
+		(t->*mem)(argv);
 	}
 };
 

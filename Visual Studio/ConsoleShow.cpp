@@ -38,13 +38,12 @@ void ConsoleShow::braille() {
 	auto start = chrono::system_clock::now();
 	super::basic_handle([&]() {
 		this->braille_create(mean(this->img).val[0]);
-		for (int i = 3, pixel = 0; i < this->braille_string->size(); i += 4) {
+		for (int i = 3, pixel = 0; i < this->braille_string.size(); i += 4) {
 			for (int j = 0; j < super::dsize.height; j++, pixel++) {
-				this->screen[pixel] = this->map_pairs[this->braille_string->at(i - 3)[j] + this->braille_string->at(i - 2)[j] + this->braille_string->at(i - 1)[j] + this->braille_string->at(i)[j]];
+				this->screen[pixel] = this->map_pairs[this->braille_string.at(i - 3)[j] + this->braille_string.at(i - 2)[j] + this->braille_string.at(i - 1)[j] + this->braille_string.at(i)[j]];
 			}
 		}
 		WriteConsoleOutputCharacterW(this->handle, this->screen, super::dsize.area(), { 0, 0 }, &this->dwBytesWritten);
-		delete this->braille_string;
 		this->video_interval(&start);
 	}, COLOR_BGR2GRAY);
 }

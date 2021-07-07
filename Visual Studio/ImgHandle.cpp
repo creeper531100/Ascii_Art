@@ -45,29 +45,6 @@ void ImgHandle::img_handle(ColorConversionCodes& color) {
 	color == COLOR_BGR2BGR565 ? void() : cv::cvtColor(this->img, this->img, color);
 }
 
-void ImgHandle::braille_create(int&& brightness_threshold) {
-	vector<vector<string>>* vec_len = new vector<vector<string>>(this->dsize.height);
-	for (int i = 0; i < this->dsize.height; i++) {
-		vector<string>deep(this->dsize.width);
-		for (int j = 1, k = 0; j < this->dsize.width; j += 2, k++) {
-			if (this->img.at<uchar>(i, j - 1) > brightness_threshold) {
-				if (this->img.at<uchar>(i, j) > brightness_threshold)
-					deep.at(k) = "m";
-				else
-					deep.at(k) = "y";
-			}
-			else {
-				if (this->img.at<uchar>(i, j) > brightness_threshold)
-					deep.at(k) = "z";
-				else
-					deep.at(k) = "k";
-			}
-		}
-		vec_len->at(i) = deep;
-	}
-	this->braille_string = vec_len;
-}
-
 void ImgHandle::print_output_info(time_t t_start) {
 	system(this->run.c_str());
 	int totalTime = difftime(time(NULL), t_start);

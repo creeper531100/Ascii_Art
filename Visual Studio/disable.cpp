@@ -1,4 +1,5 @@
-/*void ImgHandle::braille_create() {
+/*vector<vector<string>> braille_handle_;
+void braille_create_() {
 	vector<vector<string>> deep_arr;
 	for (int i = 0; i < this->dsize.height; i++) {
 		vector<string> deep;
@@ -20,9 +21,8 @@
 		}
 		deep_arr.emplace_back(deep);
 	}
-	this->braille_handle = deep_arr;
+	this->braille_handle_ = deep_arr;
 }*/
-
 /*
  * string folder_path;
 	cout << "Path:";
@@ -48,3 +48,38 @@
 		write.release();
 	}
  */
+
+/*void ImgHandle::braille_create_disable(int&& brightness_threshold) {
+	vector<vector<string>>* vec_len = new vector<vector<string>>(this->dsize.height);
+	for (int i = 0; i < this->dsize.height; i++) {
+		vector<string>deep(this->dsize.width);
+		for (int j = 1, k = 0; j < this->dsize.width; j += 2, k++) {
+			if (this->img.at<uchar>(i, j - 1) > brightness_threshold) {
+				if (this->img.at<uchar>(i, j) > brightness_threshold)
+					deep.at(k) = "m";
+				else
+					deep.at(k) = "y";
+			}
+			else {
+				if (this->img.at<uchar>(i, j) > brightness_threshold)
+					deep.at(k) = "z";
+				else
+					deep.at(k) = "k";
+			}
+		}
+		vec_len->at(i) = deep;
+	}
+	this->braille_string_disable = vec_len;
+}*/
+
+/*this->braille_create_disable(mean(this->img).val[0]);
+	for (int i = 3; i < this->braille_string_disable->size(); i += 4) {
+		cout << this->braille_string_disable->size() << " | " << endl;
+		horizontal = this->braile_mat_arr["kkkk.png"];
+		for (int j = 0; j < super::dsize.height; j++)
+			hconcat(horizontal,
+				this->braile_mat_arr[this->braille_string_disable->at(i - 3)[j] + this->braille_string_disable->at(i - 2)[j] +
+				this->braille_string_disable->at(i - 1)[j] + this->braille_string_disable->at(i)[j] + ".png"], horizontal);
+		vertical.push_back(horizontal);
+		//delete this->braille_string_disable;
+	}*/

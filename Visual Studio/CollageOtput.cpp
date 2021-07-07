@@ -29,7 +29,7 @@ void CollageOutput::init_braille() {
 }
 
 void CollageOutput::ascii() {
-	super::type == IMG ? void() : super::video_written_handle(Size(super::dsize.width * 8, super::dsize.height * 16 - 16));
+	super::type == IMG ? void(super::dsize = Size(super::img.cols / 8, super::img.rows / 16)) : super::video_written_handle(Size(super::dsize.width * 8, super::dsize.height * 16 - 16));
 	this->init_ascii();
 	super::basic_handle([&]() {
 		Mat vertical, horizontal;
@@ -47,21 +47,20 @@ void CollageOutput::ascii() {
 }
 
 void CollageOutput::braille() {
-	super::type == IMG ? void() : super::video_written_handle(Size(super::dsize.width * 4 + 8, super::dsize.height * 4));
+	super::type == IMG ? void(super::dsize = Size(super::img.cols / 4 , super::img.rows / 4)) : super::video_written_handle(Size(super::dsize.width * 4 + 8, super::dsize.height * 4));
 	this->init_braille();
 	super::basic_handle([&]() {
 		Mat vertical, horizontal;
 		this->braille_create(mean(this->img).val[0]);
-		for (int i = 3; i < this->braille_string->size(); i += 4) {
+		for (int i = 3; i < this->braille_string.size(); i += 4) {
 			horizontal = this->braile_mat_arr["kkkk.png"];
-			for (int j = 0; j < super::dsize.height; j++)
+			for (int j = 0; j < this->braille_string.at(i).size(); j++)
 				hconcat(horizontal,
-					this->braile_mat_arr[this->braille_string->at(i - 3)[j] + this->braille_string->at(i - 2)[j] +
-					this->braille_string->at(i - 1)[j] + this->braille_string->at(i)[j] + ".png"], horizontal);
+					this->braile_mat_arr[this->braille_string.at(i - 3)[j] + this->braille_string.at(i - 2)[j] +
+					this->braille_string.at(i - 1)[j] + this->braille_string.at(i)[j] + ".png"], horizontal);
 			vertical.push_back(horizontal);
+			printf("進度: %f%%\r", (this->count++ / super::frame_total) * 100);
+			super::type == IMG ? (void)imwrite("output_pic.png", vertical) : super::writer.write(vertical);
 		}
-		delete this->braille_string;
-		printf("進度: %f%%\r", (this->count++ / super::frame_total) * 100);
-		super::type == IMG ? (void)imwrite("output_pic.png", vertical) : super::writer.write(vertical);
 	}, COLOR_BGR2GRAY);
 }
