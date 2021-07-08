@@ -28,7 +28,7 @@ void CollageOutput::init_braille() {
 	}
 }
 
-void CollageOutput::ascii(map<string, int> argv) {
+void CollageOutput::ascii() {
 	super::type == IMG ? void(super::dsize = Size(super::img.cols / 8, super::img.rows / 16)) : super::video_written_handle(Size(super::dsize.width * 8, super::dsize.height * 16 - 16));
 	this->init_ascii();
 	super::basic_handle([&]() {
@@ -46,10 +46,10 @@ void CollageOutput::ascii(map<string, int> argv) {
 	}, COLOR_BGR2GRAY);
 }
 
-void CollageOutput::braille(map<string, int> argv) {
+void CollageOutput::braille() {
 	super::type == IMG ? void(super::dsize = Size(super::img.cols / 4 , super::img.rows / 4)) : super::video_written_handle(Size(super::dsize.width * 4 + 8, super::dsize.height * 4));
 	this->init_braille();
-	int thresh = argv["thresh"];
+	int thresh = super::setting_argv["collage_output"]["thresh"];
 	super::basic_handle([&]() {
 		Mat vertical, horizontal;
 		if (thresh == -1) thresh = mean(super::img).val[0];

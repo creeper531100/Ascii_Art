@@ -20,7 +20,7 @@ void ConsoleShow::video_interval(chrono::time_point<chrono::system_clock>* c_sta
 	*c_start = chrono::system_clock::now();
 }
 
-void ConsoleShow::ascii(map<string, int> argv) {
+void ConsoleShow::ascii() {
 	this->init();
 	auto start = chrono::system_clock::now();
 	super::basic_handle([&]() {
@@ -32,10 +32,10 @@ void ConsoleShow::ascii(map<string, int> argv) {
 	}, COLOR_BGR2GRAY);
 }
 
-void ConsoleShow::braille(map<string, int> argv) {
+void ConsoleShow::braille() {
 	this->init();
 	this->init_word();
-	int thresh = argv["thresh"];
+	int thresh = super::setting_argv["console_show"]["thresh"];
 	auto start = chrono::system_clock::now();
 	super::basic_handle([&]() {
 		if (thresh == -1) thresh = mean(super::img).val[0];

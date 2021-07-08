@@ -2,6 +2,7 @@
 #include <iostream>
 #include <windows.h>
 #include <opencv2/opencv.hpp>
+#include <nlohmann/json.hpp>
 
 #ifndef IMG_HANDLE 
 #define IMG_HANDLE
@@ -26,34 +27,11 @@ protected:
 	double frame_total;
 	int frame_interval;
 	Size video_size;
+	nlohmann::json setting_argv;
 	//void braille_create_disable(int&&);
 	//vector<vector<string>> *braille_string_disable;
-
-
 	vector<vector<string>> braille_string;
-	void braille_create(int brightness_threshold) {
-		vector<vector<string>> deep_arr;
-		for (int i = 0; i < this->dsize.height; i++) {
-			vector<string> deep;
-			for (int j = 1; j < this->dsize.width; j += 2) {
-				if (this->img.at<uchar>(i, j - 1) > brightness_threshold) {
-					if (this->img.at<uchar>(i, j) > brightness_threshold)
-						deep.emplace_back("m");
-					else
-						deep.emplace_back("y");
-				}
-				else {
-					if (this->img.at<uchar>(i, j) > brightness_threshold)
-						deep.emplace_back("z");
-					else
-						deep.emplace_back("k");
-				}
-			}
-			deep_arr.emplace_back(deep);
-		}
-		this->braille_string = deep_arr;
-	}
-	
+	void braille_create(int brightness_threshold);
 	VideoCapture cap;
 	string run;
 	string lv = " .'`^,:;l!i><~+_--?][}{)(|/rxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
@@ -62,15 +40,15 @@ protected:
 	void basic_handle(function<void()>&&, ColorConversionCodes&& color = COLOR_BGR2BGR565);
 public:
 	virtual ~ImgHandle() = default;
-	virtual void ascii(map<string, int> argv = {});
-	virtual void braille(map<string, int> argv = {});
-	ImgHandle(string&& , Size dsize = Size(-1, -1));
+	virtual void ascii();
+	virtual void braille();
+	ImgHandle(string&& , nlohmann::json& argv, Size dsize = Size(-1, -1));
 	Size dsize;
 
 	template<typename T>
-	void call_obj_member(void (T::* mem)(map<string, int> argv), map<string, int> argv) {
-		T* t = new T(forward<string>(this->filename), this->dsize);
-		(t->*mem)(argv);
+	void call_obj_member(void (T::* mem)()) {
+		T* t = new T(forward<string>(this->filename), this->setting_argv ,this->dsize);
+		(t->*mem)();
 	}
 };
 

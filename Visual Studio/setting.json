@@ -1,0 +1,45 @@
+{
+	"console_show": {
+		"thresh": -1,
+		"ascii": {
+			"width": 237,
+			"height": 64
+		},
+		"braille": {
+			"width": 240,
+			"height": 120
+		}
+	},
+	"collage_output": {
+		"thresh": -1,
+		"ascii": {
+			"width": 240,
+			"height": 67
+		},
+		"braille": {
+			"width": 480,
+			"height": 240
+		}
+	},
+	"basic_effect": {
+		"thresh": -1,
+		"effect": 1,
+		"offset": 128,
+		"thresholding": {
+			"width": -1,
+			"height": -1
+		},
+		"relief": {
+			"width": -1,
+			"height": -1
+		}
+	},
+	"quick_output": {
+		"font_size": 5,
+		"fill_char": "@",
+		"ascii": {
+			"width": 160,
+			"height": 71
+		}
+	}
+}

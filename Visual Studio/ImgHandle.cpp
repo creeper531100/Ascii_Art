@@ -1,10 +1,12 @@
 #include "ImgHandle.h"
 
-ImgHandle::ImgHandle(string&& path, Size dsize) {
+#include <nlohmann/json.hpp>
+
+ImgHandle::ImgHandle(string&& path, nlohmann::json& argv ,Size dsize) {
 	this->filename = path;
 	vector<string> img_extension = { ".jpg", ".JPG", ".png", ".PNG", ".tiff"};
 	vector<string> video_extension = { ".mp4", ".mp3", ".gif" };
-
+	this->setting_argv = argv;
 	auto is_file = [path](vector<string> file_type) { return std::find_if(file_type.begin(), file_type.end(), [&](string index) { return path.find(index) != std::string::npos; }) != file_type.end(); };
 	if (is_file(img_extension)) {
 		this->img = imread(path);
@@ -29,6 +31,29 @@ ImgHandle::ImgHandle(string&& path, Size dsize) {
 	else {
 		cerr << "不支援此檔案" << endl;
 	}
+}
+
+void ImgHandle::braille_create(int brightness_threshold) {
+	vector<vector<string>> deep_arr;
+	for (int i = 0; i < this->dsize.height; i++) {
+		vector<string> deep;
+		for (int j = 1; j < this->dsize.width; j += 2) {
+			if (this->img.at<uchar>(i, j - 1) > brightness_threshold) {
+				if (this->img.at<uchar>(i, j) > brightness_threshold)
+					deep.emplace_back("m");
+				else
+					deep.emplace_back("y");
+			}
+			else {
+				if (this->img.at<uchar>(i, j) > brightness_threshold)
+					deep.emplace_back("z");
+				else
+					deep.emplace_back("k");
+			}
+		}
+		deep_arr.emplace_back(deep);
+	}
+	this->braille_string = deep_arr;
 }
 
 void ImgHandle::video_written_handle(Size set_size) {
@@ -71,5 +96,5 @@ void ImgHandle::basic_handle(function<void()>&& func, ColorConversionCodes&& col
 	}
 }
 
-void ImgHandle::ascii(map<string, int> argv) {}
-void ImgHandle::braille(map<string, int> argv) {}
+void ImgHandle::ascii() {}
+void ImgHandle::braille() {}
