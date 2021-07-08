@@ -23,8 +23,6 @@ int main() {
 		system(("youtube-dl -o HTC.%(ext)s -f mp4 " + path).c_str());
 		path = "HTC.mp4";
 	}
-
-	
 	ImgHandle* img_handle = nullptr;
 	switch (sw) {
 	case 0:
@@ -33,7 +31,7 @@ int main() {
 		break;
 	case 1:
 		img_handle = new ConsoleShow(forward<string>(path), Size(240, 120));
-		img_handle->braille();
+		img_handle->braille(map<string, int>() = { { "thresh", -1} });
 		break;
 	case 2:
 		img_handle = new CollageOutput(forward<string>(path), Size(240, 67)); //8x16
@@ -41,29 +39,41 @@ int main() {
 		break;
 	case 3:
 		img_handle = new CollageOutput(forward<string>(path), Size(480, 240)); //4 , 480x240
-		img_handle->braille();
+		img_handle->braille(map<string, int>() = { { "thresh", -1} });
 		break;
 	case 4:
 		img_handle = new BasicEffectOutput(forward<string>(path)); //1x1
-		img_handle->call_obj_member<BasicEffectOutput>(&BasicEffectOutput::thresholding, vector<int>(3) = { THRESH_BINARY, -1, COLOR_BGR2GRAY });
+		img_handle->call_obj_member<BasicEffectOutput>(&BasicEffectOutput::thresholding, map<string, int>() = {
+			{ "threshold_type", THRESH_BINARY},
+			{ "thresh" ,-1 }, // -1: auto
+			{ "color", COLOR_BGR2GRAY }
+		});
 		break;
 	case 5:
 		img_handle = new BasicEffectOutput(forward<string>(path)); //1x1
-		img_handle->call_obj_member<BasicEffectOutput>(&BasicEffectOutput::relief, vector<int>(2) = { 128, 1 });
+		img_handle->call_obj_member<BasicEffectOutput>(&BasicEffectOutput::relief, map<string, int>() = {
+			{ "effect", 1},
+			{ "offset", 128 }
+		});
 		break;
 	case 6:
 		img_handle = new QuickOutput(forward<string>(path), Size(160, 71)); //12x15
-		img_handle->call_obj_member<QuickOutput>(&QuickOutput::ascii, vector<int>(1) = { 5 });
+		img_handle->ascii(map<string, int>() = { { "font_size", 5 } });
 		break;
 	case 7:
 		img_handle = new QuickOutput(forward<string>(path), Size(160, 71)); //12x15
-		img_handle->call_obj_member<QuickOutput>(&QuickOutput::ascii_color, vector<int>(2) = {5, 0});
+		img_handle->call_obj_member<QuickOutput>(&QuickOutput::ascii_color, map<string, int>() = {
+			{ "font_size", 5 }
+		});
 		break;
 	case 8:
 		cout << "輸入填充字體: ";  cin >> setting;
 		cout << setting << endl;
 		img_handle = new QuickOutput(forward<string>(path), Size(160, 71)); //12x15
-		img_handle->call_obj_member<QuickOutput>(&QuickOutput::ascii_color, vector<int>(2) = { 5, (char)setting });
+		img_handle->call_obj_member<QuickOutput>(&QuickOutput::ascii_color, map<string, int>() = {
+			{ "font_size", 5 },
+			{ "fill_char", (int)setting }
+		});
 		break;
 	default: 
 		cout << "很遺憾失敗了" << endl;

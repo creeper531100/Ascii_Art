@@ -31,7 +31,7 @@ protected:
 
 
 	vector<vector<string>> braille_string;
-	void braille_create(int&& brightness_threshold) {
+	void braille_create(int brightness_threshold) {
 		vector<vector<string>> deep_arr;
 		for (int i = 0; i < this->dsize.height; i++) {
 			vector<string> deep;
@@ -62,13 +62,13 @@ protected:
 	void basic_handle(function<void()>&&, ColorConversionCodes&& color = COLOR_BGR2BGR565);
 public:
 	virtual ~ImgHandle() = default;
-	virtual void ascii();
-	virtual void braille();
+	virtual void ascii(map<string, int> argv = {});
+	virtual void braille(map<string, int> argv = {});
 	ImgHandle(string&& , Size dsize = Size(-1, -1));
 	Size dsize;
 
 	template<typename T>
-	void call_obj_member(void (T::* mem)(vector<int>), vector<int> argv) {
+	void call_obj_member(void (T::* mem)(map<string, int> argv), map<string, int> argv) {
 		T* t = new T(forward<string>(this->filename), this->dsize);
 		(t->*mem)(argv);
 	}

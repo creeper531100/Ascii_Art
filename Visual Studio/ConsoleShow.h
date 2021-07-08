@@ -19,8 +19,8 @@ private:
 	map<string, wchar_t> map_pairs;
 	
 public:
-	void ascii() override;
-	void braille() override;
+	void ascii(map<string, int> argv) override;
+	void braille(map<string, int> argv) override;
 	using super::super;
 };
 

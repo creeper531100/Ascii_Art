@@ -71,5 +71,5 @@ void ImgHandle::basic_handle(function<void()>&& func, ColorConversionCodes&& col
 	}
 }
 
-void ImgHandle::ascii() {}
-void ImgHandle::braille() {}
+void ImgHandle::ascii(map<string, int> argv) {}
+void ImgHandle::braille(map<string, int> argv) {}

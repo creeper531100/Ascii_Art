@@ -28,7 +28,7 @@ void CollageOutput::init_braille() {
 	}
 }
 
-void CollageOutput::ascii() {
+void CollageOutput::ascii(map<string, int> argv) {
 	super::type == IMG ? void(super::dsize = Size(super::img.cols / 8, super::img.rows / 16)) : super::video_written_handle(Size(super::dsize.width * 8, super::dsize.height * 16 - 16));
 	this->init_ascii();
 	super::basic_handle([&]() {
@@ -46,12 +46,14 @@ void CollageOutput::ascii() {
 	}, COLOR_BGR2GRAY);
 }
 
-void CollageOutput::braille() {
+void CollageOutput::braille(map<string, int> argv) {
 	super::type == IMG ? void(super::dsize = Size(super::img.cols / 4 , super::img.rows / 4)) : super::video_written_handle(Size(super::dsize.width * 4 + 8, super::dsize.height * 4));
 	this->init_braille();
+	int thresh = argv["thresh"];
 	super::basic_handle([&]() {
 		Mat vertical, horizontal;
-		this->braille_create(mean(this->img).val[0]);
+		if (thresh == -1) thresh = mean(super::img).val[0];
+		this->braille_create(thresh);
 		for (int i = 3; i < this->braille_string.size(); i += 4) {
 			horizontal = this->braile_mat_arr["kkkk.png"];
 			for (int j = 0; j < this->braille_string.at(i).size(); j++)
@@ -59,8 +61,8 @@ void CollageOutput::braille() {
 					this->braile_mat_arr[this->braille_string.at(i - 3)[j] + this->braille_string.at(i - 2)[j] +
 					this->braille_string.at(i - 1)[j] + this->braille_string.at(i)[j] + ".png"], horizontal);
 			vertical.push_back(horizontal);
-			printf("進度: %f%%\r", (this->count++ / super::frame_total) * 100);
-			super::type == IMG ? (void)imwrite("output_pic.png", vertical) : super::writer.write(vertical);
 		}
+		super::type == IMG ? (void)imwrite("output_pic.png", vertical) : super::writer.write(vertical);
+		printf("進度: %f%%\r", (this->count++ / super::frame_total) * 100);
 	}, COLOR_BGR2GRAY);
 }

@@ -20,7 +20,7 @@ void ConsoleShow::video_interval(chrono::time_point<chrono::system_clock>* c_sta
 	*c_start = chrono::system_clock::now();
 }
 
-void ConsoleShow::ascii() {
+void ConsoleShow::ascii(map<string, int> argv) {
 	this->init();
 	auto start = chrono::system_clock::now();
 	super::basic_handle([&]() {
@@ -32,12 +32,14 @@ void ConsoleShow::ascii() {
 	}, COLOR_BGR2GRAY);
 }
 
-void ConsoleShow::braille() {
+void ConsoleShow::braille(map<string, int> argv) {
 	this->init();
 	this->init_word();
+	int thresh = argv["thresh"];
 	auto start = chrono::system_clock::now();
 	super::basic_handle([&]() {
-		this->braille_create(mean(this->img).val[0]);
+		if (thresh == -1) thresh = mean(super::img).val[0];
+		this->braille_create(thresh);
 		for (int i = 3, pixel = 0; i < this->braille_string.size(); i += 4) {
 			for (int j = 0; j < super::dsize.height; j++, pixel++) {
 				this->screen[pixel] = this->map_pairs[this->braille_string.at(i - 3)[j] + this->braille_string.at(i - 2)[j] + this->braille_string.at(i - 1)[j] + this->braille_string.at(i)[j]];
