@@ -29,7 +29,9 @@ void CollageOutput::init_braille() {
 }
 
 void CollageOutput::ascii() {
-	super::type == IMG ? void(super::dsize = Size(super::img.cols / 8, super::img.rows / 16)) : super::video_written_handle(Size(super::dsize.width * 8, super::dsize.height * 16 - 16));
+	super::type == IMG
+		? void(super::dsize = Size(super::img.cols / 8, super::img.rows / 16))
+		: super::video_written_handle(Size(super::dsize.width * 8, super::dsize.height * 16 - 16));
 	this->init_ascii();
 	super::basic_handle([&]() {
 		Mat vertical, horizontal;
@@ -47,19 +49,26 @@ void CollageOutput::ascii() {
 }
 
 void CollageOutput::braille() {
-	super::type == IMG ? void(super::dsize = Size(super::img.cols / 4 , super::img.rows / 4)) : super::video_written_handle(Size(super::dsize.width * 4 + 8, super::dsize.height * 4));
+	super::type == IMG
+		? void(super::dsize = Size(super::img.cols / 4, super::img.rows / 4))
+		: super::video_written_handle(Size(super::dsize.width * 4 + 8, super::dsize.height * 4));
 	this->init_braille();
 	int thresh = super::setting_argv["collage_output"]["thresh"];
 	super::basic_handle([&]() {
 		Mat vertical, horizontal;
-		if (thresh == -1) thresh = mean(super::img).val[0];
-		this->braille_create(thresh);
+		if (thresh == -1) {
+			int avg = mean(super::img).val[0];
+			this->braille_create(avg);
+		}
+		else
+			this->braille_create(thresh);
+
 		for (int i = 3; i < this->braille_string.size(); i += 4) {
 			horizontal = this->braile_mat_arr["kkkk.png"];
 			for (int j = 0; j < this->braille_string.at(i).size(); j++)
 				hconcat(horizontal,
-					this->braile_mat_arr[this->braille_string.at(i - 3)[j] + this->braille_string.at(i - 2)[j] +
-					this->braille_string.at(i - 1)[j] + this->braille_string.at(i)[j] + ".png"], horizontal);
+				        this->braile_mat_arr[this->braille_string.at(i - 3)[j] + this->braille_string.at(i - 2)[j] +
+					        this->braille_string.at(i - 1)[j] + this->braille_string.at(i)[j] + ".png"], horizontal);
 			vertical.push_back(horizontal);
 		}
 		super::type == IMG ? (void)imwrite("output_pic.png", vertical) : super::writer.write(vertical);

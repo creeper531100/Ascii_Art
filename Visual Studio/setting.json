@@ -22,16 +22,28 @@
 		}
 	},
 	"basic_effect": {
-		"thresh": -1,
-		"effect": 1,
-		"offset": 128,
+		"contours_handle": {
+			"thresh": {
+				"min": 60,
+				"max": 120
+			},
+			"color": [0, 0, 0],
+			"canvas_color": [255, 255, 255]
+		},
 		"thresholding": {
+			"thresh": -1,
 			"width": -1,
 			"height": -1
 		},
 		"relief": {
+			"effect": 1,
+			"offset": 128,
 			"width": -1,
 			"height": -1
+		},
+		"math_function_handle": {
+			"deltaI": 10,
+			"arg": 5
 		}
 	},
 	"quick_output": {

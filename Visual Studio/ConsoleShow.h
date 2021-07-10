@@ -1,6 +1,6 @@
 #pragma once
 #include "ImgHandle.h"
-#ifndef CONSOLE_HANDLE 
+#ifndef CONSOLE_HANDLE
 #define CONSOLE_HANDLE
 
 using namespace std;
@@ -17,11 +17,11 @@ private:
 	void handle_console(wchar_t** screen, cv::Size& dsize, HANDLE* hConsole);
 	void video_interval(chrono::time_point<chrono::system_clock>*);
 	map<string, wchar_t> map_pairs;
-	
+
 public:
 	void ascii() override;
 	void braille() override;
 	using super::super;
 };
 
-#endif 
+#endif

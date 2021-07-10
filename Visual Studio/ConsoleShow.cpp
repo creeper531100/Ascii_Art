@@ -27,7 +27,7 @@ void ConsoleShow::ascii() {
 		for (int i = 0; i < super::dsize.area(); i++) {
 			this->screen[i] = super::lv[super::img.at<uchar>(i) / 4];
 		}
-		WriteConsoleOutputCharacter(this->handle, this->screen, super::dsize.area(), { 0, 0 }, &this->dwBytesWritten);
+		WriteConsoleOutputCharacter(this->handle, this->screen, super::dsize.area(), {0, 0}, &this->dwBytesWritten);
 		this->video_interval(&start);
 	}, COLOR_BGR2GRAY);
 }
@@ -38,14 +38,19 @@ void ConsoleShow::braille() {
 	int thresh = super::setting_argv["console_show"]["thresh"];
 	auto start = chrono::system_clock::now();
 	super::basic_handle([&]() {
-		if (thresh == -1) thresh = mean(super::img).val[0];
-		this->braille_create(thresh);
+		if (thresh == -1) {
+			int avg = mean(super::img).val[0];
+			this->braille_create(avg);
+		}
+		else
+			this->braille_create(thresh);
 		for (int i = 3, pixel = 0; i < this->braille_string.size(); i += 4) {
 			for (int j = 0; j < super::dsize.height; j++, pixel++) {
-				this->screen[pixel] = this->map_pairs[this->braille_string.at(i - 3)[j] + this->braille_string.at(i - 2)[j] + this->braille_string.at(i - 1)[j] + this->braille_string.at(i)[j]];
+				this->screen[pixel] = this->map_pairs[this->braille_string.at(i - 3)[j] + this->braille_string.at(i - 2)
+					[j] + this->braille_string.at(i - 1)[j] + this->braille_string.at(i)[j]];
 			}
 		}
-		WriteConsoleOutputCharacterW(this->handle, this->screen, super::dsize.area(), { 0, 0 }, &this->dwBytesWritten);
+		WriteConsoleOutputCharacterW(this->handle, this->screen, super::dsize.area(), {0, 0}, &this->dwBytesWritten);
 		this->video_interval(&start);
 	}, COLOR_BGR2GRAY);
 }

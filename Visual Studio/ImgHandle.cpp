@@ -2,12 +2,16 @@
 
 #include <nlohmann/json.hpp>
 
-ImgHandle::ImgHandle(string&& path, nlohmann::json& argv ,Size dsize) {
+ImgHandle::ImgHandle(string path, nlohmann::json& argv, Size dsize) {
 	this->filename = path;
-	vector<string> img_extension = { ".jpg", ".JPG", ".png", ".PNG", ".tiff"};
-	vector<string> video_extension = { ".mp4", ".mp3", ".gif" };
+	vector<string> img_extension = {".jpg", ".JPG", ".png", ".PNG", ".tiff"};
+	vector<string> video_extension = {".mp4", ".mp3", ".gif"};
 	this->setting_argv = argv;
-	auto is_file = [path](vector<string> file_type) { return std::find_if(file_type.begin(), file_type.end(), [&](string index) { return path.find(index) != std::string::npos; }) != file_type.end(); };
+	auto is_file = [path](vector<string> file_type) {
+		return std::find_if(file_type.begin(), file_type.end(), [&](string index) {
+			return path.find(index) != std::string::npos;
+		}) != file_type.end();
+	};
 	if (is_file(img_extension)) {
 		this->img = imread(path);
 		cout << "Video Resize Size: " << this->img.size().height << "x" << this->img.size().width << endl;
@@ -18,7 +22,7 @@ ImgHandle::ImgHandle(string&& path, nlohmann::json& argv ,Size dsize) {
 	}
 	else if (is_file(video_extension)) {
 		this->cap = VideoCapture(path);
-		Size size_i = Size(cap.get(CAP_PROP_FRAME_WIDTH), cap.get(CAP_PROP_FRAME_HEIGHT));
+		auto size_i = Size(cap.get(CAP_PROP_FRAME_WIDTH), cap.get(CAP_PROP_FRAME_HEIGHT));
 		if (dsize.height == -1)
 			dsize = size_i;
 		this->frame_FPS = this->cap.get(CAP_PROP_FPS);
@@ -96,5 +100,8 @@ void ImgHandle::basic_handle(function<void()>&& func, ColorConversionCodes&& col
 	}
 }
 
-void ImgHandle::ascii() {}
-void ImgHandle::braille() {}
+void ImgHandle::ascii() {
+}
+
+void ImgHandle::braille() {
+}

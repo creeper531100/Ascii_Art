@@ -1,7 +1,8 @@
 ﻿#pragma once
 #include "ImgHandle.h"
-#ifndef QUICK_OUTPUT 
+#ifndef QUICK_OUTPUT
 #define QUICK_OUTPUT
+
 class QuickOutput : public ImgHandle {
 	using super = ImgHandle;
 	int count = 0;
