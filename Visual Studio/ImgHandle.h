@@ -4,7 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include <nlohmann/json.hpp>
 
-#ifndef IMG_HANDLE 
+#ifndef IMG_HANDLE
 #define IMG_HANDLE
 
 using namespace std;
@@ -19,6 +19,7 @@ protected:
 		IMG,
 		VIDEO
 	};
+
 	varType type;
 	VideoWriter writer;
 	Mat img;
@@ -42,12 +43,12 @@ public:
 	virtual ~ImgHandle() = default;
 	virtual void ascii();
 	virtual void braille();
-	ImgHandle(string&& , nlohmann::json& argv, Size dsize = Size(-1, -1));
+	ImgHandle(string, nlohmann::json& argv, Size dsize = Size(-1, -1));
 	Size dsize;
 
-	template<typename T>
+	template <typename T>
 	void call_obj_member(void (T::* mem)()) {
-		T* t = new T(forward<string>(this->filename), this->setting_argv ,this->dsize);
+		T* t = new T(forward<string>(this->filename), this->setting_argv, this->dsize);
 		(t->*mem)();
 	}
 };

@@ -1,7 +1,8 @@
 #pragma once
 #include "ImgHandle.h"
-#ifndef VIDEO_COLLAGE_OUTPUT 
+#ifndef VIDEO_COLLAGE_OUTPUT
 #define VIDEO_COLLAGE_OUTPUT
+
 class CollageOutput final : public ImgHandle {
 private:
 	using super = ImgHandle;
