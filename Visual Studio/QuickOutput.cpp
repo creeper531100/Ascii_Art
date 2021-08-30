@@ -1,7 +1,7 @@
 ﻿#include "QuickOutput.h"
 
 void QuickOutput::quick_output_basic_handle(function<void(int*, Mat*, char*, Point*, double*)> puttext_func,
-                                            function<Mat()> handle_mat, ColorConversionCodes&& color, int&& type) {
+	function<Mat()> handle_mat, ColorConversionCodes&& color, int&& type) {
 	double font_size = (double)super::setting_argv["quick_output"]["font_size"] / 10.0;
 	int w_enlarge = (int)super::setting_argv["quick_output"]["font_size"] * 2.4; //12
 	int h_enlarge = (int)super::setting_argv["quick_output"]["font_size"] * 3; //15
@@ -14,7 +14,7 @@ void QuickOutput::quick_output_basic_handle(function<void(int*, Mat*, char*, Poi
 	Mat mat, this_mat;
 	super::basic_handle([&]() {
 		mat = Mat(Size(super::dsize.width * w_enlarge, super::dsize.height * h_enlarge), type,
-		          USAGE_ALLOCATE_DEVICE_MEMORY);
+			USAGE_ALLOCATE_DEVICE_MEMORY);
 		this_mat = handle_mat();
 		point.y = 0;
 		for (int i = 0; i < super::dsize.area(); i++) {
@@ -29,15 +29,15 @@ void QuickOutput::quick_output_basic_handle(function<void(int*, Mat*, char*, Poi
 		}
 		printf("進度: %f%%\r", (this->count++ / super::frame_total) * 100);
 		super::type == IMG ? (void)imwrite("output_pic.png", mat) : super::writer.write(mat);
-	}, forward<ColorConversionCodes>(color));
+		}, forward<ColorConversionCodes>(color));
 }
 
 void QuickOutput::ascii() {
 	quick_output_basic_handle([&](int* index, Mat* mat, char* str, Point* point, double* font_size) {
-		                          putText(*mat, str, *point, FONT_HERSHEY_SIMPLEX, *font_size,
-		                                  Scalar(255, 255, 255), 1, 8, 0);
-	                          }, [&]() { return super::img; },
-	                          COLOR_BGR2GRAY, CV_8U);
+		putText(*mat, str, *point, FONT_HERSHEY_SIMPLEX, *font_size,
+			Scalar(255, 255, 255), 1, 8, 0);
+		}, [&]() { return super::img; },
+			COLOR_BGR2GRAY, CV_8U);
 }
 
 void QuickOutput::ascii_color() {
@@ -45,15 +45,15 @@ void QuickOutput::ascii_color() {
 	single_char += super::setting_argv["quick_output"]["fill_char"];
 
 	quick_output_basic_handle([&](int* index, Mat* mat, char* str, Point* point, double* font_size) {
-		                          putText(*mat, (single_char[0] == (char)0) ? str : single_char, *point,
-		                                  FONT_HERSHEY_SIMPLEX, *font_size,
-		                                  Scalar(super::img.at<Vec3b>(*index)[0], super::img.at<Vec3b>(*index)[1],
-		                                         super::img.at<Vec3b>(*index)[2]), 1, 8, 0);
+		putText(*mat, (single_char[0] == (char)0) ? str : single_char, *point,
+			FONT_HERSHEY_SIMPLEX, *font_size,
+			Scalar(super::img.at<Vec3b>(*index)[0], super::img.at<Vec3b>(*index)[1],
+				super::img.at<Vec3b>(*index)[2]), 1, 8, 0);
 
-	                          }, [&]() {
-		                          Mat m;
-		                          cvtColor(super::img, m, COLOR_BGR2GRAY);
-		                          return m;
+		}, [&]() {
+			Mat m;
+			cvtColor(super::img, m, COLOR_BGR2GRAY);
+			return m;
 
-	                          }, COLOR_BGR2BGR565, CV_8UC3);
+		}, COLOR_BGR2BGR565, CV_8UC3);
 }
