@@ -98,7 +98,6 @@ A AsciiArt generator<br>
 	}
 }
 ```
-數值設定若為-1，即為自動設定，根據亮度，影片長寬比... 進行設定
 # 參考影片
 1. [AsciiArt](https://youtu.be/8WSQcTy1UYM)
 2. [AsciiArt - QuickOutput](https://youtu.be/o5iKn05nuLc)
