@@ -37,7 +37,22 @@ A AsciiArt generator<br>
   * 輸出浮雕照 - 對影像作分離，可以達成一個非常酷的效果
   * 函數處理 - 對影像做基本的函數處理
   * 素描/描邊 - 對影像做canny處理，可以達成描邊效果
-# 個人化設定
+# 個人化設定 Setting
+若你想對解析度或是二值化域值進行設定，你可以進入`Setting.json`對他設定<br>
+設定有幾大類別<br>
+* `console_show` - 對預覽設定
+* `collage_output` - 對拼貼設定，也就是預設的輸出
+* `basic_effect` - 對基本影像設定
+* `uick_output` - 快速輸出設定
+而內容有幾個小設定，因為都大同小異，所以放在下面
+* `thresh` - 域值設定，當像素大於域值即設定為白色，否則為黑色 
+* `width / height` - 輸出影片長寬設定
+* `font_size` - 拼貼的文字大小
+* `fill_char` - 填滿文字的字形
+# 參考影片
+[AsciiArt](https://youtu.be/8WSQcTy1UYM)
+[AsciiArt - QuickOutput](https://youtu.be/o5iKn05nuLc)
+[BrailleArt](https://youtu.be/fds8-M9iK8I)
 
 # 下載
 https://github.com/creeper531100/Ascii_Art/releases/download/v1.0.1/JEFF.zip
