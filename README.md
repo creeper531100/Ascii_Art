@@ -1,3 +1,4 @@
+![alt text](https://github.com/creeper531100/Ascii_Art/blob/master/%E4%BB%8B%E7%B4%B9/title.png?raw=true)
 # AsciiArt
 一個AsciiArt生成器，本專案使用C++與opencv框架編輯而成的<br>
 - AsciiArt影片製作<br>
