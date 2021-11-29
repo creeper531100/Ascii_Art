@@ -12,7 +12,7 @@ A AsciiArt generator<br>
 
 # 教學 How to use it?
 ![alt text](https://github.com/creeper531100/Ascii_Art/blob/master/%E4%BB%8B%E7%B4%B9/main.png?raw=true)<br>
-## 作業
+## 作業 Instructions
   1. 下載完執行 AsciiArt.exe，可以看見共有12項功能，下面單元會講解使用方法<br>
   2. 選擇完樣式，程式會要求你導入影像，這時候你可以<br>
       > 輸入一般影像/影片(jpg, png, mp4)等檔案<br>
