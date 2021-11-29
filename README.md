@@ -50,9 +50,9 @@ A AsciiArt generator<br>
 * `font_size` - 拼貼的文字大小
 * `fill_char` - 填滿文字的字形
 # 參考影片
-[AsciiArt](https://youtu.be/8WSQcTy1UYM)<br>
-[AsciiArt - QuickOutput](https://youtu.be/o5iKn05nuLc)<br>
-[BrailleArt](https://youtu.be/fds8-M9iK8I)<br>
+1. [AsciiArt](https://youtu.be/8WSQcTy1UYM)
+2. [AsciiArt - QuickOutput](https://youtu.be/o5iKn05nuLc)
+3. [BrailleArt](https://youtu.be/fds8-M9iK8I)
 
 # 下載
 https://github.com/creeper531100/Ascii_Art/releases/download/v1.0.1/JEFF.zip
