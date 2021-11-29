@@ -39,7 +39,7 @@ A AsciiArt generator<br>
   * 素描/描邊 - 對影像做canny處理，可以達成描邊效果
 # 個人化設定 Setting
 若你想對解析度或是二值化域值進行設定，你可以進入`Setting.json`對他設定<br>
-```json
+```javascript
 {
 	"console_show": {
 		"thresh": -1, //域值設定，當像素大於域值即設定為白色，否則為黑色，-1即為自動
