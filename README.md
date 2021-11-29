@@ -37,3 +37,7 @@ A AsciiArt generator<br>
   * 輸出浮雕照 - 對影像作分離，可以達成一個非常酷的效果
   * 函數處理 - 對影像做基本的函數處理
   * 素描/描邊 - 對影像做canny處理，可以達成描邊效果
+# 個人化設定
+
+# 下載
+https://github.com/creeper531100/Ascii_Art/releases/download/v1.0.1/JEFF.zip
