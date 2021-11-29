@@ -13,6 +13,6 @@ class QuickOutput : public ImgHandle {
 public:
 	using super::super;
 	void ascii() override;
-	void ascii_color();
+	void ascii_color(int);
 };
 #endif

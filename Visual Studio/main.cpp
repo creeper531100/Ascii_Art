@@ -71,13 +71,13 @@ int main() {
 		img_handle = new QuickOutput(path, json_file,
 									 Size(json_file["quick_output"]["ascii"]["width"],
 										  json_file["quick_output"]["ascii"]["height"])); //12x15
-		img_handle->call_obj_member<QuickOutput>(&QuickOutput::ascii_color);
+		img_handle->call_obj_member<QuickOutput>(&QuickOutput::ascii_color, 1);
 		break;
 	case 8:
 		img_handle = new QuickOutput(path, json_file,
 									 Size(json_file["quick_output"]["ascii"]["width"],
 										  json_file["quick_output"]["ascii"]["height"])); //12x15
-		img_handle->call_obj_member<QuickOutput>(&QuickOutput::ascii_color);
+		img_handle->call_obj_member<QuickOutput>(&QuickOutput::ascii_color, 0);
 		break;
 	case 9:
 		img_handle = new BasicEffectOutput(path, json_file); //1x1

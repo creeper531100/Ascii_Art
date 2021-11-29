@@ -46,10 +46,10 @@ public:
 	ImgHandle(string, nlohmann::json& argv, Size dsize = Size(-1, -1));
 	Size dsize;
 
-	template <typename T>
-	void call_obj_member(void (T::* mem)()) {
+	template <typename T, typename ...Argv>
+	void call_obj_member(void (T::* mem)(Argv...), Argv... argv) {
 		T* t = new T(forward<string>(this->filename), this->setting_argv, this->dsize);
-		(t->*mem)();
+		(t->*mem)(argv...);
 	}
 };
 

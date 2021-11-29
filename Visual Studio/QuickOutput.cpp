@@ -40,12 +40,12 @@ void QuickOutput::ascii() {
 			COLOR_BGR2GRAY, CV_8U);
 }
 
-void QuickOutput::ascii_color() {
+void QuickOutput::ascii_color(int sw) {
 	string single_char = "";
 	single_char += super::setting_argv["quick_output"]["fill_char"];
-
+	bool is_fill = ((single_char[0] == (char)0) || sw);
 	quick_output_basic_handle([&](int* index, Mat* mat, char* str, Point* point, double* font_size) {
-		putText(*mat, (single_char[0] == (char)0) ? str : single_char, *point,
+		putText(*mat, is_fill ? str : single_char, *point,
 			FONT_HERSHEY_SIMPLEX, *font_size,
 			Scalar(super::img.at<Vec3b>(*index)[0], super::img.at<Vec3b>(*index)[1],
 				super::img.at<Vec3b>(*index)[2]), 1, 8, 0);
