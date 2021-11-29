@@ -18,7 +18,8 @@ A AsciiArt generator<br>
       > 輸入一般影像/影片(jpg, png, mp4)等檔案<br>
       > 輸入Youtube網址來自動下載影片，只要貼入網址就好了，下載完的影片為`HTC.mp4`<br>
   3. 等待輸出影片/影像... 過成依影片長度決定
-  4. 
+  4. 在資料夾會生成`output_video.mp4`或`output_pic.png`即是輸出檔案
+  5. 完成~~~
 
 # 功能介紹 Features
 * AsciiArt
