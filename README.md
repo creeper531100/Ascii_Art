@@ -22,6 +22,7 @@ A AsciiArt generator<br>
   5. 完成~~~
 
 # 功能介紹 Features
+![alt text](https://github.com/creeper531100/Ascii_Art/blob/master/%E4%BB%8B%E7%B4%B9/colordef.png?raw=true)<br>
 * AsciiArt
   * 預覽AsciiArt - 他可以立即輸出影片到WindowsConsole，不需等待匯出，但並沒有聲音
   * 輸出AsciiArt - 將匯入的影片輸出成平常的mp4檔，可以分享給你所有的朋友
