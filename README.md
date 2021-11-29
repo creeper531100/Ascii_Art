@@ -13,7 +13,12 @@ A AsciiArt generator<br>
 # 教學 How to use it?
 ![alt text](https://github.com/creeper531100/Ascii_Art/blob/master/%E4%BB%8B%E7%B4%B9/main.png?raw=true)<br>
 ## 作業
-  下載完執行 AsciiArt.exe，可以看見共有12項功能，下面單元會講解使用方法<br>
+  1. 下載完執行 AsciiArt.exe，可以看見共有12項功能，下面單元會講解使用方法<br>
+  2. 選擇完樣式，程式會要求你導入影像，這時候你可以
+    * 輸入一般影像/影片(jpg, png, mp4)等檔案
+    * 輸入Youtube網址來自動下載影片，只要貼入網址就好了，下載完的影片為`HTC.mp4`
+  3. 等待輸出影片/影像... 過成依影片長度決定
+  4. 
 
 # 功能介紹 Features
 * AsciiArt
