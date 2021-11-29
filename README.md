@@ -39,16 +39,65 @@ A AsciiArt generator<br>
   * 素描/描邊 - 對影像做canny處理，可以達成描邊效果
 # 個人化設定 Setting
 若你想對解析度或是二值化域值進行設定，你可以進入`Setting.json`對他設定<br>
-設定有幾大類別<br>
-* `console_show` - 對預覽設定
-* `collage_output` - 對拼貼設定，也就是預設的輸出
-* `basic_effect` - 對基本影像設定
-* `uick_output` - 快速輸出設定
-而內容有幾個小設定，因為都大同小異，所以放在下面
-* `thresh` - 域值設定，當像素大於域值即設定為白色，否則為黑色 
-* `width / height` - 輸出影片長寬設定
-* `font_size` - 拼貼的文字大小
-* `fill_char` - 填滿文字的字形<br>
+```json
+{
+	"console_show": {
+		"thresh": -1, //域值設定，當像素大於域值即設定為白色，否則為黑色，-1即為自動
+		"ascii": {
+			"width": 237, //輸出影片寬設定
+			"height": 64  //輸出影片長設定
+		},
+		"braille": {
+			"width": 240,
+			"height": 120
+		}
+	},
+	"collage_output": {
+		"thresh": -1, //域值設定
+		"ascii": {
+			"width": 240, //長寬
+			"height": 67  //長寬
+		},
+		"braille": {
+			"width": 480, //長寬
+			"height": 268 //長寬
+		}
+	},
+	"basic_effect": {
+		"contours_handle": { //輪廓設定
+			"thresh": {
+				"min": 60, //輪廓最小域質
+				"max": 120 //輪廓最大域質
+			},
+			"color": [0, 0, 0], //輪廓顏色
+			"canvas_color": [255, 255, 255] //畫布顏色
+		},
+		"thresholding": { //二值化設定
+			"thresh": -1,
+			"width": -1,
+			"height": -1
+		},
+		"relief": { //浮雕照設定
+			"effect": 1, //效果
+			"offset": 128, //偏移
+			"width": -1, //長寬
+			"height": -1 //長寬
+		},
+		"math_function_handle": {
+			"deltaI": 10,
+			"arg": 5
+		}
+	},
+	"quick_output": {
+		"font_size": 5, //拼貼的文字大小
+		"fill_char": "@", //填滿文字的字形
+		"ascii": {
+			"width": 160,
+			"height": 71
+		}
+	}
+}
+```
 數值設定若為-1，即為自動設定，根據亮度，影片長寬比... 進行設定
 # 參考影片
 1. [AsciiArt](https://youtu.be/8WSQcTy1UYM)
