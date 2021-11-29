@@ -11,5 +11,5 @@ A AsciiArt generator<br>
 - Basic image processing
 
 # 教學 How to use it?
-![alt text](https://github.com/creeper531100/Ascii_Art/blob/master/%E4%BB%8B%E7%B4%B9/main.png?raw=true)
+![alt text](https://github.com/creeper531100/Ascii_Art/blob/master/%E4%BB%8B%E7%B4%B9/main.png?raw=true)<br>
 下載完執行 AsciiArt.exe，可以看見共有12項功能，以下一一介紹
