@@ -15,7 +15,7 @@ A AsciiArt generator<br>
 ## 作業 Instructions
   1. 下載完執行 AsciiArt.exe，可以看見共有12項功能，下面單元會講解使用方法<br>
   2. 選擇完樣式，程式會要求你導入影像，這時候你可以<br>
-      > 輸入一般影像/影片(jpg, png, mp4)等檔案<br>
+      > 輸入一般影像/影片(jpg, png, mp4)等檔案，拖至視窗內即可，不可以有空白<br>
       > 輸入Youtube網址來自動下載影片，只要貼入網址就好了，下載完的影片為`HTC.mp4`<br>
   3. 等待輸出影片/影像... 過成依影片長度決定
   4. 在資料夾會生成`output_video.mp4`或`output_pic.png`即是輸出檔案
@@ -24,8 +24,8 @@ A AsciiArt generator<br>
 # 功能介紹 Features
 ![alt text](https://github.com/creeper531100/Ascii_Art/blob/master/%E4%BB%8B%E7%B4%B9/colordef.png?raw=true)<br>
 * AsciiArt
-  * 預覽AsciiArt - 他可以立即輸出影片到WindowsConsole，不需等待匯出，但並沒有聲音
-  * 輸出AsciiArt - 將匯入的影片輸出成平常的mp4檔，可以分享給你所有的朋友
+  * 預覽AsciiArt - 他可以立即輸出影片到WindowsConsole，不需等待匯出，但並沒有聲音，視窗必須保持最大化且沒有縮放
+  * 輸出AsciiArt - 將匯入的影片輸出成平常的mp4檔，可以分享給你所有的朋友，視窗必須保持最小化且沒有縮放
   * 快速輸出AsciiArt - 使用opencv預設的字體作為輸出，但是解析度較低，字體效果也較差
   * 輸出AsciiArt 彩色版 - 使用opencv預設的字體作為輸出，但是是彩色的
   * 輸出AsciiArt 彩色版(固定文字) - 使用單一字形作為輸出，不會因為亮度改變字形
