@@ -7,7 +7,7 @@
 A AsciiArt generator<br>
 - AsciiArt video generator
 - BrailleArt video generator
-- Basic video generator
+- Basic image processing
 
 # 教學 How to use it?
 下載完執行 AsciiArt.exe
