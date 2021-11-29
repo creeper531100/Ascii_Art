@@ -12,8 +12,10 @@ A AsciiArt generator<br>
 
 # 教學 How to use it?
 ![alt text](https://github.com/creeper531100/Ascii_Art/blob/master/%E4%BB%8B%E7%B4%B9/main.png?raw=true)<br>
+## 作業
+  下載完執行 AsciiArt.exe，可以看見共有12項功能，下面單元會講解使用方法<br>
 
-下載完執行 AsciiArt.exe，可以看見共有12項功能，以下一一介紹<br>
+# 功能介紹 Features
 * AsciiArt
   * 預覽AsciiArt - 他可以立即輸出影片到WindowsConsole，不需等待匯出，但並沒有聲音
   * 輸出AsciiArt - 將匯入的影片輸出成平常的mp4檔，可以分享給你所有的朋友
