@@ -49,7 +49,7 @@ A AsciiArt generator<br>
 * `width / height` - 輸出影片長寬設定
 * `font_size` - 拼貼的文字大小
 * `fill_char` - 填滿文字的字形
-數值設定若為-1，即為自動設定，根據亮度，影片長寬比... 進行設定
+<br>數值設定若為-1，即為自動設定，根據亮度，影片長寬比... 進行設定
 # 參考影片
 1. [AsciiArt](https://youtu.be/8WSQcTy1UYM)
 2. [AsciiArt - QuickOutput](https://youtu.be/o5iKn05nuLc)
