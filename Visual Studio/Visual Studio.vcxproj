@@ -156,6 +156,10 @@
     <ClInclude Include="ConsoleShow.h" />
     <ClInclude Include="ImgHandle.h" />
     <ClInclude Include="CollageOtput.h" />
+    <ClInclude Include="n_ConsoleShow.h" />
+    <ClInclude Include="n_initword.h" />
+    <ClInclude Include="n_Imghandle.h" />
+    <ClInclude Include="pch.h" />
     <ClInclude Include="QuickOutput.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

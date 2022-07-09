@@ -2,7 +2,6 @@
 
 #include "ConsoleShow.h"
 #include "ImgHandle.h"
-
 void ConsoleShow::init_word() {
 	this->map_pairs["kkkk"] = L' ';
 	this->map_pairs["ykkk"] = L'⠁';

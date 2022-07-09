@@ -15,14 +15,13 @@ private:
 	int encoding = VideoWriter::fourcc('D', 'I', 'V', 'X');
 	void img_handle(ColorConversionCodes& color);
 protected:
-	enum varType {
+	enum VarType {
 		IMG,
 		VIDEO
-	};
-
-	varType type;
+	} type;
 	VideoWriter writer;
 	Mat img;
+
 	string filename;
 	double frame_FPS;
 	double frame_total;
@@ -40,6 +39,7 @@ protected:
 	void print_output_info(time_t);
 	void basic_handle(function<void()>&&, ColorConversionCodes&& color = COLOR_BGR2BGR565);
 public:
+
 	virtual ~ImgHandle() = default;
 	virtual void ascii();
 	virtual void braille();
