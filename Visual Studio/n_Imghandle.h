@@ -12,9 +12,17 @@ inline bool match_string(string keyword, vector<string> arr) {
 
 struct SettingDataPack {
     cv::Size dsize;
+    int thresh;
     cv::ColorConversionCodes color;
+    Json param;
+    string func_name;
 
-    SettingDataPack() : dsize(cv::Size{ -1, -1 }), color((cv::ColorConversionCodes)-1) {
+    SettingDataPack(Json param, string func_name) :
+            dsize(cv::Size{ -1, -1 }),
+            color((cv::ColorConversionCodes)-1),
+            param(param),
+            func_name(func_name),
+            thresh(param[func_name]["thresh"]) {
     }
 
     SettingDataPack& set_color(cv::ColorConversionCodes color) {
@@ -27,8 +35,13 @@ struct SettingDataPack {
         return *this;
     }
 
-    static SettingDataPack create() {
-        return SettingDataPack();
+    SettingDataPack& set_dsize(const char* mode) {
+        this->dsize = { param[func_name][mode]["width"], param[func_name][mode]["height"] };
+        return *this;
+    }
+
+    static SettingDataPack create(Json param, string func_name) {
+        return SettingDataPack(param, func_name);
     }
 };
 

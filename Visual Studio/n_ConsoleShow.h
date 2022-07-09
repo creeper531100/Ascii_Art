@@ -13,10 +13,11 @@ private:
 public:
     using ImageHandle::ImageHandle;
 
-    SettingDataPack& console_init(int width, int height) {
-        screen = new wchar_t[width * height];
+    SettingDataPack console_init( const char* mode) {
+        SettingDataPack pack = SettingDataPack::create(param, "console_show").set_color(cv::COLOR_BGR2GRAY).set_dsize(mode);
+        screen = new wchar_t[pack.dsize.area()];
         hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-        return SettingDataPack::create().set_color(cv::COLOR_BGR2GRAY).set_dsize({width, height});
+        return pack;
     }
 
     void video_interval(chrono::time_point<chrono::system_clock>* c_start) {
@@ -26,10 +27,7 @@ public:
     }
 
     void ascii() {
-        int width = super::param["console_show"]["ascii"]["width"];
-        int height = super::param["console_show"]["ascii"]["height"];
-
-        SettingDataPack pack = console_init(width, height);
+        SettingDataPack pack = console_init("ascii");
         SetConsoleActiveScreenBuffer(hConsole);
 
         auto start = chrono::system_clock::now();
@@ -43,16 +41,13 @@ public:
     }
 
     void braille() {
-        int width = super::param["console_show"]["braille"]["width"];
-        int height = super::param["console_show"]["braille"]["height"];
-        int thresh = super::param["console_show"]["thresh"];
+        SettingDataPack pack = console_init("braille");
         bool auto_thresh = false;
 
         map<string, wchar_t> map_pairs = init_words();
-        SettingDataPack pack = console_init(width, height);
-        vector<vector<char>> braille_string(width, vector<char>(height));
+        vector<vector<char>> braille_string(pack.dsize.width, vector<char>(pack.dsize.height));
 
-        if (thresh == -1) {
+        if (pack.thresh == -1) {
             auto_thresh = true;
         }
         SetConsoleActiveScreenBuffer(hConsole);
@@ -60,10 +55,10 @@ public:
         auto start = chrono::system_clock::now();
         super::basic_handle(pack, [&]() {
             if (auto_thresh) {
-                thresh = mean(super::img).val[0];
+                pack.thresh = mean(super::img).val[0];
             }
 
-            braille_create(braille_string, thresh, pack.dsize);
+            braille_create(braille_string, pack.thresh, pack.dsize);
             for (int i = 3, pixel = 0; i < braille_string.size(); i += 4) {
                 for (int j = 0; j < pack.dsize.height; j++, pixel++) {
                     string buf = {
