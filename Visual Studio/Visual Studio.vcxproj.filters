@@ -89,5 +89,8 @@
     <ClInclude Include="n_ConsoleShow.h">
       <Filter>來源檔案\Console</Filter>
     </ClInclude>
+    <ClInclude Include="n_CollageOutput.h">
+      <Filter>來源檔案\Output\CollageOutput</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
