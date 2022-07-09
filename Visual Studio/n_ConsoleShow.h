@@ -13,8 +13,8 @@ private:
 public:
     using ImageHandle::ImageHandle;
 
-    SettingDataPack console_init( const char* mode) {
-        SettingDataPack pack = SettingDataPack::create(param, "console_show").set_color(cv::COLOR_BGR2GRAY).set_dsize(mode);
+    SettingDataPack console_init(const char* mode) {
+        SettingDataPack pack = SettingDataPack::create(param, "console_show").set_color(cv::COLOR_BGR2GRAY).set_dsize(mode, this->original_video_size);
         screen = new wchar_t[pack.dsize.area()];
         hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
         return pack;

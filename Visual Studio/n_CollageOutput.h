@@ -37,10 +37,10 @@ public:
 
     void ascii() {
         SettingDataPack pack = SettingDataPack::create(param, "collage_output")
-            .set_color(cv::COLOR_BGR2GRAY)
-            .set_dsize("ascii");
+                               .set_color(cv::COLOR_BGR2GRAY)
+                               .set_dsize("ascii", original_video_size);
         int process = 0;
-        cv::Size output_size = { pack.dsize.width * 8, pack.dsize.height * 16 };
+        cv::Size output_size = {pack.dsize.width * 8, pack.dsize.height * 16};
         cv::Mat output_mat(output_size.height, output_size.width, CV_8UC3);
 
         if (super::type == IMG)
@@ -50,7 +50,7 @@ public:
 
         vector<cv::Mat> mats;
         read_img("font\\font\\", std::move(mats));
-        cv::Size thumbnail_size = { mats[0].cols, mats[0].rows };
+        cv::Size thumbnail_size = {mats[0].cols, mats[0].rows};
         super::basic_handle(pack, [&]() {
             for (int i = 0; i < output_size.height; i += thumbnail_size.height) {
                 for (int j = 0; j < output_size.width; j += thumbnail_size.width) {
@@ -61,18 +61,18 @@ public:
             }
             printf("進度: %f%%\r", (process++ / super::frame_total) * 100);
             super::type == IMG ? (void)imwrite("output_pic.png", output_mat) : super::writer.write(output_mat);
-            });
+        });
     }
 
     void braille() {
         //垂直限制能被4整除，水平限制2整除
         SettingDataPack pack = SettingDataPack::create(param, "collage_output")
-            .set_color(cv::COLOR_BGR2GRAY)
-            .set_dsize("braille");
+                               .set_color(cv::COLOR_BGR2GRAY)
+                               .set_dsize("braille", original_video_size, {2, 4});
         int process = 0;
         bool auto_thresh = false;
 
-        cv::Size output_size = { pack.dsize.width * 4, pack.dsize.height * 4 };
+        cv::Size output_size = {pack.dsize.width * 4, pack.dsize.height * 4};
         cv::Mat output_mat(output_size.height, output_size.width, CV_8UC3);
         vector<vector<char>> braille_string(pack.dsize.width, vector<char>(pack.dsize.height));
 
@@ -86,10 +86,7 @@ public:
             super::create_written(pack.dsize, output_size);
 
         auto mats = read_img("font\\braille\\");
-        cv::Size thumbnail_size = { mats.begin()->second.cols, mats.begin()->second.rows };
-
-        cout << output_size.width << ", " << output_size.height << "\n";
-        cout << braille_string.size() << ", " << pack.dsize.height << "\n";
+        cv::Size thumbnail_size = {mats.begin()->second.cols, mats.begin()->second.rows};
 
         super::basic_handle(pack, [&]() {
             if (auto_thresh) {
@@ -103,7 +100,7 @@ public:
                     string buf = {
                             braille_string[row - 3][col], braille_string[row - 2][col], braille_string[row - 1][col],
                             braille_string[row][col]
-                    };
+                        };
                     cv::Rect roi(cv::Point(j, i), thumbnail_size);
                     cv::Mat symbol = mats[buf + ".png"];
                     symbol.copyTo(output_mat(roi));

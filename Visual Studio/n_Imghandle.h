@@ -18,11 +18,11 @@ struct SettingDataPack {
     string func_name;
 
     SettingDataPack(Json param, string func_name) :
-            dsize(cv::Size{ -1, -1 }),
-            color((cv::ColorConversionCodes)-1),
-            param(param),
-            func_name(func_name),
-            thresh(param[func_name]["thresh"]) {
+        dsize(cv::Size{ -1, -1 }),
+        color((cv::ColorConversionCodes)-1),
+        param(param),
+        func_name(func_name),
+        thresh(param[func_name]["thresh"]) {
     }
 
     SettingDataPack& set_color(cv::ColorConversionCodes color) {
@@ -35,8 +35,35 @@ struct SettingDataPack {
         return *this;
     }
 
-    SettingDataPack& set_dsize(const char* mode) {
+    SettingDataPack& set_dsize(const char* mode, cv::Size& original_video_size, pair<int, int> img_zoom = { 1, 1 }) {
+        pair<int, int> resize_zoom = { 8, 16 };
         this->dsize = { param[func_name][mode]["width"], param[func_name][mode]["height"] };
+        if (this->dsize.width == -1) {
+            int width = original_video_size.width;
+            int resize_width = width / resize_zoom.first;
+            while (resize_zoom.first > 0) {
+                resize_width = width / resize_zoom.first;
+                if (width % resize_zoom.first == 0) break;
+                resize_zoom.first--;
+            }
+            this->dsize.width = resize_width;
+        }
+
+        if (this->dsize.height == -1) {
+            int height = original_video_size.height;
+            int resize_height = height / resize_zoom.second;
+
+            while (resize_zoom.second > 0) {
+                resize_height = height / resize_zoom.second;
+                if (height % resize_zoom.second == 0) break;
+                resize_zoom.second--;
+            }
+
+            this->dsize.height = resize_height;
+        }
+        this->dsize.width *= img_zoom.first;
+        this->dsize.height *= img_zoom.second;
+
         return *this;
     }
 
@@ -50,7 +77,9 @@ protected:
     string file_path;
     Json param;
     cv::Mat img;
+
     enum FileType { NONE, IMG, VIDEO } type;
+
     cv::VideoCapture cap;
     cv::VideoWriter writer;
 
@@ -86,7 +115,9 @@ public:
     }
 
     void print_output_info(time_t t_start) {
-        system(("ffmpeg -i tempvideo.mp4 -i " + this->file_path + " -c copy -map 0:v:0 -map 1:a:0 output_video.mp4").c_str());
+        system(
+            ("ffmpeg -i tempvideo.mp4 -i " + this->file_path + " -c copy -map 0:v:0 -map 1:a:0 output_video.mp4").
+            c_str());
         int totalTime = difftime(time(NULL), t_start);
         printf("\nused %02d:%02d\n", totalTime / 60, totalTime % 60);
         remove("tempvideo.mp4");

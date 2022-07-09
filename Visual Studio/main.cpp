@@ -1,4 +1,6 @@
 ﻿#include <fstream>
+
+#include "n_CollageOutput.h"
 #include "pch.h"
 #include "n_ConsoleShow.h"
 
@@ -26,7 +28,7 @@ int main() {
     }
 
     CollageOutput console_shows(path, json_file);
-    console_shows.braille();
+    console_shows.ascii();
 }
 
 /*

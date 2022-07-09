@@ -13,12 +13,12 @@
 	"collage_output": {
 		"thresh": -1,
 		"ascii": {
-			"width": 240,
-			"height": 67
+			"width": -1,
+			"height": -1
 		},
 		"braille": {
-			"width": 480,
-			"height": 268
+			"width": -1,
+			"height": -1
 		}
 	},
 	"basic_effect": {
