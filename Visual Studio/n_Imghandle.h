@@ -37,13 +37,15 @@ protected:
     string file_path;
     Json param;
     cv::Mat img;
-
     enum FileType { NONE, IMG, VIDEO } type;
-
     cv::VideoCapture cap;
+    cv::VideoWriter writer;
+
     double frame_FPS;
     double frame_total;
     int frame_interval;
+    int encoding;
+
     cv::Size original_video_size;
     string lv = " .'`^,:;l!i><~+_--?][}{)(|/rxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
 public:
@@ -58,9 +60,10 @@ public:
             this->cap = cv::VideoCapture(path);
             this->frame_FPS = this->cap.get(cv::CAP_PROP_FPS);
             this->frame_total = this->cap.get(cv::CAP_PROP_FRAME_COUNT);
-            this->frame_interval = (int)((1.0 / this->frame_FPS) * 100000.0);
+            this->frame_interval = (int)((1.0 / this->frame_FPS) * 1000000.0);
             this->original_video_size = cv::Size(cap.get(cv::CAP_PROP_FRAME_WIDTH), cap.get(cv::CAP_PROP_FRAME_HEIGHT));
             this->type = VIDEO;
+            this->encoding = cv::VideoWriter::fourcc('D', 'I', 'V', 'X');
         }
     }
 
@@ -69,13 +72,31 @@ public:
         cv::cvtColor(this->img, this->img, pack.color);
     }
 
+    void print_output_info(time_t t_start) {
+        system(("ffmpeg -i tempvideo.mp4 -i " + this->file_path + " -c copy -map 0:v:0 -map 1:a:0 output_video.mp4").c_str());
+        int totalTime = difftime(time(NULL), t_start);
+        printf("\nused %02d:%02d\n", totalTime / 60, totalTime % 60);
+        remove("tempvideo.mp4");
+        system("pause");
+    }
+
+    void create_written(cv::Size origin_size, cv::Size set_size) {
+        if (set_size.height == -1)
+            set_size = origin_size;
+
+        cout << "Resize Size: " << origin_size.width << "x" << origin_size.height << endl;
+        cout << "Output Size: " << set_size.width << "x" << set_size.height << endl;
+
+        writer = cv::VideoWriter("tempvideo.mp4", this->encoding, this->frame_FPS, set_size);
+    }
+
     ImageHandle& basic_handle(SettingDataPack pack, function<void()>&& func) {
+        time_t t_start = time(NULL);
         if (type == IMG) {
             this->img_handle(pack);
             func();
         }
         else if (type == VIDEO) {
-            time_t t_start = time(NULL);
             while (1) {
                 this->cap >> this->img;
                 if (this->img.empty())
@@ -84,6 +105,7 @@ public:
                 func();
             }
         }
+        print_output_info(t_start);
         return *this;
     }
 

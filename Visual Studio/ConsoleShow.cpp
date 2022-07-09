@@ -2,7 +2,6 @@
 #include "ConsoleShow.h"
 #include "ImgHandle.h"
 
-
 void ConsoleShow::handle_console(wchar_t** screen, cv::Size& dsize, HANDLE* hConsole) {
     *screen = new wchar_t[dsize.area()];
     *hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
