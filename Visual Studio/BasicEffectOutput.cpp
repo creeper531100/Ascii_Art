@@ -5,9 +5,9 @@ void BasicEffectOutput::math_function_handle(function<double(double*)> math_func
     int arg = super::param["basic_effect"]["math_function_handle"]["arg"];
 
     SettingDataPack pack = SettingDataPack::create(param, "basic_effect")
-        .set_dsize(original_video_size);
+        .set_dsize(original_size);
 
-    super::type == IMG ? void() : super::create_written(original_video_size);
+    super::type == IMG ? void() : super::create_written(original_size);
 
     super::basic_handle(pack, [&]() {
         cv::Mat src(this->img.size(), CV_8UC3);
@@ -29,9 +29,9 @@ void BasicEffectOutput::math_function_handle(function<double(double*)> math_func
 void BasicEffectOutput::contours_handle(function<void(vector<vector<cv::Point>>*, vector<cv::Vec4i>*)> func) {
     SettingDataPack pack = SettingDataPack::create(param, "basic_effect")
                            .set_color(cv::COLOR_BGR2GRAY)
-                           .set_dsize(original_video_size);
+                           .set_dsize(original_size);
 
-    super::type == IMG ? void() : super::create_written(original_video_size);
+    super::type == IMG ? void() : super::create_written(original_size);
     int thresh[2] = {
             super::param["basic_effect"]["contours_handle"]["thresh"]["min"],
             super::param["basic_effect"]["contours_handle"]["thresh"]["max"]
@@ -60,9 +60,9 @@ void BasicEffectOutput::contours_handle(function<void(vector<vector<cv::Point>>*
 void BasicEffectOutput::thresholding() {
     SettingDataPack pack = SettingDataPack::create(param, "basic_effect")
                            .set_color(cv::COLOR_BGR2GRAY)
-                           .set_dsize("thresholding", original_video_size).init_thresh();
+                           .set_dsize("thresholding", original_size).init_thresh();
 
-    super::type == IMG ? void() : super::create_written(original_video_size);
+    super::type == IMG ? void() : super::create_written(original_size);
     bool auto_thresh = false;
     if (pack.thresh == -1) {
         auto_thresh = true;
@@ -81,9 +81,9 @@ void BasicEffectOutput::thresholding() {
 
 void BasicEffectOutput::relief() {
     SettingDataPack pack = SettingDataPack::create(param, "basic_effect")
-        .set_dsize(original_video_size);
+        .set_dsize(original_size);
 
-    super::type == IMG ? void() : super::create_written(original_video_size);
+    super::type == IMG ? void() : super::create_written(original_size);
     int effect = super::param["basic_effect"]["relief"]["effect"];
     int offset = super::param["basic_effect"]["relief"]["offset"];
     super::basic_handle(pack, [&]() {

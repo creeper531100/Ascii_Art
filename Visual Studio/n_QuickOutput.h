@@ -23,7 +23,7 @@ public:
 
         SettingDataPack pack = SettingDataPack::create(param, "quick_output")
                                .set_color(color_conversion_codes)
-                               .set_dsize("ascii", original_video_size, {1, 1}, thumbnail_size);
+                               .set_dsize("ascii", original_size, {1, 1}, thumbnail_size);
 
         cv::Size output_size = {(pack.dsize.width * thumbnail_size.width), (pack.dsize.height * thumbnail_size.height)};
         cv::Mat output_mat(output_size, CV_8UC3);

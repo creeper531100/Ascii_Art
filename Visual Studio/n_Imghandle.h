@@ -45,10 +45,10 @@ struct SettingDataPack {
         if (this->dsize.width == -1) {
             int width = original_video_size.width;
             int resize_width = width / resize_zoom.width;
-            while (resize_zoom.width > 0) {
+            while (resize_zoom.width < width) {
                 resize_width = width / resize_zoom.width;
                 if (width % resize_zoom.width == 0) break;
-                resize_zoom.width--;
+                resize_zoom.width++;
             }
             this->dsize.width = resize_width;
         }
@@ -57,17 +57,16 @@ struct SettingDataPack {
             int height = original_video_size.height;
             int resize_height = height / resize_zoom.height;
 
-            while (resize_zoom.height > 0) {
+            while (resize_zoom.height < height) {
                 resize_height = height / resize_zoom.height;
                 if (height % resize_zoom.height == 0) break;
-                resize_zoom.height--;
+                resize_zoom.height++;
             }
 
             this->dsize.height = resize_height;
         }
         this->dsize.width *= img_zoom.width;
         this->dsize.height *= img_zoom.height;
-        fmt::print("HelloWOlrd");
         return *this;
     }
 
@@ -82,7 +81,9 @@ protected:
     Json param;
     cv::Mat img;
 
-    enum FileType { NONE, IMG, VIDEO } type;
+    enum FileType { NONE, IMG, VIDEO };
+
+    FileType type;
 
     cv::VideoCapture cap;
     cv::VideoWriter writer;
@@ -92,22 +93,25 @@ protected:
     int frame_interval;
     int encoding;
 
-    cv::Size original_video_size;
+    cv::Size original_size;
     string lv = " .'`^,:;l!i><~+_--?][}{)(|/rxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
 public:
     ImageHandle(string path, Json param) : file_path(path), param(param) {
         if (match_string(path, {".jpg", ".JPG", ".png", ".PNG", ".tiff"}) == true) {
             //判斷圖片
+            cout << "圖片" << endl;
             this->img = cv::imread(path);
             cout << "Resize Size: " << this->img.size().height << "x" << this->img.size().width << endl;
             this->type = IMG;
+            this->original_size = img.size();
         }
         else if (match_string(path, {".mp4", ".mp3", ".gif"})) {
+            cout << "in片" << endl;
             this->cap = cv::VideoCapture(path);
             this->frame_FPS = this->cap.get(cv::CAP_PROP_FPS);
             this->frame_total = this->cap.get(cv::CAP_PROP_FRAME_COUNT);
             this->frame_interval = (int)((1.0 / this->frame_FPS) * 1000000.0);
-            this->original_video_size = cv::Size(cap.get(cv::CAP_PROP_FRAME_WIDTH), cap.get(cv::CAP_PROP_FRAME_HEIGHT));
+            this->original_size = cv::Size(cap.get(cv::CAP_PROP_FRAME_WIDTH), cap.get(cv::CAP_PROP_FRAME_HEIGHT));
             this->type = VIDEO;
             this->encoding = cv::VideoWriter::fourcc('D', 'I', 'V', 'X');
         }
@@ -142,6 +146,7 @@ public:
     ImageHandle& basic_handle(SettingDataPack pack, function<void()>&& func) {
         time_t t_start = time(NULL);
         if (type == IMG) {
+            cout << "圖片" << endl;
             this->img_handle(pack);
             func();
         }

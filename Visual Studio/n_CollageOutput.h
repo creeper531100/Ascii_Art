@@ -38,14 +38,13 @@ public:
     void ascii() {
         SettingDataPack pack = SettingDataPack::create(param, "collage_output")
                                .set_color(cv::COLOR_BGR2GRAY)
-                               .set_dsize("ascii", original_video_size);
+                               .set_dsize("ascii", original_size);
         int process = 0;
+
         cv::Size output_size = {pack.dsize.width * 8, pack.dsize.height * 16};
         cv::Mat output_mat(output_size, CV_8UC3);
 
-        if (super::type == IMG)
-            pack.dsize = cv::Size(super::img.cols / 8, super::img.rows / 16);
-        else
+        if (super::type == VIDEO)
             super::create_written(pack.dsize, output_size);
 
         vector<cv::Mat> mats;
@@ -60,6 +59,7 @@ public:
                 }
             }
             fmt::print("進度: {}%\r", (process++ / super::frame_total) * 100);
+            imwrite("output_pic.png", output_mat);
             super::type == IMG ? (void)imwrite("output_pic.png", output_mat) : super::writer.write(output_mat);
         });
     }
@@ -73,13 +73,13 @@ public:
         SettingDataPack pack = SettingDataPack::create(param, "collage_output")
                                .set_color(cv::COLOR_BGR2GRAY)
                                .init_thresh()
-                               .set_dsize("braille", original_video_size, {2, 4});
-                                //原始解析度被放大 240x67 => 480x268，這邊放大是因為【⣿】文字寬2高4
-        int process = 0;        
+                               .set_dsize("braille", original_size, {2, 4});
+        //原始解析度被放大 240x67 => 480x268，這邊放大是因為【⣿】文字寬2高4
+        int process = 0;
         bool auto_thresh = false;
 
         //輸出解析度放大 480x268 -> 1920x1072
-        cv::Size output_size = {pack.dsize.width * 4, pack.dsize.height * 4 };
+        cv::Size output_size = {pack.dsize.width * 4, pack.dsize.height * 4};
         cv::Mat output_mat(output_size, CV_8UC3);
         vector<vector<char>> braille_string(pack.dsize.width, vector<char>(pack.dsize.height));
 
@@ -87,9 +87,7 @@ public:
             auto_thresh = true;
         }
 
-        if (super::type == IMG)
-            pack.dsize = cv::Size(super::img.cols / 4, super::img.rows / 4);
-        else
+        if (super::type == VIDEO)
             super::create_written(pack.dsize, output_size);
 
         auto mats = read_img("font\\braille\\");
@@ -112,7 +110,7 @@ public:
                     symbol.copyTo(output_mat(roi));
                 }
             }
-            
+
             super::type == IMG ? (void)imwrite("output_pic.png", output_mat) : super::writer.write(output_mat);
             fmt::print("進度: {}%\r", (process++ / super::frame_total) * 100);
         });

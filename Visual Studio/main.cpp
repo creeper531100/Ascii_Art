@@ -21,15 +21,15 @@ int main() {
         "AsciiArt新藝術\n----------------------------------\n(0).預覽 AsciiArt (1).預覽 BrailleArt \n(2).輸出 AsciiArt (3).輸出 BrailleArt \n(4).輸出帥臉 (5).輸出浮雕照\n(6).快速輸出 AsciiArt (7).輸出 AsciiArt 彩色版 (8).輸出 AsciiArt 彩色版(固定文字)\n(9).函數處理 (10).素描 (11).描邊\n----------------------------------\n選擇功能: ";
     //cin >> sw;
     cout << "輸入網址或圖片位置: ";
-    //cin >> path;
+    cin >> path;
     if (path.find("https") != std::string::npos) {
         remove("HTC.mp4");
         system(("youtube-dl -o HTC.%(ext)s -f mp4 " + path).c_str());
         path = "HTC.mp4";
     }
 
-    BasicEffectOutput console_shows("E:\\AAAA.mp4", json_file);
-    console_shows.trace();
+    CollageOutput console_shows(path, json_file);
+    console_shows.ascii();
 }
 
 /*
