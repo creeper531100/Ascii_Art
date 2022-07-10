@@ -7,7 +7,7 @@ using Json = nlohmann::json;
 inline bool match_string(string keyword, vector<string> arr) {
     return std::find_if(arr.begin(), arr.end(), [&](string index) {
         return keyword.find(index) != std::string::npos;
-        }) != arr.end();
+    }) != arr.end();
 }
 
 struct SettingDataPack {
@@ -18,11 +18,10 @@ struct SettingDataPack {
     string func_name;
 
     SettingDataPack(Json param, string func_name) :
-        dsize(cv::Size{ -1, -1 }),
+        dsize(cv::Size{-1, -1}),
         color((cv::ColorConversionCodes)-1),
         param(param),
-        func_name(func_name),
-        thresh(param[func_name]["thresh"]) {
+        func_name(func_name) {
     }
 
     SettingDataPack& set_color(cv::ColorConversionCodes color) {
@@ -35,35 +34,40 @@ struct SettingDataPack {
         return *this;
     }
 
-    SettingDataPack& set_dsize(const char* mode, cv::Size& original_video_size, pair<int, int> img_zoom = { 1, 1 }) {
-        pair<int, int> resize_zoom = { 8, 16 };
-        this->dsize = { param[func_name][mode]["width"], param[func_name][mode]["height"] };
+    SettingDataPack& init_thresh() {
+        this->thresh = param[func_name]["thresh"];
+        return *this;
+    }
+
+    SettingDataPack& set_dsize(const char* mode, cv::Size& original_video_size, cv::Size img_zoom = {1, 1},
+                               cv::Size resize_zoom = {8, 16}) {
+        this->dsize = {param[func_name][mode]["width"], param[func_name][mode]["height"]};
         if (this->dsize.width == -1) {
             int width = original_video_size.width;
-            int resize_width = width / resize_zoom.first;
-            while (resize_zoom.first > 0) {
-                resize_width = width / resize_zoom.first;
-                if (width % resize_zoom.first == 0) break;
-                resize_zoom.first--;
+            int resize_width = width / resize_zoom.width;
+            while (resize_zoom.width > 0) {
+                resize_width = width / resize_zoom.width;
+                if (width % resize_zoom.width == 0) break;
+                resize_zoom.width--;
             }
             this->dsize.width = resize_width;
         }
 
         if (this->dsize.height == -1) {
             int height = original_video_size.height;
-            int resize_height = height / resize_zoom.second;
+            int resize_height = height / resize_zoom.height;
 
-            while (resize_zoom.second > 0) {
-                resize_height = height / resize_zoom.second;
-                if (height % resize_zoom.second == 0) break;
-                resize_zoom.second--;
+            while (resize_zoom.height > 0) {
+                resize_height = height / resize_zoom.height;
+                if (height % resize_zoom.height == 0) break;
+                resize_zoom.height--;
             }
 
             this->dsize.height = resize_height;
         }
-        this->dsize.width *= img_zoom.first;
-        this->dsize.height *= img_zoom.second;
-
+        this->dsize.width *= img_zoom.width;
+        this->dsize.height *= img_zoom.height;
+        fmt::print("HelloWOlrd");
         return *this;
     }
 
@@ -92,13 +96,13 @@ protected:
     string lv = " .'`^,:;l!i><~+_--?][}{)(|/rxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
 public:
     ImageHandle(string path, Json param) : file_path(path), param(param) {
-        if (match_string(path, { ".jpg", ".JPG", ".png", ".PNG", ".tiff" }) == true) {
+        if (match_string(path, {".jpg", ".JPG", ".png", ".PNG", ".tiff"}) == true) {
             //§PÂ_¹Ï¤ù
             this->img = cv::imread(path);
             cout << "Resize Size: " << this->img.size().height << "x" << this->img.size().width << endl;
             this->type = IMG;
         }
-        else if (match_string(path, { ".mp4", ".mp3", ".gif" })) {
+        else if (match_string(path, {".mp4", ".mp3", ".gif"})) {
             this->cap = cv::VideoCapture(path);
             this->frame_FPS = this->cap.get(cv::CAP_PROP_FPS);
             this->frame_total = this->cap.get(cv::CAP_PROP_FRAME_COUNT);
@@ -111,7 +115,8 @@ public:
 
     void img_handle(SettingDataPack pack) {
         cv::resize(this->img, this->img, pack.dsize, 0, 0, cv::INTER_CUBIC);
-        cv::cvtColor(this->img, this->img, pack.color);
+        if (pack.color != -1)
+            cv::cvtColor(this->img, this->img, pack.color);
     }
 
     void print_output_info(time_t t_start) {

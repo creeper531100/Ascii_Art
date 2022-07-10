@@ -160,6 +160,7 @@
     <ClInclude Include="n_ConsoleShow.h" />
     <ClInclude Include="n_initword.h" />
     <ClInclude Include="n_Imghandle.h" />
+    <ClInclude Include="n_QuickOutput.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="QuickOutput.h" />
   </ItemGroup>

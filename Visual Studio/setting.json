@@ -21,6 +21,14 @@
 			"height": -1
 		}
 	},
+	"quick_output": {
+		"font_size": 5.0,
+		"fill_char": "@",
+		"ascii": {
+			"width": -1,
+			"height": -1
+		}
+	},
 	"basic_effect": {
 		"contours_handle": {
 			"thresh": {
@@ -44,14 +52,6 @@
 		"math_function_handle": {
 			"deltaI": 10,
 			"arg": 5
-		}
-	},
-	"quick_output": {
-		"font_size": 5,
-		"fill_char": "@",
-		"ascii": {
-			"width": 160,
-			"height": 71
 		}
 	}
 }
