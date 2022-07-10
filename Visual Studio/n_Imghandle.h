@@ -125,11 +125,11 @@ public:
             c_str());
         int totalTime = difftime(time(NULL), t_start);
         printf("\nused %02d:%02d\n", totalTime / 60, totalTime % 60);
-        remove("tempvideo.mp4");
+        //remove("tempvideo.mp4");
         system("pause");
     }
 
-    void create_written(cv::Size origin_size, cv::Size set_size) {
+    void create_written(cv::Size origin_size, cv::Size set_size = {-1, -1}) {
         if (set_size.height == -1)
             set_size = origin_size;
 

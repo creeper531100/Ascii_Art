@@ -3,7 +3,7 @@
 #include "n_CollageOutput.h"
 #include "pch.h"
 #include "n_ConsoleShow.h"
-#include "n_QuickOutput.h"
+#include "BasicEffectOutput.h"
 
 using namespace std;
 using Json = nlohmann::json;
@@ -28,8 +28,8 @@ int main() {
         path = "HTC.mp4";
     }
 
-    QuickOutput console_shows("E:\\AAAA.mp4", json_file);
-    console_shows.ascii(QuickOutput::FILLED);
+    BasicEffectOutput console_shows("E:\\AAAA.mp4", json_file);
+    console_shows.trace();
 }
 
 /*
