@@ -28,11 +28,9 @@ public:
         cv::Size output_size = {(pack.dsize.width * thumbnail_size.width), (pack.dsize.height * thumbnail_size.height)};
         cv::Mat output_mat(output_size, CV_8UC3);
 
-        if (super::type == IMG) {
-            pack.dsize = cv::Size(super::img.cols / 6, super::img.rows / 7);
-        }
-        else {
+        if (super::type != VIDEO) {
             super::create_written(pack.dsize, output_size);
+            //pack.dsize = cv::Size(super::img.cols / 6, super::img.rows / 7);
         }
 
         cv::Scalar scalar = cv::Scalar(255, 255, 255);

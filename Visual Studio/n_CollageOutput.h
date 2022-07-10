@@ -41,6 +41,9 @@ public:
                                .set_dsize("ascii", original_size);
         int process = 0;
 
+        if (super::type == IMG)
+            pack.dsize = {img.cols / 8, img.rows / 16};
+
         cv::Size output_size = {pack.dsize.width * 8, pack.dsize.height * 16};
         cv::Mat output_mat(output_size, CV_8UC3);
 
@@ -78,15 +81,18 @@ public:
         int process = 0;
         bool auto_thresh = false;
 
+        if (super::type == IMG)
+            pack.dsize = {img.cols / 4, img.rows / 4};
+
         //輸出解析度放大 480x268 -> 1920x1072
         cv::Size output_size = {pack.dsize.width * 4, pack.dsize.height * 4};
+        cout << pack.dsize << "/" << output_size << endl;
+
         cv::Mat output_mat(output_size, CV_8UC3);
         vector<vector<char>> braille_string(pack.dsize.width, vector<char>(pack.dsize.height));
 
-        if (pack.thresh == -1) {
+        if (pack.thresh == -1)
             auto_thresh = true;
-        }
-
         if (super::type == VIDEO)
             super::create_written(pack.dsize, output_size);
 
