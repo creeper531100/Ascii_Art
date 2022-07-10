@@ -88,16 +88,17 @@ public:
 
         //輸出解析度放大 480x268 -> 1920x1072
         cv::Size output_size = {pack.dsize.width * 4, pack.dsize.height * 4};
-        cout << pack.dsize << "/" << output_size << endl;
 
         cv::Mat output_mat(output_size, CV_8UC3);
-        vector<vector<char>> braille_string(pack.dsize.width, vector<char>(pack.dsize.height));
+        vector<vector<char>> braille_string(pack.dsize.width, vector<char>(pack.dsize.height, 'k'));
+        vector<vector<char>> braille_string2(pack.dsize.width, vector<char>(pack.dsize.height, 'k'));
 
         if (pack.thresh == -1)
             auto_thresh = true;
         if (super::type == VIDEO)
             super::create_written(pack.dsize, output_size);
 
+        cout << pack.dsize << "/" << output_size << endl;
         auto mats = read_img("font\\braille\\");
         cv::Size thumbnail_size = {mats.begin()->second.cols, mats.begin()->second.rows};
 
@@ -106,23 +107,44 @@ public:
                 pack.thresh = mean(super::img).val[0];
             }
 
-            braille_create(braille_string, pack.thresh);
-            for (int i = 0, row = 3; i < output_size.height; i += thumbnail_size.height, row += 4) {
-                for (int j = 0, col = 0; j < output_size.width; j += thumbnail_size.width, col++) {
+            braille_create(braille_string2, pack.thresh);
+            braille_create2(braille_string, pack.thresh);
+            for (int row = 3; row < braille_string.size(); row += 4) {
+                for (int col = 0; col < braille_string[0].size(); col += 1) {
+                    
+                    fmt::print("{}還有{}這是答案={}\n", "buf", "buf2", braille_string == braille_string2);
+                }
+            }
+            /*for (int row = 3, i = 0; row < braille_string.size() && i < output_size.height; row += 4, i += thumbnail_size.height) {
+                for (int col = 0, j = 0; col < braille_string[0].size() && j < output_size.width; col += 1, j += thumbnail_size.width) {
                     string buf = {
                             braille_string[row - 3][col], braille_string[row - 2][col], braille_string[row - 1][col],
                             braille_string[row][col]
-                        };
-                    //cv::Rect roi(cv::Point(j, i), thumbnail_size);
-                    //cv::Mat symbol = mats[buf + ".png"];
-                    //symbol.copyTo(output_mat(roi));
-                    //cv::imshow("output_mat", output_mat);
-                    //cv::waitKey(5);
+                    };
+                    cv::Rect roi(cv::Point(j, i), thumbnail_size);
+                    //cout << buf << endl;
+                    cv::Mat symbol = mats[buf + ".png"];
+                    symbol.copyTo(output_mat(roi));
+
+                    cv::imshow("output_mat", output_mat);
+                    cv::waitKey(1);
                 }
-            }
+            }*/
+
 
             super::type == IMG ? (void)imwrite("output_pic.png", output_mat) : super::writer.write(output_mat);
             fmt::print("進度: {}%\r", (process++ / super::frame_total) * 100);
         });
     }
 };
+
+/*
+          * string buf = {
+                         braille_string[row - 3][col], braille_string[row - 2][col], braille_string[row - 1][col],
+                         braille_string[row][col]
+                     };
+          */
+/*
+ * for (int i = 0, row = 3; i < output_size.height; i += thumbnail_size.height, row += 4) {
+                for (int j = 0, col = 0; j < output_size.width; j += thumbnail_size.width, col++) {
+ */

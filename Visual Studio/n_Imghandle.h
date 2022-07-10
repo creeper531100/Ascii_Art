@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "pch.h"
 
 using namespace std;
@@ -98,15 +98,15 @@ protected:
 public:
     ImageHandle(string path, Json param) : file_path(path), param(param) {
         if (match_string(path, {".jpg", ".JPG", ".png", ".PNG", ".tiff"}) == true) {
-            //§PÂ_¹Ï¤ù
-            cout << "¹Ï¤ù" << endl;
+            //åˆ¤æ–·åœ–ç‰‡
+            cout << "åœ–ç‰‡" << endl;
             this->img = cv::imread(path);
             cout << "Resize Size: " << this->img.size().height << "x" << this->img.size().width << endl;
             this->type = IMG;
             this->original_size = img.size();
         }
         else if (match_string(path, {".mp4", ".mp3", ".gif"})) {
-            cout << "in¤ù" << endl;
+            cout << "inç‰‡" << endl;
             this->cap = cv::VideoCapture(path);
             this->frame_FPS = this->cap.get(cv::CAP_PROP_FPS);
             this->frame_total = this->cap.get(cv::CAP_PROP_FRAME_COUNT);
@@ -146,7 +146,7 @@ public:
     ImageHandle& basic_handle(SettingDataPack pack, function<void()>&& func) {
         time_t t_start = time(NULL);
         if (type == IMG) {
-            cout << "¹Ï¤ù" << endl;
+            cout << "åœ–ç‰‡" << endl;
             this->img_handle(pack);
             func();
         }
@@ -163,22 +163,53 @@ public:
         return *this;
     }
 
-    void braille_create(vector<vector<char>>& deep_arr, int brightness_threshold) {
-        for (int i = 1; i < deep_arr.size(); i += 2) {
-            for (int j = 0, k = 0; j < deep_arr[0].size(); j++, k++) {
-                if (this->img.at<uchar>(j, i - 1) > brightness_threshold) {
-                    if (this->img.at<uchar>(j, i) > brightness_threshold)
-                        deep_arr[i][k] = 'm';
+    void braille_create(vector<vector<char>>& deep_arr, int threshold) {
+        cv::Mat ig(img.size(), img.type());
+
+        for (int i = 0; i < deep_arr[0].size(); i++) {
+            for (int j = 1; j < deep_arr.size(); j += 2) {
+                if (this->img.at<uchar>(i, j - 1) > threshold) {
+                    if (this->img.at<uchar>(i, j) > threshold)
+                        deep_arr[i][j / 2] = 'm';
                     else
-                        deep_arr[i][k] = 'y';
+                        deep_arr[i][j / 2] = 'y';
                 }
                 else {
-                    if (this->img.at<uchar>(j, i) > brightness_threshold)
-                        deep_arr[i][k] = 'z';
+                    if (this->img.at<uchar>(i, j) > threshold)
+                        deep_arr[i][j / 2] = 'z';
                     else
-                        deep_arr[i][k] = 'k';
+                        deep_arr[i][j / 2] = 'k';
                 }
+                ig.at<uchar>(i, j) = this->img.at<uchar>(i, j);
+
             }
         }
+
+        cv::imshow("name2", ig);
+        cv::waitKey(1);
+    }
+
+    void braille_create2(vector<vector<char>>& deep_arr, int threshold) {
+        cv::Mat ig(img.size(), img.type());
+
+        for (int i = 0; i < deep_arr.size(); i++) {
+            for (int j = 1; j < deep_arr[0].size(); j += 2) {
+                if (this->img.at<uchar>(j - 1, i) > threshold) {
+                    if (this->img.at<uchar>(j, i) > threshold)
+                        deep_arr[i][j / 2] = 'm';
+                    else
+                        deep_arr[i][j / 2] = 'y';
+                }
+                else {
+                    if (this->img.at<uchar>(j, i) > threshold)
+                        deep_arr[i][j / 2] = 'z';
+                    else
+                        deep_arr[i][j / 2] = 'k';
+                }
+                ig.at<uchar>(j, i) = this->img.at<uchar>(j, i);
+            }
+        }
+        cv::imshow("name", ig);
+        cv::waitKey(1);
     }
 };
