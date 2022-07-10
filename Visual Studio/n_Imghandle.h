@@ -163,17 +163,17 @@ public:
         return *this;
     }
 
-    void braille_create(vector<vector<char>>& deep_arr, int brightness_threshold, cv::Size& dsize) {
-        for (int i = 0; i < dsize.height; i++) {
-            for (int j = 1, k = 0; j < dsize.width; j += 2, k++) {
-                if (this->img.at<uchar>(i, j - 1) > brightness_threshold) {
-                    if (this->img.at<uchar>(i, j) > brightness_threshold)
+    void braille_create(vector<vector<char>>& deep_arr, int brightness_threshold) {
+        for (int i = 1; i < deep_arr.size(); i += 2) {
+            for (int j = 0, k = 0; j < deep_arr[0].size(); j++, k++) {
+                if (this->img.at<uchar>(j, i - 1) > brightness_threshold) {
+                    if (this->img.at<uchar>(j, i) > brightness_threshold)
                         deep_arr[i][k] = 'm';
                     else
                         deep_arr[i][k] = 'y';
                 }
                 else {
-                    if (this->img.at<uchar>(i, j) > brightness_threshold)
+                    if (this->img.at<uchar>(j, i) > brightness_threshold)
                         deep_arr[i][k] = 'z';
                     else
                         deep_arr[i][k] = 'k';

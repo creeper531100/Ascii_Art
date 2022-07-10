@@ -77,12 +77,14 @@ public:
                                .set_color(cv::COLOR_BGR2GRAY)
                                .init_thresh()
                                .set_dsize("braille", original_size, {2, 4});
+
         //原始解析度被放大 240x67 => 480x268，這邊放大是因為【⣿】文字寬2高4
         int process = 0;
         bool auto_thresh = false;
 
-        if (super::type == IMG)
-            pack.dsize = {img.cols / 4, img.rows / 4};
+        if (super::type == IMG) {
+            pack.dsize = {(int)(img.cols / 4 / 8) * 8, (int)(img.rows / 4 / 16) * 16};
+        }
 
         //輸出解析度放大 480x268 -> 1920x1072
         cv::Size output_size = {pack.dsize.width * 4, pack.dsize.height * 4};
@@ -104,16 +106,18 @@ public:
                 pack.thresh = mean(super::img).val[0];
             }
 
-            braille_create(braille_string, pack.thresh, pack.dsize);
+            braille_create(braille_string, pack.thresh);
             for (int i = 0, row = 3; i < output_size.height; i += thumbnail_size.height, row += 4) {
                 for (int j = 0, col = 0; j < output_size.width; j += thumbnail_size.width, col++) {
                     string buf = {
                             braille_string[row - 3][col], braille_string[row - 2][col], braille_string[row - 1][col],
                             braille_string[row][col]
                         };
-                    cv::Rect roi(cv::Point(j, i), thumbnail_size);
-                    cv::Mat symbol = mats[buf + ".png"];
-                    symbol.copyTo(output_mat(roi));
+                    //cv::Rect roi(cv::Point(j, i), thumbnail_size);
+                    //cv::Mat symbol = mats[buf + ".png"];
+                    //symbol.copyTo(output_mat(roi));
+                    //cv::imshow("output_mat", output_mat);
+                    //cv::waitKey(5);
                 }
             }
 

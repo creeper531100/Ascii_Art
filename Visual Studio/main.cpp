@@ -35,7 +35,7 @@ int main() {
         path = "HTC.mp4";
     }
 
-    CollageOutput console_shows("E:\\IMG_0481.jpg", json_file);
+    CollageOutput console_shows("C:\\Users\\creep\\OneDrive\\桌面\\圖片\\ahtc.png", json_file);
     console_shows.braille();
 }
 
