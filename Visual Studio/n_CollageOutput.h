@@ -90,7 +90,7 @@ public:
         cv::Size output_size = {pack.dsize.width * 4, pack.dsize.height * 4};
 
         cv::Mat output_mat(output_size, CV_8UC3);
-        vector<vector<char>> braille_string(pack.dsize.width, vector<char>(pack.dsize.height, 'k'));
+        vector<vector<char>> braille_string(pack.dsize.height, vector<char>(pack.dsize.width, 'k'));
         vector<vector<char>> braille_string2(pack.dsize.width, vector<char>(pack.dsize.height, 'k'));
 
         if (pack.thresh == -1)
@@ -107,14 +107,28 @@ public:
                 pack.thresh = mean(super::img).val[0];
             }
 
-            braille_create(braille_string2, pack.thresh);
-            braille_create2(braille_string, pack.thresh);
+            braille_create(braille_string, pack.thresh);
+            braille_create2(braille_string2, pack.thresh);
+            /*for (int row = 3; row < braille_string.size(); row += 4) {
+                for (int col = 0; col < braille_string[0].size(); col += 1) {
+                    string buf = {
+                            braille_string[row - 3][col], braille_string[row - 2][col], braille_string[row - 1][col],
+                            braille_string[row][col]
+                    };
+                    fmt::print("{}還有{}這是答案={}\n", buf, "buf2", braille_string == braille_string2);
+                }
+            }*/
+
             for (int row = 3; row < braille_string.size(); row += 4) {
                 for (int col = 0; col < braille_string[0].size(); col += 1) {
-                    
-                    fmt::print("{}還有{}這是答案={}\n", "buf", "buf2", braille_string == braille_string2);
+                    string buf2 = {
+                            braille_string2[row - 3][col], braille_string2[row - 2][col], braille_string2[row - 1][col],
+                            braille_string2[row][col]
+                    };
+                    fmt::print("{}還有{}這是答案={}\n", "buf", buf2, braille_string == braille_string2);
                 }
             }
+
             /*for (int row = 3, i = 0; row < braille_string.size() && i < output_size.height; row += 4, i += thumbnail_size.height) {
                 for (int col = 0, j = 0; col < braille_string[0].size() && j < output_size.width; col += 1, j += thumbnail_size.width) {
                     string buf = {
@@ -126,8 +140,8 @@ public:
                     cv::Mat symbol = mats[buf + ".png"];
                     symbol.copyTo(output_mat(roi));
 
-                    cv::imshow("output_mat", output_mat);
-                    cv::waitKey(1);
+                    /*cv::imshow("output_mat", output_mat);
+                    cv::waitKey(1);#1#
                 }
             }*/
 

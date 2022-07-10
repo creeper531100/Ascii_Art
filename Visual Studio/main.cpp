@@ -35,7 +35,7 @@ int main() {
         path = "HTC.mp4";
     }
 
-    CollageOutput console_shows("C:\\Users\\creep\\OneDrive\\桌面\\圖片\\0取.PNG", json_file);
+    CollageOutput console_shows("C:\\Users\\creep\\OneDrive\\桌面\\圖片\\illust_98137656_20220616_145944.jpg", json_file);
     console_shows.braille();
 }
 
