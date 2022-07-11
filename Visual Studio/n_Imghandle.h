@@ -88,14 +88,12 @@ public:
     ImageHandle(string path, Json param) : file_path(path), param(param) {
         if (match_string(path, {".jpg", ".JPG", ".png", ".PNG", ".tiff"}) == true) {
             //判斷圖片
-            cout << "圖片" << endl;
             this->img = cv::imread(path);
             cout << "Resize Size: " << this->img.size().height << "x" << this->img.size().width << endl;
             this->type = IMG;
             this->original_size = img.size();
         }
         else if (match_string(path, {".mp4", ".mp3", ".gif"})) {
-            cout << "in片" << endl;
             this->cap = cv::VideoCapture(path);
             this->frame_FPS = this->cap.get(cv::CAP_PROP_FPS);
             this->frame_total = this->cap.get(cv::CAP_PROP_FRAME_COUNT);
@@ -135,7 +133,6 @@ public:
     ImageHandle& basic_handle(SettingDataPack pack, function<void()>&& func) {
         time_t t_start = time(NULL);
         if (type == IMG) {
-            cout << "圖片" << endl;
             this->img_handle(pack);
             func();
         }
