@@ -39,7 +39,8 @@ struct SettingDataPack {
         return *this;
     }
 
-    SettingDataPack& set_dsize(const char* mode, cv::Size& original_video_size, cv::Size thumbnail_size = {8, 16}, cv::Size zoom = {1, 1}) {
+    SettingDataPack& set_dsize(const char* mode, cv::Size& original_video_size, cv::Size thumbnail_size = {8, 16},
+                               pair<int, int> zoom = {1, 1}) {
         /*
          * width除8 => 因為img被resize了，輸出圖像必須被擴充至原始解析度(thumbnail縮圖，乘上縮圖即原始尺寸)
          * width除zoom => 一個文字占據兩格寬度
@@ -48,14 +49,15 @@ struct SettingDataPack {
          */
         this->dsize = {param[func_name][mode]["width"], param[func_name][mode]["height"]};
         if (this->dsize.width == -1) {
-            int width = original_video_size.width / (thumbnail_size.width / zoom.width);
-            this->dsize.width = (int)(width / thumbnail_size.width) * thumbnail_size.width;
+            this->dsize.width = original_video_size.width / (thumbnail_size.width / zoom.first);
+            if (zoom.first != 1)
+                this->dsize.width = (int)(this->dsize.width / thumbnail_size.width) * thumbnail_size.width;
         }
         if (this->dsize.height == -1) {
-            int height = original_video_size.height / (thumbnail_size.height / zoom.height);
-            this->dsize.height = (int)(height / thumbnail_size.height) * thumbnail_size.height;
+            this->dsize.height = original_video_size.height / (thumbnail_size.height / zoom.second);
+            if (zoom.first != 1)
+                this->dsize.height = (int)(this->dsize.height / thumbnail_size.height) * thumbnail_size.height;
         }
-        fmt::print("\n\n{} {} {} {}\n\n", this->dsize.width, this->dsize.height, thumbnail_size.width, thumbnail_size.height);
         return *this;
     }
 
@@ -111,13 +113,19 @@ public:
     }
 
     void print_output_info(time_t t_start) {
-        system(
-            ("ffmpeg -i tempvideo.mp4 -i " + this->file_path + " -c copy -map 0:v:0 -map 1:a:0 output_video.mp4").
-            c_str());
-        int totalTime = difftime(time(NULL), t_start);
-        printf("\nused %02d:%02d\n", totalTime / 60, totalTime % 60);
-        //remove("tempvideo.mp4");
-        system("pause");
+#ifndef _DEBUG
+        if(type == VIDEO) {
+            writer.release();
+            Sleep(1000);
+            system(
+                ("ffmpeg -i tempvideo.mp4 -i " + this->file_path + " -c copy -map 0:v:0 -map 1:a:0 output_video.mp4").
+                c_str());
+            int totalTime = difftime(time(NULL), t_start);
+            printf("\nused %02d:%02d\n", totalTime / 60, totalTime % 60);
+            remove("tempvideo.mp4");
+            system("pause");
+        }
+#endif
     }
 
     void create_written(cv::Size origin_size, cv::Size set_size = {-1, -1}) {

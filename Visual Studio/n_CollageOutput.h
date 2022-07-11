@@ -38,7 +38,7 @@ public:
     void ascii() {
         SettingDataPack pack = SettingDataPack::create(param, "collage_output")
                                .set_color(cv::COLOR_BGR2GRAY)
-                               .set_dsize("ascii", original_size);
+                               .set_dsize("ascii", original_size, {8, 16});
         int process = 0;
 
         cv::Size output_size = {pack.dsize.width * 8, pack.dsize.height * 16};
@@ -59,7 +59,6 @@ public:
                 }
             }
             fmt::print("進度: {}%\r", (process++ / super::frame_total) * 100);
-            imwrite("output_pic.png", output_mat);
             super::type == IMG ? (void)imwrite("output_pic.png", output_mat) : super::writer.write(output_mat);
         });
     }
