@@ -17,7 +17,7 @@ inline std::vector<std::string> split(std::string split_str, std::string&& delim
     return res;
 }
 
-inline unordered_map<string, cv::Mat> read_img(string path, vector<cv::Mat>&& mats = {}) {
+inline unordered_map<string, cv::Mat> read_img_for_folder(string path) {
     unordered_map<string, cv::Mat> vec;
     vector<string> names;
     cv::glob(path, names);
@@ -25,9 +25,17 @@ inline unordered_map<string, cv::Mat> read_img(string path, vector<cv::Mat>&& ma
         cv::Mat mat = cv::imread(row);
         string name = split(row, "\\")[2];
         vec[name] = mat;
-        mats.push_back(mat);
     }
     return vec;
+}
+
+inline vector<cv::Mat> read_img_for_index(string path) {
+    vector<cv::Mat> arr;
+    for (int i = 0; i <= 64; i++) {
+        cv::Mat mat = cv::imread("font\\font\\" + to_string(i) + ".png");
+        arr.push_back(mat);
+    }
+    return arr;
 }
 
 class CollageOutput : public ImageHandle {
@@ -47,8 +55,7 @@ public:
         if (super::type == VIDEO)
             super::create_written(pack.dsize, output_size);
 
-        vector<cv::Mat> mats;
-        read_img("font\\font\\", std::move(mats));
+        vector<cv::Mat> mats = read_img_for_index("font\\font\\");
         cv::Size thumbnail_size = {mats[0].cols, mats[0].rows};
         super::basic_handle(pack, [&]() {
             for (int i = 0; i < output_size.height; i += thumbnail_size.height) {
@@ -88,7 +95,7 @@ public:
         if (super::type == VIDEO)
             super::create_written(pack.dsize, output_size);
 
-        auto mats = read_img("font\\braille\\");
+        auto mats = read_img_for_folder("font\\braille\\");
         cv::Size thumbnail_size = {mats.begin()->second.cols, mats.begin()->second.rows};
 
         super::basic_handle(pack, [&]() {
