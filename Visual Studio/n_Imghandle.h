@@ -163,62 +163,22 @@ public:
         return *this;
     }
 
-    void braille_create(vector<vector<char>>& deep_arr, int threshold) {
-        cv::Mat ig(img.size(), img.type());
-
-        for (int i = 0; i < deep_arr[0].size(); i++) {
-            cout << img.size() << endl;
-            cout << img.rows << endl;
-            cout << img.cols << endl;
-
-            for (int j = 1; j < deep_arr.size(); j += 2) {
-                if(i > deep_arr.size() - 1) {
-                    fmt::print("{} > {} = {}\n", i, deep_arr.size() - 1, i > deep_arr.size() - 1);
-                    fmt::print("太大了塞不下\n");
-                    break;
-                }
-
-                if (this->img.at<uchar>(i, j - 1) > threshold) {
-                    if (this->img.at<uchar>(i, j) > threshold)
-                        deep_arr[i][j / 2] = 'm';
-                    else
-                        deep_arr[i][j / 2] = 'y';
-                }
-                else {
-                    if (this->img.at<uchar>(i, j) > threshold)
-                        deep_arr[i][j / 2] = 'z';
-                    else
-                        deep_arr[i][j / 2] = 'k';
-                }
-                ig.at<uchar>(i, j) = this->img.at<uchar>(i, j);
-
-            }
-        }
-
-        //cv::imshow("name2", ig);
-        //cv::waitKey(1);
-    }
-
     void braille_create2(vector<vector<char>>& deep_arr, int threshold) {
-        cv::Mat ig(img.size(), img.type());
         for (int i = 0; i < deep_arr.size(); i++) {
             for (int j = 1; j < deep_arr[0].size(); j += 2) {
-                if (this->img.at<uchar>(j - 1, i) > threshold) {
-                    if (this->img.at<uchar>(j, i) > threshold)
+                if (this->img.at<uchar>(i, j - 1) > threshold) { //.at(y, x)
+                    if (this->img.at<uchar>(i, j) > threshold) 
                         deep_arr[i][j / 2] = 'm';
                     else
                         deep_arr[i][j / 2] = 'y';
                 }
                 else {
-                    if (this->img.at<uchar>(j, i) > threshold)
+                    if (this->img.at<uchar>(i, j) > threshold)
                         deep_arr[i][j / 2] = 'z';
                     else
                         deep_arr[i][j / 2] = 'k';
                 }
-                ig.at<uchar>(j, i) = this->img.at<uchar>(j, i);
             }
         }
-        //cv::imshow("name", ig);
-        //cv::waitKey(1);
     }
 };

@@ -58,7 +58,7 @@ public:
                 pack.thresh = mean(super::img).val[0];
             }
 
-            braille_create(braille_string, pack.thresh);
+            braille_create2(braille_string, pack.thresh);
             for (int i = 3, pixel = 0; i < braille_string.size(); i += 4) {
                 for (int j = 0; j < pack.dsize.height; j++, pixel++) {
                     string buf = {

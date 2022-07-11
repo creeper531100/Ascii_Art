@@ -83,7 +83,8 @@ public:
         bool auto_thresh = false;
 
         if (super::type == IMG) {
-            pack.dsize = {(int)(img.cols / 4 / 8) * 8, (int)(img.rows / 4 / 16) * 16};
+            //pack.dsize = {(int)(img.cols / 4 / 8) * 8, (int)(img.rows / 4 / 16) * 16};
+            pack.dsize = { (int)(img.cols / 4 / 8) * 8, (int)(img.rows / 4 / 16) * 16 };
         }
 
         //輸出解析度放大 480x268 -> 1920x1072
@@ -91,7 +92,7 @@ public:
 
         cv::Mat output_mat(output_size, CV_8UC3);
         vector<vector<char>> braille_string(pack.dsize.height, vector<char>(pack.dsize.width, 'k'));
-        vector<vector<char>> braille_string2(pack.dsize.width, vector<char>(pack.dsize.height, 'k'));
+        vector<vector<char>> braille_string2(pack.dsize.height, vector<char>(pack.dsize.width, 'k'));
 
         if (pack.thresh == -1)
             auto_thresh = true;
@@ -107,44 +108,19 @@ public:
                 pack.thresh = mean(super::img).val[0];
             }
 
-            braille_create(braille_string, pack.thresh);
             braille_create2(braille_string2, pack.thresh);
-            /*for (int row = 3; row < braille_string.size(); row += 4) {
-                for (int col = 0; col < braille_string[0].size(); col += 1) {
-                    string buf = {
-                            braille_string[row - 3][col], braille_string[row - 2][col], braille_string[row - 1][col],
-                            braille_string[row][col]
-                    };
-                    fmt::print("{}還有{}這是答案={}\n", buf, "buf2", braille_string == braille_string2);
-                }
-            }*/
 
-            for (int row = 3; row < braille_string.size(); row += 4) {
-                for (int col = 0; col < braille_string[0].size(); col += 1) {
-                    string buf2 = {
+            for (int row = 3, i = 0; i < output_size.height; row += 4, i += thumbnail_size.height) {
+                for (int col = 0, j = 0; j < output_size.width; col += 1, j += thumbnail_size.width) {
+                    string buf = {
                             braille_string2[row - 3][col], braille_string2[row - 2][col], braille_string2[row - 1][col],
                             braille_string2[row][col]
                     };
-                    fmt::print("{}還有{}這是答案={}\n", "buf", buf2, braille_string == braille_string2);
-                }
-            }
-
-            /*for (int row = 3, i = 0; row < braille_string.size() && i < output_size.height; row += 4, i += thumbnail_size.height) {
-                for (int col = 0, j = 0; col < braille_string[0].size() && j < output_size.width; col += 1, j += thumbnail_size.width) {
-                    string buf = {
-                            braille_string[row - 3][col], braille_string[row - 2][col], braille_string[row - 1][col],
-                            braille_string[row][col]
-                    };
                     cv::Rect roi(cv::Point(j, i), thumbnail_size);
-                    //cout << buf << endl;
                     cv::Mat symbol = mats[buf + ".png"];
                     symbol.copyTo(output_mat(roi));
-
-                    /*cv::imshow("output_mat", output_mat);
-                    cv::waitKey(1);#1#
                 }
-            }*/
-
+            }
 
             super::type == IMG ? (void)imwrite("output_pic.png", output_mat) : super::writer.write(output_mat);
             fmt::print("進度: {}%\r", (process++ / super::frame_total) * 100);
