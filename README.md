@@ -104,4 +104,4 @@ A AsciiArt generator<br>
 3. [BrailleArt](https://youtu.be/fds8-M9iK8I)
 
 # 下載
-[載點](https://github.com/creeper531100/Ascii_Art/releases/download/v1.0.2/AsciiArt.zip)
+[載點](https://github.com/creeper531100/Ascii_Art/releases/download/V2.0/AsciiArt2.zip)
