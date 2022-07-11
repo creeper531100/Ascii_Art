@@ -39,34 +39,10 @@ struct SettingDataPack {
         return *this;
     }
 
-    SettingDataPack& set_dsize(const char* mode, cv::Size& original_video_size, cv::Size img_zoom = {1, 1},
-                               cv::Size resize_zoom = {8, 16}) {
+    SettingDataPack& set_dsize(const char* mode, cv::Size& original_video_size, cv::Size resize_zoom = {8, 16}) {
         this->dsize = {param[func_name][mode]["width"], param[func_name][mode]["height"]};
-        if (this->dsize.width == -1) {
-            int width = original_video_size.width;
-            int resize_width = width / resize_zoom.width;
-            while (resize_zoom.width < width) {
-                resize_width = width / resize_zoom.width;
-                if (width % resize_zoom.width == 0) break;
-                resize_zoom.width++;
-            }
-            this->dsize.width = resize_width;
-        }
-
-        if (this->dsize.height == -1) {
-            int height = original_video_size.height;
-            int resize_height = height / resize_zoom.height;
-
-            while (resize_zoom.height < height) {
-                resize_height = height / resize_zoom.height;
-                if (height % resize_zoom.height == 0) break;
-                resize_zoom.height++;
-            }
-
-            this->dsize.height = resize_height;
-        }
-        this->dsize.width *= img_zoom.width;
-        this->dsize.height *= img_zoom.height;
+        this->dsize.width = (int)(this->dsize.width / resize_zoom.width) * resize_zoom.width;
+        this->dsize.height = (int)(this->dsize.width / resize_zoom.width) * resize_zoom.width;
         return *this;
     }
 

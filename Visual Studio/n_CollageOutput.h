@@ -42,7 +42,7 @@ public:
         int process = 0;
 
         if (super::type == IMG)
-            pack.dsize = {img.cols / 8, img.rows / 16};
+            pack.dsize = {img.cols * 8, img.rows * 16};
 
         cv::Size output_size = {pack.dsize.width * 8, pack.dsize.height * 16};
         cv::Mat output_mat(output_size, CV_8UC3);
@@ -76,22 +76,24 @@ public:
         SettingDataPack pack = SettingDataPack::create(param, "collage_output")
                                .set_color(cv::COLOR_BGR2GRAY)
                                .init_thresh()
-                               .set_dsize("braille", original_size, {2, 4});
-
-        //原始解析度被放大 240x67 => 480x268，這邊放大是因為【⣿】文字寬2高4
+                               .set_dsize("braille", original_size);
         int process = 0;
         bool auto_thresh = false;
 
         if (super::type == IMG) {
-            //pack.dsize = {(int)(img.cols / 4 / 8) * 8, (int)(img.rows / 4 / 16) * 16};
-            pack.dsize = { (int)(img.cols / 4 / 8) * 8, (int)(img.rows / 4 / 16) * 16 };
+            /*
+             * cols除8 => 因為img被resize了，輸出圖像必須被擴充至原始解析度
+             * cols除2 => 一個文字占據兩格寬度
+             * cols除8再乘8 => 這邊是為了找近似解析度，先除8去掉小數，在乘8回到近似的原始解析度
+             * 同理rows
+             */
+            pack.dsize = { (int)((img.cols / (8 / 2)) / 8) * 8, (int)((img.rows / (16 / 4)) / 16) * 16 };
         }
 
         //輸出解析度放大 480x268 -> 1920x1072
-        cv::Size output_size = {pack.dsize.width * 4, pack.dsize.height * 4};
+        cv::Size output_size = {pack.dsize.width * (8 / 2), pack.dsize.height * (16 / 4) };
 
         cv::Mat output_mat(output_size, CV_8UC3);
-        vector<vector<char>> braille_string(pack.dsize.height, vector<char>(pack.dsize.width, 'k'));
         vector<vector<char>> braille_string2(pack.dsize.height, vector<char>(pack.dsize.width, 'k'));
 
         if (pack.thresh == -1)
@@ -109,13 +111,12 @@ public:
             }
 
             braille_create2(braille_string2, pack.thresh);
-
             for (int row = 3, i = 0; i < output_size.height; row += 4, i += thumbnail_size.height) {
                 for (int col = 0, j = 0; j < output_size.width; col += 1, j += thumbnail_size.width) {
                     string buf = {
                             braille_string2[row - 3][col], braille_string2[row - 2][col], braille_string2[row - 1][col],
                             braille_string2[row][col]
-                    };
+                        };
                     cv::Rect roi(cv::Point(j, i), thumbnail_size);
                     cv::Mat symbol = mats[buf + ".png"];
                     symbol.copyTo(output_mat(roi));

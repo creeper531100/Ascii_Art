@@ -28,14 +28,14 @@ int main() {
 
     //cin >> sw;
     cout << "輸入網址或圖片位置: ";
-    //cin >> path;
+    cin >> path;
     if (path.find("https") != std::string::npos) {
         remove("HTC.mp4");
         system(("youtube-dl -o HTC.%(ext)s -f mp4 " + path).c_str());
         path = "HTC.mp4";
     }
 
-    CollageOutput console_shows("C:\\Users\\creep\\OneDrive\\桌面\\圖片\\illust_98137656_20220616_145944.jpg", json_file);
+    CollageOutput console_shows(path, json_file);
     console_shows.braille();
 }
 
