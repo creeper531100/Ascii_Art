@@ -14,7 +14,8 @@ public:
     using super::super;
 
     SettingDataPack console_init(const char* mode) {
-        SettingDataPack pack = SettingDataPack::create(param, "console_show").set_color(cv::COLOR_BGR2GRAY).set_dsize(mode, this->original_size).init_thresh();
+        SettingDataPack pack = SettingDataPack::create(param, "console_show").set_color(cv::COLOR_BGR2GRAY).set_dsize(
+            mode, this->original_size).init_thresh();
         screen = new wchar_t[pack.dsize.area()];
         hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
         return pack;
@@ -45,7 +46,7 @@ public:
         bool auto_thresh = false;
 
         map<string, wchar_t> map_pairs = init_words();
-        vector<vector<char>> braille_string(pack.dsize.width, vector<char>(pack.dsize.height));
+        vector<vector<char>> braille_string(pack.dsize.height, vector<char>(pack.dsize.width));
 
         if (pack.thresh == -1) {
             auto_thresh = true;

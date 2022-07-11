@@ -39,10 +39,23 @@ struct SettingDataPack {
         return *this;
     }
 
-    SettingDataPack& set_dsize(const char* mode, cv::Size& original_video_size, cv::Size resize_zoom = {8, 16}) {
+    SettingDataPack& set_dsize(const char* mode, cv::Size& original_video_size, cv::Size thumbnail_size = {8, 16}, cv::Size zoom = {1, 1}) {
+        /*
+         * width除8 => 因為img被resize了，輸出圖像必須被擴充至原始解析度(thumbnail縮圖，乘上縮圖即原始尺寸)
+         * width除zoom => 一個文字占據兩格寬度
+         * width除8再乘8 => 這邊是為了找近似解析度，先除8去掉小數，在乘8回到近似的原始解析度
+         * 同理height
+         */
         this->dsize = {param[func_name][mode]["width"], param[func_name][mode]["height"]};
-        this->dsize.width = (int)(this->dsize.width / resize_zoom.width) * resize_zoom.width;
-        this->dsize.height = (int)(this->dsize.width / resize_zoom.width) * resize_zoom.width;
+        if (this->dsize.width == -1) {
+            int width = original_video_size.width / (thumbnail_size.width / zoom.width);
+            this->dsize.width = (int)(width / thumbnail_size.width) * thumbnail_size.width;
+        }
+        if (this->dsize.height == -1) {
+            int height = original_video_size.height / (thumbnail_size.height / zoom.height);
+            this->dsize.height = (int)(height / thumbnail_size.height) * thumbnail_size.height;
+        }
+        fmt::print("\n\n{} {} {} {}\n\n", this->dsize.width, this->dsize.height, thumbnail_size.width, thumbnail_size.height);
         return *this;
     }
 
@@ -142,8 +155,9 @@ public:
     void braille_create2(vector<vector<char>>& deep_arr, int threshold) {
         for (int i = 0; i < deep_arr.size(); i++) {
             for (int j = 1; j < deep_arr[0].size(); j += 2) {
-                if (this->img.at<uchar>(i, j - 1) > threshold) { //.at(y, x)
-                    if (this->img.at<uchar>(i, j) > threshold) 
+                if (this->img.at<uchar>(i, j - 1) > threshold) {
+                    //.at(y, x)
+                    if (this->img.at<uchar>(i, j) > threshold)
                         deep_arr[i][j / 2] = 'm';
                     else
                         deep_arr[i][j / 2] = 'y';

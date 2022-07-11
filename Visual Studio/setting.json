@@ -23,6 +23,7 @@
 	},
 	"quick_output": {
 		"font_size": 5.0,
+		"h_offset": 3,
 		"fill_char": "@",
 		"ascii": {
 			"width": -1,

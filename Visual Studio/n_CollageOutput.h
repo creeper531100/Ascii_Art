@@ -41,9 +41,6 @@ public:
                                .set_dsize("ascii", original_size);
         int process = 0;
 
-        if (super::type == IMG)
-            pack.dsize = {img.cols * 8, img.rows * 16};
-
         cv::Size output_size = {pack.dsize.width * 8, pack.dsize.height * 16};
         cv::Mat output_mat(output_size, CV_8UC3);
 
@@ -76,32 +73,22 @@ public:
         SettingDataPack pack = SettingDataPack::create(param, "collage_output")
                                .set_color(cv::COLOR_BGR2GRAY)
                                .init_thresh()
-                               .set_dsize("braille", original_size);
+                               .set_dsize("braille", original_size, {8, 16}, {2, 4});
         int process = 0;
         bool auto_thresh = false;
 
-        if (super::type == IMG) {
-            /*
-             * cols除8 => 因為img被resize了，輸出圖像必須被擴充至原始解析度
-             * cols除2 => 一個文字占據兩格寬度
-             * cols除8再乘8 => 這邊是為了找近似解析度，先除8去掉小數，在乘8回到近似的原始解析度
-             * 同理rows
-             */
-            pack.dsize = { (int)((img.cols / (8 / 2)) / 8) * 8, (int)((img.rows / (16 / 4)) / 16) * 16 };
-        }
-
         //輸出解析度放大 480x268 -> 1920x1072
-        cv::Size output_size = {pack.dsize.width * (8 / 2), pack.dsize.height * (16 / 4) };
+        cv::Size output_size = {pack.dsize.width * (8 / 2), pack.dsize.height * (16 / 4)};
 
         cv::Mat output_mat(output_size, CV_8UC3);
-        vector<vector<char>> braille_string2(pack.dsize.height, vector<char>(pack.dsize.width, 'k'));
+        vector<vector<char>> braille_string2(pack.dsize.height, vector<char>(pack.dsize.width));
 
         if (pack.thresh == -1)
             auto_thresh = true;
+
         if (super::type == VIDEO)
             super::create_written(pack.dsize, output_size);
 
-        cout << pack.dsize << "/" << output_size << endl;
         auto mats = read_img("font\\braille\\");
         cv::Size thumbnail_size = {mats.begin()->second.cols, mats.begin()->second.rows};
 
@@ -128,14 +115,3 @@ public:
         });
     }
 };
-
-/*
-          * string buf = {
-                         braille_string[row - 3][col], braille_string[row - 2][col], braille_string[row - 1][col],
-                         braille_string[row][col]
-                     };
-          */
-/*
- * for (int i = 0, row = 3; i < output_size.height; i += thumbnail_size.height, row += 4) {
-                for (int j = 0, col = 0; j < output_size.width; j += thumbnail_size.width, col++) {
- */

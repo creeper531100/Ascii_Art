@@ -4,6 +4,7 @@
 #include "pch.h"
 #include "n_ConsoleShow.h"
 #include "BasicEffectOutput.h"
+#include "n_QuickOutput.h"
 
 using namespace std;
 using Json = nlohmann::json;
@@ -35,7 +36,7 @@ int main() {
         path = "HTC.mp4";
     }
 
-    CollageOutput console_shows(path, json_file);
+    ConsoleShows console_shows(path, json_file);
     console_shows.braille();
 }
 

@@ -13,6 +13,7 @@ public:
         int process = 0;
         double font_size = (double)super::param["quick_output"]["font_size"] / 10.0f;
         double enlarge = super::param["quick_output"]["font_size"];
+        int h_offset = super::param["quick_output"]["h_offset"]; //高度有跑掉請調整這個
         char fill_char = ((string)super::param["quick_output"]["fill_char"]).c_str()[0];
         cv::Size thumbnail_size = {(int)(enlarge * 2.4f), (int)(enlarge * 3.0f)};
 
@@ -25,12 +26,11 @@ public:
                                .set_color(color_conversion_codes)
                                .set_dsize("ascii", original_size, thumbnail_size);
 
-        cv::Size output_size = {(pack.dsize.width * thumbnail_size.width), (pack.dsize.height * thumbnail_size.height)};
+        cv::Size output_size = { (pack.dsize.width * thumbnail_size.width), (pack.dsize.height * thumbnail_size.height)};
         cv::Mat output_mat(output_size, CV_8UC3);
 
-        if (super::type != VIDEO) {
+        if (super::type == VIDEO) {
             super::create_written(pack.dsize, output_size);
-            //pack.dsize = cv::Size(super::img.cols / 6, super::img.rows / 7);
         }
 
         cv::Scalar scalar = cv::Scalar(255, 255, 255);
@@ -45,7 +45,7 @@ public:
                     if (mode == FILLED) {
                         str[0] = fill_char;
                     }
-                    putText(output_mat, str, {j, i}, cv::FONT_HERSHEY_SIMPLEX, font_size, scalar, 1, 8, 0);
+                    putText(output_mat, str, {j, i + thumbnail_size.height - h_offset }, cv::FONT_HERSHEY_SIMPLEX, font_size, scalar, 1, 8, 0);
                 }
             }
             fmt::print("進度: {}%\r", (process++ / super::frame_total) * 100);
