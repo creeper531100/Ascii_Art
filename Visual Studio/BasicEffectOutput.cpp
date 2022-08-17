@@ -21,12 +21,11 @@ void BasicEffectOutput::math_function_handle(function<double(double*)> math_func
                 x += deltaI;
             }
         }
-        std::printf("進度: %f%%\r", (this->count++ / super::frame_total) * 100);
-        super::type == IMG ? (void)imwrite("output_pic.png", src) : super::writer.write(src);
+        return &src;
     });
 }
 
-void BasicEffectOutput::contours_handle(function<void(vector<vector<cv::Point>>*, vector<cv::Vec4i>*)> func) {
+void BasicEffectOutput::contours_handle(function<cv::Mat*(vector<vector<cv::Point>>*, vector<cv::Vec4i>*)> func) {
     SettingDataPack pack = SettingDataPack::create(param, "basic_effect")
                            .set_color(cv::COLOR_BGR2GRAY)
                            .set_dsize(original_size);
@@ -52,8 +51,7 @@ void BasicEffectOutput::contours_handle(function<void(vector<vector<cv::Point>>*
             Canny(drawing, drawing, thresh[0], thresh[1]);
         }
         findContours(drawing, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-        func(&contours, &hierarchy);
-        std::printf("進度: %f%%\r", (this->count++ / super::frame_total) * 100);
+        return func(&contours, &hierarchy);
     });
 }
 
@@ -75,8 +73,7 @@ void BasicEffectOutput::thresholding() {
             pack.thresh = mean(super::img).val[0];
         }
         threshold(super::img, threshold_mat, pack.thresh, 255, cv::THRESH_BINARY);
-        super::type == IMG ? (void)imwrite("output_pic.png", threshold_mat) : super::writer.write(threshold_mat);
-        std::printf("進度: %f%%\r", (this->count++ / super::frame_total) * 100);
+        return &threshold_mat;
     });
 }
 
@@ -95,8 +92,7 @@ void BasicEffectOutput::relief() {
                 relief2.at<cv::Vec3b>(i)[j] = cv::saturate_cast<uchar>(res2);
             }
         }
-        std::printf("進度: %f%%\r", (this->count++ / super::frame_total) * 100);
-        super::type == IMG ? (void)imwrite("output_pic.png", relief2) : super::writer.write(relief2);
+        return &relief2;
     });
 }
 
@@ -118,7 +114,7 @@ void BasicEffectOutput::trace() {
             drawContours(super::img, *contours, i, color, 2, cv::LINE_AA, *hierarchy, 0);
         }
         cv::cvtColor(img, img, cv::COLOR_GRAY2BGR);
-        super::type == IMG ? (void)imwrite("output_pic.png", super::img) : super::writer.write(super::img);
+        return &img;
     });
 }
 
@@ -140,6 +136,6 @@ void BasicEffectOutput::sketch() {
         for (int i = 0; i < contours->size(); i++) {
             drawContours(mm, *contours, i, color, 2, cv::LINE_AA, *hierarchy, 0);
         }
-        super::type == IMG ? (void)imwrite("output_pic.png", mm) : super::writer.write(mm);
+        return &mm;
     });
 }

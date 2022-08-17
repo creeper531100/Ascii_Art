@@ -139,7 +139,7 @@ public:
         writer = cv::VideoWriter("tempvideo.mp4", this->encoding, this->frame_FPS, set_size);
     }
 
-    ImageHandle& basic_handles(SettingDataPack pack, function<cv::Mat*()>&& func) {
+    ImageHandle& basic_handle(SettingDataPack pack, function<cv::Mat*()>&& func) {
         int process = 0;
         time_t t_start = time(NULL);
 

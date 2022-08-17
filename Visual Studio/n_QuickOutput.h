@@ -48,8 +48,7 @@ public:
                     putText(output_mat, str, {j, i + thumbnail_size.height - h_offset }, cv::FONT_HERSHEY_SIMPLEX, font_size, scalar, 1, 8, 0);
                 }
             }
-            fmt::print("進度: {}%\r", (process++ / super::frame_total) * 100);
-            super::type == IMG ? (void)imwrite("output_pic.png", output_mat) : super::writer.write(output_mat);
+            return &output_mat;
         });
     }
 };

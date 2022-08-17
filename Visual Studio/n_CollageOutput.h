@@ -66,8 +66,7 @@ public:
                     symbol.copyTo(output_mat(roi));
                 }
             }
-            fmt::print("進度: {}%\r", (process++ / super::frame_total) * 100);
-            super::type == IMG ? (void)imwrite("output_pic.png", output_mat) : super::writer.write(output_mat);
+            return &output_mat;
         });
     }
 
@@ -98,7 +97,7 @@ public:
         auto mats = read_img_for_folder("font\\braille\\");
         cv::Size thumbnail_size = {mats.begin()->second.cols, mats.begin()->second.rows};
 
-        super::basic_handles(pack, [&]() {
+        super::basic_handle(pack, [&]() {
             if (auto_thresh) {
                 pack.thresh = mean(super::img).val[0];
             }
@@ -140,7 +139,7 @@ public:
         if (super::type == VIDEO)
             super::create_written(original_size);
 
-        super::basic_handles(pack, [&](){
+        super::basic_handle(pack, [&](){
             Qt qt(boundary, cap, offset);
             output_mat = cv::Scalar(0, 0, 0);
             for (int i = 0; i < height; i++) {
