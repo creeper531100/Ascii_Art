@@ -1,4 +1,5 @@
 ﻿#pragma once
+#ifdef _DEBUG
 #include "n_Imghandle.h"
 #include "pch.h"
 
@@ -19,5 +20,5 @@ public:
 	void trace();
 	void sketch();
 };
-
+#endif
 #endif

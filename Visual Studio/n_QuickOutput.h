@@ -10,14 +10,13 @@ public:
     enum Mode { DEFAULT, COLOR, FILLED };
 
     void ascii(Mode mode) {
-        int process = 0;
         double font_size = (double)super::param["quick_output"]["font_size"] / 10.0f;
         double enlarge = super::param["quick_output"]["font_size"];
         int h_offset = super::param["quick_output"]["h_offset"]; //高度有跑掉請調整這個
         char fill_char = ((string)super::param["quick_output"]["fill_char"]).c_str()[0];
         cv::Size thumbnail_size = {(int)(enlarge * 2.4f), (int)(enlarge * 3.0f)};
-
         cv::ColorConversionCodes color_conversion_codes = cv::COLOR_BGR2GRAY;
+
         if (mode != DEFAULT) {
             color_conversion_codes = (cv::ColorConversionCodes)-1;
         }

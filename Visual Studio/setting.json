@@ -23,7 +23,7 @@
 		"qt": {
 			"texture": "-1",
 			"cap": 7,
-			"offset": 3
+			"reverse": 0
 		}
 	},
 	"quick_output": {

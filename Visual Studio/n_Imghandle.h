@@ -35,7 +35,7 @@ struct SettingDataPack {
         return *this;
     }
 
-    SettingDataPack& thresh_detect() {
+    SettingDataPack& enable_thresh_detect() {
         this->thresh = param[func_name]["thresh"];
         return *this;
     }

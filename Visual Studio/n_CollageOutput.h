@@ -77,7 +77,7 @@ public:
     void braille() {
         SettingDataPack pack = SettingDataPack::create(param, "collage_output")
                                .set_color(cv::COLOR_BGR2GRAY)
-                               .thresh_detect()
+                               .enable_thresh_detect()
                                .set_dsize("braille", original_size, {8, 16}, {2, 4});
         //輸出解析度放大 480x268 -> 1920x1072
         cv::Size output_size = {pack.dsize.width * (8 / 2), pack.dsize.height * (16 / 4)};
@@ -115,38 +115,48 @@ public:
     }
 
     void qt() {
-        SettingDataPack pack = SettingDataPack::create(param)
+        SettingDataPack pack = SettingDataPack::create(param, "collage_output")
                                .set_color(cv::COLOR_BGR2GRAY)
-                               .set_dsize(original_size);
+                               .set_dsize(original_size)
+                               .enable_thresh_detect();
 
-        int width = original_size.width;
-        int height = original_size.height;
         int cap = param["collage_output"]["qt"]["cap"];
-        int offset = param["collage_output"]["qt"]["offset"];
         bool have_texture_path = (param["collage_output"]["qt"]["texture"] != "-1");
+        bool auto_thresh = (pack.thresh == -1);
 
-        Recti boundary( width / 2, height / 2 , width / 2, height / 2);
+        int reverse = param["collage_output"]["qt"]["reverse"];
+        auto thresh_cmp = [&reverse](int val1, int val2) {
+            if (reverse) {
+                return val1 > val2;
+            }
+            return val1 < val2;
+        };
+
+        Recti boundary(pack.dsize.width / 2, pack.dsize.height / 2, pack.dsize.width / 2, pack.dsize.height / 2);
+
         Mat texture;
-
-        if(have_texture_path)
+        if (have_texture_path)
             texture = cv::imread(param["collage_output"]["qt"]["texture"]);
 
         cv::Mat output_mat(original_size, CV_8UC3);
         if (super::type == VIDEO)
             super::create_written(original_size);
-        
-        super::basic_handle(pack, [&](){
+
+        super::basic_handle(pack, [&]() {
             Qt qt(boundary, cap);
+            if (auto_thresh)
+                pack.thresh = mean(super::img).val[0];
+
             output_mat = cv::Scalar(0, 0, 0);
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++) {
-                    if (img.at<uchar>(i, j) < 127) {
+            for (int i = 0; i < pack.dsize.height; i++) {
+                for (int j = 0; j < pack.dsize.width; j++) {
+                    if (thresh_cmp(img.at<uchar>(i, j), pack.thresh)) {
                         qt.insert({j, i}, cap);
                     }
                 }
             }
 
-            if(!have_texture_path) {
+            if (!have_texture_path) {
                 texture = super::orig_img;
             }
             qt.show(output_mat, texture, cap, have_texture_path);

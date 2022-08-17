@@ -1,5 +1,5 @@
-﻿#include "BasicEffectOutput.h"
-
+﻿#ifdef _DEBUG
+#include "BasicEffectOutput.h"
 void BasicEffectOutput::math_function_handle(function<double(double*)> math_func) {
     double deltaI = (double)super::param["basic_effect"]["math_function_handle"]["deltaI"] / 100;
     int arg = super::param["basic_effect"]["math_function_handle"]["arg"];
@@ -59,7 +59,7 @@ void BasicEffectOutput::thresholding() {
     SettingDataPack pack = SettingDataPack::create(param, "basic_effect")
                            .set_color(cv::COLOR_BGR2GRAY)
                            .set_dsize("thresholding", original_size)
-                           .thresh_detect();
+                           .enable_thresh_detect();
 
     super::type == IMG ? void() : super::create_written(original_size);
     bool auto_thresh = false;
@@ -139,3 +139,4 @@ void BasicEffectOutput::sketch() {
         return &mm;
     });
 }
+#endif
