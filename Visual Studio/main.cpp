@@ -3,7 +3,7 @@
 #include "n_CollageOutput.h"
 #include "pch.h"
 #include "n_ConsoleShow.h"
-#include "BasicEffectOutput.h"
+//#include "BasicEffectOutput.h"
 #include "n_QuickOutput.h"
 
 using namespace std;
@@ -20,9 +20,9 @@ int main() {
     cout << "----------------------------------\n";
     cout << "(0).預覽 AsciiArt(1).預覽 BrailleArt \n";
     cout << "(2).輸出 AsciiArt(3).輸出 BrailleArt \n";
-    cout << "(4).輸出qt(5).輸出浮雕照\n";
-    cout << "(6).快速輸出 AsciiArt(7).輸出 AsciiArt 彩色版(8).輸出 AsciiArt 彩色版(固定文字)\n";
-    cout << "(9).函數處理(10).素描(11).描邊\n";
+    cout << "(4).輸出四元樹圖像\n";
+    cout << "(5).快速輸出 AsciiArt(6).輸出 AsciiArt 彩色版(7).輸出 AsciiArt 彩色版(固定文字)\n";
+    cout << "(x).輸出浮雕照 (x).函數處理(x).素描(x).描邊 (x).帥臉\n";
     cout << "----------------------------------\n選擇功能: ";
 
     cin >> sw;
@@ -55,31 +55,29 @@ int main() {
         img_handle.braille();
         break;
     }
-    case 4: { //有問題
-        /*BasicEffectOutput img_handle(path, json_file);
-        img_handle.thresholding();*/
+    case 4: {
         CollageOutput img_handle(path, json_file);
         img_handle.qt();
         break;
     }
     case 5: {
-        BasicEffectOutput img_handle(path, json_file);
-        img_handle.relief();
-        break;
-    }
-    case 6: {
         QuickOutput img_handle(path, json_file);
         img_handle.ascii(QuickOutput::DEFAULT);
         break;
     }
-    case 7: {
+    case 6: {
         QuickOutput img_handle(path, json_file);
         img_handle.ascii(QuickOutput::COLOR);
         break;
     }
-    case 8: {
+    case 7: {
         QuickOutput img_handle(path, json_file);
         img_handle.ascii(QuickOutput::FILLED);
+        break;
+    }
+    /*case 8: {
+        BasicEffectOutput img_handle(path, json_file);
+        img_handle.relief();
         break;
     }
     case 9: {
@@ -97,6 +95,10 @@ int main() {
         img_handle.trace();
         break;
     }
+    case 12: {
+        BasicEffectOutput img_handle(path, json_file);
+        img_handle.thresholding();
+    }*/
     default:
         cout << "很遺憾失敗了" << endl;
     }

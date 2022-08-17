@@ -153,6 +153,10 @@ public:
             this->img.copyTo(orig_img);
             this->img_handle(pack);
             cv::Mat* output_mat = func();
+
+            if(!output_mat)
+                continue;
+
             if (process % 30 == 0) {
                 cv::imshow("preview", *output_mat);
                 cv::waitKey(1);
@@ -169,25 +173,6 @@ public:
         print_output_info(t_start);
         return *this;
     }
-
-    /*ImageHandle& basic_handle(SettingDataPack pack, function<void()>&& func) {
-        time_t t_start = time(NULL);
-        if (type == IMG) {
-            this->img_handle(pack);
-            func();
-        }
-        else if (type == VIDEO) {
-            while (1) {
-                this->cap >> this->img;
-                if (this->img.empty())
-                    break;
-                this->img_handle(pack);
-                func();
-            }
-        }
-        print_output_info(t_start);
-        return *this;
-    }*/
 
     void braille_create2(vector<vector<char>>& deep_arr, int threshold) {
         for (int i = 0; i < deep_arr.size(); i++) {

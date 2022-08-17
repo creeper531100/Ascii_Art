@@ -41,6 +41,7 @@ public:
             }
             WriteConsoleOutputCharacterW(hConsole, screen, pack.dsize.area(), {0, 0}, &dwBytesWritten);
             video_interval(&start);
+            return nullptr;
         });
     }
 
@@ -74,6 +75,7 @@ public:
             }
             WriteConsoleOutputCharacterW(hConsole, screen, pack.dsize.area(), {0, 0}, &dwBytesWritten);
             video_interval(&start);
+            return nullptr;
         });
     }
 
