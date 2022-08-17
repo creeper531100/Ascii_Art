@@ -25,9 +25,6 @@
     <Filter Include="來源檔案\Output\BasicEffect">
       <UniqueIdentifier>{630a5aa2-1e32-4a0a-aa60-2bc4e02d2480}</UniqueIdentifier>
     </Filter>
-    <Filter Include="來源檔案\Disable">
-      <UniqueIdentifier>{96b40d9d-3b9a-4dd6-a054-c82f0b54e84b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="來源檔案\Output\CollageOutput">
       <UniqueIdentifier>{5b0bcc21-2e98-4354-8773-470b5cd86dae}</UniqueIdentifier>
     </Filter>
@@ -39,26 +36,8 @@
     <ClCompile Include="main.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
-    <ClCompile Include="disable.cpp">
-      <Filter>來源檔案\Disable</Filter>
-    </ClCompile>
     <ClCompile Include="BasicEffectOutput.cpp">
       <Filter>來源檔案\Output\BasicEffect</Filter>
-    </ClCompile>
-    <ClCompile Include="ConsoleShow.cpp">
-      <Filter>來源檔案\Disable</Filter>
-    </ClCompile>
-    <ClCompile Include="InitWord.cpp">
-      <Filter>來源檔案\Disable</Filter>
-    </ClCompile>
-    <ClCompile Include="ImgHandle.cpp">
-      <Filter>來源檔案\Disable</Filter>
-    </ClCompile>
-    <ClCompile Include="CollageOtput.cpp">
-      <Filter>來源檔案\Disable</Filter>
-    </ClCompile>
-    <ClCompile Include="QuickOutput.cpp">
-      <Filter>來源檔案\Disable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -82,18 +61,6 @@
     </ClInclude>
     <ClInclude Include="n_QuickOutput.h">
       <Filter>來源檔案\Output\QuickOutput</Filter>
-    </ClInclude>
-    <ClInclude Include="ConsoleShow.h">
-      <Filter>來源檔案\Disable</Filter>
-    </ClInclude>
-    <ClInclude Include="ImgHandle.h">
-      <Filter>來源檔案\Disable</Filter>
-    </ClInclude>
-    <ClInclude Include="CollageOtput.h">
-      <Filter>來源檔案\Disable</Filter>
-    </ClInclude>
-    <ClInclude Include="QuickOutput.h">
-      <Filter>來源檔案\Disable</Filter>
     </ClInclude>
     <ClInclude Include="Qt.h">
       <Filter>來源檔案\Output\CollageOutput</Filter>
