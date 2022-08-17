@@ -110,5 +110,6 @@ A AsciiArt generator<br>
 2. [AsciiArt - QuickOutput](https://youtu.be/o5iKn05nuLc)
 3. [BrailleArt](https://youtu.be/fds8-M9iK8I)
 4. [QuadTree](https://youtu.be/n1y7JL6NfS8)
+5. [QuadTree - static image](https://youtu.be/Gbx0jPiPlQA)
 # 下載
 請點擊左邊Releases
