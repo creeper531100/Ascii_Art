@@ -56,7 +56,7 @@ struct SettingDataPack {
         }
         if (this->dsize.height == -1) {
             this->dsize.height = original_video_size.height / (thumbnail_size.height / zoom.second);
-            if (zoom.first != 1)
+            if (zoom.second != 1)
                 this->dsize.height = (int)(this->dsize.height / thumbnail_size.height) * thumbnail_size.height;
         }
         return *this;

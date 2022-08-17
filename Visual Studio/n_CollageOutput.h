@@ -125,7 +125,7 @@ public:
         int offset = param["collage_output"]["qt"]["offset"];
         bool have_texture_path = (param["collage_output"]["qt"]["texture"] != "-1");
 
-        Recti boundary({ width / 2, height / 2 }, width / 2, height / 2);
+        Recti boundary( width / 2, height / 2 , width / 2, height / 2);
         Mat texture;
 
         if(have_texture_path)
@@ -136,7 +136,7 @@ public:
             super::create_written(original_size);
         
         super::basic_handle(pack, [&](){
-            Qt qt(boundary, cap, offset);
+            Qt qt(boundary, cap);
             output_mat = cv::Scalar(0, 0, 0);
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {

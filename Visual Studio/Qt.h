@@ -6,20 +6,21 @@ using cv::Rect;
 using cv::Mat;
 
 struct Recti {
-    Recti(Point center, int width, int height) : center(center), width(width), height(height) {
-        this->west = this->center.x - this->width;
-        this->east = this->center.x + this->width;
-        this->north = this->center.y - this->height;
-        this->south = this->center.y + this->height;
+    Recti(float cx, float cy, float width, float height) : cx(cx), cy(cy), width(width), height(height) {
+        this->west = (this->cx - this->width);
+        this->east = (this->cx + this->width);
+        this->north = (this->cy - this->height);
+        this->south = (this->cy + this->height);
     }
 
     bool contains(Point p) {
         return p.x >= west && p.x < east&& p.y >= north && p.y < south;
     }
 
-    Point center;
-    int width;
-    int height;
+    float cx;
+    float cy;
+    float width;
+    float height;
     int west;
     int east;
     int north;
@@ -33,27 +34,26 @@ private:
     std::queue<Point> points;
     int cap;
     cv::Scalar scalar;
-    int offset;
 public:
     bool div;
-    Qt(Recti boundary, int cap, int offset) : boundary(boundary), cap(cap), offset(offset) {
+    Qt(Recti boundary, int cap) : boundary(boundary), cap(cap) {
         this->div = false;
         this->scalar = { 0, 0, 0 };
     }
     void sub() {
-        int x = boundary.center.x;
-        int y = boundary.center.y;
-        int cx = boundary.width / 2;
-        int cy = boundary.height / 2;
+        float cx = boundary.cx;
+        float cy = boundary.cy;
+        float w = boundary.width / 2.0;
+        float h = boundary.height / 2.0;
 
-        Recti nw({ x - cx, y - cy }, cx, cy);
-        root[0] = new Qt(nw, cap, offset);
-        Recti ne({ x + cx, y - cy }, cx, cy);
-        root[1] = new Qt(ne, cap, offset);
-        Recti sw({ x - cx, y + cy }, cx, cy);
-        root[2] = new Qt(sw, cap, offset);
-        Recti se({ x + cx, y + cy }, cx, cy);
-        root[3] = new Qt(se, cap, offset);
+        Recti nw(cx - w, cy - h, w, h);
+        root[0] = new Qt(nw, cap);
+        Recti ne(cx + w, cy - h, w, h);
+        root[1] = new Qt(ne, cap);
+        Recti sw(cx - w, cy + h, w, h);
+        root[2] = new Qt(sw, cap);
+        Recti se(cx + w, cy + h, w, h);
+        root[3] = new Qt(se, cap);
         div = true;
     }
 
@@ -84,15 +84,9 @@ public:
         return false;
     }
 
-    void draw(Mat& mat, std::vector<Mat>& src, int lv) {
+    void draw(Mat& mat, vector<Mat>& src, int lv) {
         static Mat img;
         src[lv].copyTo(img);
-        if (lv <= 0) {
-            Point start = { boundary.west - offset, boundary.north - offset };
-            Point end = { boundary.east + offset, boundary.south + offset };
-            rectangle(mat, start, end, scalar, -1);
-            return;
-        }
         Rect roi(Point(boundary.west, boundary.north), img.size());
         Mat insetImage(mat, roi);
         if (lv <= 3) {
