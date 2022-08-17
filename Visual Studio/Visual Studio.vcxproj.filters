@@ -95,5 +95,8 @@
     <ClInclude Include="QuickOutput.h">
       <Filter>來源檔案\Disable</Filter>
     </ClInclude>
+    <ClInclude Include="Qt.h">
+      <Filter>來源檔案\Output\CollageOutput</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

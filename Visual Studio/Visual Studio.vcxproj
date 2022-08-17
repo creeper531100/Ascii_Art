@@ -162,6 +162,7 @@
     <ClInclude Include="n_Imghandle.h" />
     <ClInclude Include="n_QuickOutput.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Qt.h" />
     <ClInclude Include="QuickOutput.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

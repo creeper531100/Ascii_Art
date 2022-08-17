@@ -19,6 +19,11 @@
 		"braille": {
 			"width": -1,
 			"height": -1
+		},
+		"qt": {
+			"texture": "-1",
+			"cap": 7,
+			"offset": 3
 		}
 	},
 	"quick_output": {

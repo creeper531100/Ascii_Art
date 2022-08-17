@@ -34,7 +34,7 @@ struct SettingDataPack {
         return *this;
     }
 
-    SettingDataPack& init_thresh() {
+    SettingDataPack& thresh_detect() {
         this->thresh = param[func_name]["thresh"];
         return *this;
     }
@@ -61,7 +61,7 @@ struct SettingDataPack {
         return *this;
     }
 
-    static SettingDataPack create(Json param, string func_name) {
+    static SettingDataPack create(Json param, string func_name = "") {
         return SettingDataPack(param, func_name);
     }
 };
@@ -71,6 +71,7 @@ protected:
     string file_path;
     Json param;
     cv::Mat img;
+    cv::Mat orig_img;
 
     enum FileType { NONE, IMG, VIDEO };
 
@@ -138,7 +139,38 @@ public:
         writer = cv::VideoWriter("tempvideo.mp4", this->encoding, this->frame_FPS, set_size);
     }
 
-    ImageHandle& basic_handle(SettingDataPack pack, function<void()>&& func) {
+    ImageHandle& basic_handles(SettingDataPack pack, function<cv::Mat*()>&& func) {
+        int process = 0;
+        time_t t_start = time(NULL);
+
+        while (1) {
+            if (type == VIDEO)
+                this->cap >> this->img;
+
+            if (this->img.empty())
+                break;
+
+            this->img.copyTo(orig_img);
+            this->img_handle(pack);
+            cv::Mat* output_mat = func();
+            if (process % 30 == 0) {
+                cv::imshow("preview", *output_mat);
+                cv::waitKey(1);
+            }
+
+            fmt::print("進度: {}%\r", (process++ / frame_total) * 100);
+            if (type == IMG) {
+                cv::imwrite("output_pic.png", *output_mat);
+                break;
+            }
+            writer.write(*output_mat);
+        }
+
+        print_output_info(t_start);
+        return *this;
+    }
+
+    /*ImageHandle& basic_handle(SettingDataPack pack, function<void()>&& func) {
         time_t t_start = time(NULL);
         if (type == IMG) {
             this->img_handle(pack);
@@ -155,13 +187,12 @@ public:
         }
         print_output_info(t_start);
         return *this;
-    }
+    }*/
 
     void braille_create2(vector<vector<char>>& deep_arr, int threshold) {
         for (int i = 0; i < deep_arr.size(); i++) {
             for (int j = 1; j < deep_arr[0].size(); j += 2) {
                 if (this->img.at<uchar>(i, j - 1) > threshold) {
-                    //.at(y, x)
                     if (this->img.at<uchar>(i, j) > threshold)
                         deep_arr[i][j / 2] = 'm';
                     else

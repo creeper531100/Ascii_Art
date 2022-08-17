@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "n_Imghandle.h"
 #include "pch.h"
+#include "Qt.h"
 
 inline std::vector<std::string> split(std::string split_str, std::string&& delimiter) {
     //分割特定字元
@@ -58,10 +59,10 @@ public:
         vector<cv::Mat> mats = read_img_for_index("font\\font\\");
         cv::Size thumbnail_size = {mats[0].cols, mats[0].rows};
         super::basic_handle(pack, [&]() {
-            for (int i = 0; i < output_size.height; i += thumbnail_size.height) {
-                for (int j = 0; j < output_size.width; j += thumbnail_size.width) {
+            for (int i = 0, row = 0; i < output_size.height; i += thumbnail_size.height, row++) {
+                for (int j = 0, col = 0; j < output_size.width; j += thumbnail_size.width, col++) {
                     cv::Rect roi(cv::Point(j, i), thumbnail_size);
-                    cv::Mat symbol = mats[img.at<uchar>(i / thumbnail_size.height, j / thumbnail_size.width) / 4];
+                    cv::Mat symbol = mats[img.at<uchar>(row, col) / 4];
                     symbol.copyTo(output_mat(roi));
                 }
             }
@@ -78,9 +79,8 @@ public:
     void braille() {
         SettingDataPack pack = SettingDataPack::create(param, "collage_output")
                                .set_color(cv::COLOR_BGR2GRAY)
-                               .init_thresh()
+                               .thresh_detect()
                                .set_dsize("braille", original_size, {8, 16}, {2, 4});
-        int process = 0;
         bool auto_thresh = false;
 
         //輸出解析度放大 480x268 -> 1920x1072
@@ -98,7 +98,7 @@ public:
         auto mats = read_img_for_folder("font\\braille\\");
         cv::Size thumbnail_size = {mats.begin()->second.cols, mats.begin()->second.rows};
 
-        super::basic_handle(pack, [&]() {
+        super::basic_handles(pack, [&]() {
             if (auto_thresh) {
                 pack.thresh = mean(super::img).val[0];
             }
@@ -115,9 +115,48 @@ public:
                     symbol.copyTo(output_mat(roi));
                 }
             }
+            return &output_mat;
+        });
+    }
 
-            super::type == IMG ? (void)imwrite("output_pic.png", output_mat) : super::writer.write(output_mat);
-            fmt::print("進度: {}%\r", (process++ / super::frame_total) * 100);
+    void qt() {
+        SettingDataPack pack = SettingDataPack::create(param)
+                               .set_color(cv::COLOR_BGR2GRAY)
+                               .set_dsize(original_size);
+
+        int width = original_size.width;
+        int height = original_size.height;
+        int cap = param["collage_output"]["qt"]["cap"];
+        int offset = param["collage_output"]["qt"]["offset"];
+        bool have_texture_path = (param["collage_output"]["qt"]["texture"] != "-1");
+
+        Mat texture;
+        if(have_texture_path)
+            texture = cv::imread(param["collage_output"]["qt"]["texture"]);
+
+        Recti boundary({width / 2, height / 2}, width / 2, height / 2);
+
+        cv::Mat output_mat(original_size, CV_8UC3);
+        if (super::type == VIDEO)
+            super::create_written(original_size);
+
+        super::basic_handles(pack, [&](){
+            Qt qt(boundary, cap, offset);
+            output_mat = cv::Scalar(0, 0, 0);
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    if (img.at<uchar>(i, j) < 127) {
+                        qt.insert({j, i}, cap);
+                    }
+                }
+            }
+
+            if(!have_texture_path) {
+                texture = super::orig_img;
+            }
+
+            qt.show(output_mat, texture, cap, !have_texture_path);
+            return &output_mat;
         });
     }
 };

@@ -14,8 +14,11 @@ public:
     using super::super;
 
     SettingDataPack console_init(const char* mode) {
-        SettingDataPack pack = SettingDataPack::create(param, "console_show").set_color(cv::COLOR_BGR2GRAY).set_dsize(
-            mode, this->original_size).init_thresh();
+        SettingDataPack pack = SettingDataPack::create(param, "console_show")
+                               .set_color(cv::COLOR_BGR2GRAY)
+                               .set_dsize(mode, this->original_size)
+                               .thresh_detect();
+
         screen = new wchar_t[pack.dsize.area()];
         hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
         return pack;

@@ -60,7 +60,8 @@ void BasicEffectOutput::contours_handle(function<void(vector<vector<cv::Point>>*
 void BasicEffectOutput::thresholding() {
     SettingDataPack pack = SettingDataPack::create(param, "basic_effect")
                            .set_color(cv::COLOR_BGR2GRAY)
-                           .set_dsize("thresholding", original_size).init_thresh();
+                           .set_dsize("thresholding", original_size)
+                           .thresh_detect();
 
     super::type == IMG ? void() : super::create_written(original_size);
     bool auto_thresh = false;
