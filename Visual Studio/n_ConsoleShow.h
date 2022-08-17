@@ -47,14 +47,10 @@ public:
 
     void braille() {
         SettingDataPack pack = console_init("braille");
-        bool auto_thresh = false;
-
         map<string, wchar_t> map_pairs = init_words();
         vector<vector<char>> braille_string(pack.dsize.height, vector<char>(pack.dsize.width));
+        bool auto_thresh = (pack.thresh == -1);
 
-        if (pack.thresh == -1) {
-            auto_thresh = true;
-        }
         SetConsoleActiveScreenBuffer(hConsole);
 
         auto start = chrono::system_clock::now();

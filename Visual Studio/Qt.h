@@ -31,16 +31,15 @@ private:
     Recti boundary;
     Qt* root[4];
     std::queue<Point> points;
-    bool div;
     int cap;
     cv::Scalar scalar;
     int offset;
 public:
+    bool div;
     Qt(Recti boundary, int cap, int offset) : boundary(boundary), cap(cap), offset(offset) {
         this->div = false;
         this->scalar = { 0, 0, 0 };
     }
-
     void sub() {
         int x = boundary.center.x;
         int y = boundary.center.y;
@@ -65,7 +64,7 @@ public:
             return false;
         }
 
-        if (points.size() < cap) {
+        if (points.size() < cap) { //TODO: о─пр
             points.push(point);
             return true;
         }
@@ -102,34 +101,37 @@ public:
         img.copyTo(insetImage);
     }
 
-    void show(Mat& mat, Mat& img2, int lv, bool is_dynamic_img) {
+    void show(Mat& mat, Mat& img2, int lv, bool is_static_img) {
         static bool first_run = true;
         static bool first_frame = true;
         static std::vector<Mat> img(this->cap + 1);
-        if (first_run || (first_frame && is_dynamic_img)) {
-            cv::resize(img2, img2, mat.size());
+        if (first_run || (first_frame && !is_static_img)) {
+            cv::resize(img2, img2, mat.size(), 0, 0, cv::INTER_CUBIC);
             float scaling = 1;
             for (int i = 0; i < this->cap + 1; i++) {
-                cv::resize(img2, img[i], cv::Size(), scaling, scaling);
+                cv::resize(img2, img[this->cap - i], cv::Size(), scaling, scaling, cv::INTER_CUBIC);
                 scaling *= 0.5;
             }
-            std::reverse(img.begin(), img.end());
             first_run = false;
         }
 
         this->draw(mat, img, lv);
         if (div) {
-            root[0]->show(mat, img2, lv - 1, is_dynamic_img);
-            root[1]->show(mat, img2, lv - 1, is_dynamic_img);
-            root[2]->show(mat, img2, lv - 1, is_dynamic_img);
-            root[3]->show(mat, img2, lv - 1, is_dynamic_img);
+            root[0]->show(mat, img2, lv - 1, is_static_img);
+            root[1]->show(mat, img2, lv - 1, is_static_img);
+            root[2]->show(mat, img2, lv - 1, is_static_img);
+            root[3]->show(mat, img2, lv - 1, is_static_img);
             first_frame = (lv == 7);
         }
     }
 
-    ~Qt() {
+    void free() {
         for (int i = 0; i < 4; i++) {
             delete root[i];
         }
+    }
+
+    ~Qt() {
+        free();
     }
 };

@@ -11,6 +11,7 @@ inline bool match_string(string keyword, vector<string> arr) {
 }
 
 struct SettingDataPack {
+    //TODO: 寫不好
     cv::Size dsize;
     int thresh;
     cv::ColorConversionCodes color;
@@ -72,13 +73,10 @@ protected:
     Json param;
     cv::Mat img;
     cv::Mat orig_img;
-
-    enum FileType { NONE, IMG, VIDEO };
-
-    FileType type;
-
     cv::VideoCapture cap;
     cv::VideoWriter writer;
+
+    enum FileType { NONE, IMG, VIDEO } type;
 
     double frame_FPS;
     double frame_total;
@@ -91,8 +89,9 @@ public:
     ImageHandle(string path, Json param) : file_path(path), param(param) {
         if (match_string(path, {".jpg", ".JPG", ".png", ".PNG", ".tiff"}) == true) {
             //判斷圖片
-            this->img = cv::imread(path);
-            cout << "Resize Size: " << this->img.size().height << "x" << this->img.size().width << endl;
+            this->orig_img = cv::imread(path);
+            this->orig_img.copyTo(this->img);
+            cout << "Resize Size: " << this->orig_img.size().height << "x" << this->orig_img.size().width << endl;
             this->type = IMG;
             this->original_size = img.size();
         }
@@ -105,12 +104,6 @@ public:
             this->type = VIDEO;
             this->encoding = cv::VideoWriter::fourcc('D', 'I', 'V', 'X');
         }
-    }
-
-    void img_handle(SettingDataPack pack) {
-        cv::resize(this->img, this->img, pack.dsize, 0, 0, cv::INTER_CUBIC);
-        if (pack.color != -1)
-            cv::cvtColor(this->img, this->img, pack.color);
     }
 
     void print_output_info(time_t t_start) {
@@ -145,16 +138,19 @@ public:
 
         while (1) {
             if (type == VIDEO)
-                this->cap >> this->img;
+                this->cap >> this->orig_img;
 
-            if (this->img.empty())
+            if (this->orig_img.empty())
                 break;
 
-            this->img.copyTo(orig_img);
-            this->img_handle(pack);
+            resize(this->orig_img, this->img, pack.dsize, 0, 0, cv::INTER_CUBIC);
+
+            if (pack.color != -1)
+                cv::cvtColor(this->img, this->img, pack.color);
+
             cv::Mat* output_mat = func();
 
-            if(!output_mat)
+            if (!output_mat)
                 continue;
 
             if (process % 30 == 0) {
@@ -162,11 +158,12 @@ public:
                 cv::waitKey(1);
             }
 
-            fmt::print("進度: {}%\r", (process++ / frame_total) * 100);
             if (type == IMG) {
-                cv::imwrite("output_pic.png", *output_mat);
+                imwrite("output_pic.png", *output_mat);
                 break;
             }
+
+            fmt::print("進度: {}%\r", (process++ / frame_total) * 100);
             writer.write(*output_mat);
         }
 

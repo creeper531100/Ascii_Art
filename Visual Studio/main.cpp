@@ -10,23 +10,24 @@ using namespace std;
 using Json = nlohmann::json;
 
 int main() {
+    SetConsoleOutputCP(65001);
     int sw = 0;
     string path = "";
     Json json_file;
     ifstream in("setting.json");
     in >> json_file;
 
-    cout << "AsciiArt新藝術\n";
-    cout << "----------------------------------\n";
-    cout << "(0).預覽 AsciiArt(1).預覽 BrailleArt \n";
-    cout << "(2).輸出 AsciiArt(3).輸出 BrailleArt \n";
-    cout << "(4).輸出四元樹圖像\n";
-    cout << "(5).快速輸出 AsciiArt(6).輸出 AsciiArt 彩色版(7).輸出 AsciiArt 彩色版(固定文字)\n";
-    cout << "(x).輸出浮雕照 (x).函數處理(x).素描(x).描邊 (x).帥臉\n";
-    cout << "----------------------------------\n選擇功能: ";
+    cout << u8"AsciiArt新藝術\n";
+    cout << u8"----------------------------------\n";
+    cout << u8"(0).預覽 AsciiArt(1).預覽 BrailleArt \n";
+    cout << u8"(2).輸出 AsciiArt(3).輸出 BrailleArt \n";
+    cout << u8"(4).輸出四元樹圖像\n";
+    cout << u8"(5).快速輸出 AsciiArt(6).輸出 AsciiArt 彩色版(7).輸出 AsciiArt 彩色版(固定文字)\n";
+    cout << u8"(x).輸出浮雕照 (x).函數處理(x).素描(x).描邊 (x).帥臉\n";
+    cout << u8"----------------------------------\n選擇功能: ";
 
     cin >> sw;
-    cout << "輸入網址或圖片位置: ";
+    cout << u8"輸入網址或圖片位置: ";
     cin >> path;
     if (path.find("https") != std::string::npos) {
         remove("HTC.mp4");
@@ -100,7 +101,7 @@ int main() {
         img_handle.thresholding();
     }*/
     default:
-        cout << "很遺憾失敗了" << endl;
+        cout << u8"很遺憾失敗了" << endl;
     }
     ::system("pause");
 }

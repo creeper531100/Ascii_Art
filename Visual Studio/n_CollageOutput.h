@@ -18,7 +18,7 @@ inline std::vector<std::string> split(std::string split_str, std::string&& delim
     return res;
 }
 
-inline unordered_map<string, cv::Mat> read_img_for_folder(string path) {
+inline unordered_map<string, cv::Mat> read_folder_as_map(string path) {
     unordered_map<string, cv::Mat> vec;
     vector<string> names;
     cv::glob(path, names);
@@ -30,7 +30,7 @@ inline unordered_map<string, cv::Mat> read_img_for_folder(string path) {
     return vec;
 }
 
-inline vector<cv::Mat> read_img_for_index(string path) {
+inline vector<cv::Mat> read_folder_as_list(string path) {
     vector<cv::Mat> arr;
     for (int i = 0; i <= 64; i++) {
         cv::Mat mat = cv::imread("font\\font\\" + to_string(i) + ".png");
@@ -48,7 +48,6 @@ public:
         SettingDataPack pack = SettingDataPack::create(param, "collage_output")
                                .set_color(cv::COLOR_BGR2GRAY)
                                .set_dsize("ascii", original_size, {8, 16});
-        int process = 0;
 
         cv::Size output_size = {pack.dsize.width * 8, pack.dsize.height * 16};
         cv::Mat output_mat(output_size, CV_8UC3);
@@ -56,7 +55,7 @@ public:
         if (super::type == VIDEO)
             super::create_written(pack.dsize, output_size);
 
-        vector<cv::Mat> mats = read_img_for_index("font\\font\\");
+        vector<cv::Mat> mats = read_folder_as_list("font\\font\\");
         cv::Size thumbnail_size = {mats[0].cols, mats[0].rows};
         super::basic_handle(pack, [&]() {
             for (int i = 0, row = 0; i < output_size.height; i += thumbnail_size.height, row++) {
@@ -80,21 +79,18 @@ public:
                                .set_color(cv::COLOR_BGR2GRAY)
                                .thresh_detect()
                                .set_dsize("braille", original_size, {8, 16}, {2, 4});
-        bool auto_thresh = false;
-
         //輸出解析度放大 480x268 -> 1920x1072
         cv::Size output_size = {pack.dsize.width * (8 / 2), pack.dsize.height * (16 / 4)};
 
         cv::Mat output_mat(output_size, CV_8UC3);
         vector<vector<char>> braille_string2(pack.dsize.height, vector<char>(pack.dsize.width));
 
-        if (pack.thresh == -1)
-            auto_thresh = true;
+        bool auto_thresh = (pack.thresh == -1);
 
         if (super::type == VIDEO)
             super::create_written(pack.dsize, output_size);
 
-        auto mats = read_img_for_folder("font\\braille\\");
+        auto mats = read_folder_as_map("font\\braille\\");
         cv::Size thumbnail_size = {mats.begin()->second.cols, mats.begin()->second.rows};
 
         super::basic_handle(pack, [&]() {
@@ -129,16 +125,16 @@ public:
         int offset = param["collage_output"]["qt"]["offset"];
         bool have_texture_path = (param["collage_output"]["qt"]["texture"] != "-1");
 
+        Recti boundary({ width / 2, height / 2 }, width / 2, height / 2);
         Mat texture;
+
         if(have_texture_path)
             texture = cv::imread(param["collage_output"]["qt"]["texture"]);
-
-        Recti boundary({width / 2, height / 2}, width / 2, height / 2);
 
         cv::Mat output_mat(original_size, CV_8UC3);
         if (super::type == VIDEO)
             super::create_written(original_size);
-
+        
         super::basic_handle(pack, [&](){
             Qt qt(boundary, cap, offset);
             output_mat = cv::Scalar(0, 0, 0);
@@ -153,8 +149,7 @@ public:
             if(!have_texture_path) {
                 texture = super::orig_img;
             }
-
-            qt.show(output_mat, texture, cap, !have_texture_path);
+            qt.show(output_mat, texture, cap, have_texture_path);
             return &output_mat;
         });
     }
