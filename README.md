@@ -32,7 +32,9 @@ A AsciiArt generator<br>
 * BrailleArt
   * `預覽BrailleArt` - 此效果可能會卡住，他可以立即輸出影片到WindowsConsole，視窗必須保持最小化且沒有縮放
   * `輸出BrailleArt` - 將匯入的影片輸出成平常的mp4檔，可以分享給你所有的朋友
-* 基本影像處理 
+* 四元樹
+  * `輸出四元樹圖像` - 將匯入的影片進行四元樹分割，可以分享給你所有的朋友
+* 基本影像處理 `待修復`
   * `輸出帥臉` - 將影像進行二值化，變成剪影，也給你朋友當作一個大驚喜
   * `輸出浮雕照` - 對影像作分離，可以達成一個非常酷的效果
   * `函數處理` - 對影像做基本的函數處理
@@ -44,8 +46,8 @@ A AsciiArt generator<br>
 	"console_show": {
 		"thresh": -1, //域值設定，當像素大於域值即設定為白色，否則為黑色，-1即為自動
 		"ascii": {
-			"width": 237, //輸出影片寬設定
-			"height": 64  //輸出影片長設定
+			"width": 237, //輸出影片寬設定，-1為自動
+			"height": 64  //輸出影片長設定，-1為自動
 		},
 		"braille": {
 			"width": 240,
@@ -53,7 +55,7 @@ A AsciiArt generator<br>
 		}
 	},
 	"collage_output": {
-		"thresh": -1, //域值設定
+		"thresh": -1, //域值設定，-1為自動
 		"ascii": {
 			"width": 240, //長寬
 			"height": 67  //長寬
@@ -61,6 +63,11 @@ A AsciiArt generator<br>
 		"braille": {
 			"width": 480, //長寬
 			"height": 268 //長寬
+		},
+		"qt": {
+			"texture": "-1", //你的貼文文件位址，-1為自動
+			"cap": 7, //要分割多少個小方塊
+			"reverse": 0 //啟用反向顏色 0: 關閉
 		}
 	},
 	"basic_effect": {
@@ -102,6 +109,6 @@ A AsciiArt generator<br>
 1. [AsciiArt](https://youtu.be/8WSQcTy1UYM)
 2. [AsciiArt - QuickOutput](https://youtu.be/o5iKn05nuLc)
 3. [BrailleArt](https://youtu.be/fds8-M9iK8I)
-
+4. [QuadTree](https://youtu.be/n1y7JL6NfS8)
 # 下載
 [載點](https://github.com/creeper531100/Ascii_Art/releases/download/V2.0/AsciiArt2.zip)
