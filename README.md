@@ -112,4 +112,4 @@ A AsciiArt generator<br>
 4. [QuadTree](https://youtu.be/n1y7JL6NfS8)
 5. [QuadTree - static image](https://youtu.be/Gbx0jPiPlQA)
 # 下載
-請點擊左邊Releases
+請點擊左邊Releases :)
