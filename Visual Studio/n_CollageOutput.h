@@ -49,17 +49,14 @@ public:
                                .set_color(cv::COLOR_BGR2GRAY)
                                .set_dsize("ascii", original_size, {8, 16});
 
-        cv::Size output_size = {pack.dsize.width * 8, pack.dsize.height * 16};
-        cv::Mat output_mat(output_size, CV_8UC3);
-
-        if (super::type == VIDEO)
-            super::create_written(pack.dsize, output_size);
+        pack.output_size = {pack.dsize.width * 8, pack.dsize.height * 16};
+        cv::Mat output_mat(pack.output_size, CV_8UC3);
 
         vector<cv::Mat> mats = read_folder_as_list("font\\font\\");
         cv::Size thumbnail_size = {mats[0].cols, mats[0].rows};
         super::basic_handle(pack, [&]() {
-            for (int i = 0, row = 0; i < output_size.height; i += thumbnail_size.height, row++) {
-                for (int j = 0, col = 0; j < output_size.width; j += thumbnail_size.width, col++) {
+            for (int i = 0, row = 0; i < pack.output_size.height; i += thumbnail_size.height, row++) {
+                for (int j = 0, col = 0; j < pack.output_size.width; j += thumbnail_size.width, col++) {
                     cv::Rect roi(cv::Point(j, i), thumbnail_size);
                     cv::Mat symbol = mats[img.at<uchar>(row, col) / 4];
                     symbol.copyTo(output_mat(roi));
@@ -80,15 +77,12 @@ public:
                                .enable_thresh_detect()
                                .set_dsize("braille", original_size, {8, 16}, {2, 4});
         //輸出解析度放大 480x268 -> 1920x1072
-        cv::Size output_size = {pack.dsize.width * (8 / 2), pack.dsize.height * (16 / 4)};
+         
+        pack.output_size = {pack.dsize.width * (8 / 2), pack.dsize.height * (16 / 4)};
+        cv::Mat output_mat(pack.output_size, CV_8UC3);
 
-        cv::Mat output_mat(output_size, CV_8UC3);
         vector<vector<char>> braille_string2(pack.dsize.height, vector<char>(pack.dsize.width));
-
-        bool auto_thresh = (pack.thresh == -1);
-
-        if (super::type == VIDEO)
-            super::create_written(pack.dsize, output_size);
+        bool auto_thresh = (pack.thresh == AUTO_DETECT);
 
         auto mats = read_folder_as_map("font\\braille\\");
         cv::Size thumbnail_size = {mats.begin()->second.cols, mats.begin()->second.rows};
@@ -99,8 +93,8 @@ public:
             }
 
             braille_create2(braille_string2, pack.thresh);
-            for (int row = 3, i = 0; i < output_size.height; row += 4, i += thumbnail_size.height) {
-                for (int col = 0, j = 0; j < output_size.width; col += 1, j += thumbnail_size.width) {
+            for (int row = 3, i = 0; i < pack.output_size.height; row += 4, i += thumbnail_size.height) {
+                for (int col = 0, j = 0; j < pack.output_size.width; col += 1, j += thumbnail_size.width) {
                     string buf = {
                             braille_string2[row - 3][col], braille_string2[row - 2][col], braille_string2[row - 1][col],
                             braille_string2[row][col]
@@ -117,12 +111,13 @@ public:
     void qt() {
         SettingDataPack pack = SettingDataPack::create(param, "collage_output")
                                .set_color(cv::COLOR_BGR2GRAY)
-                               .set_dsize(original_size)
+                               .set_output_mode(OutputMode::ORIGIN_SIZE)
                                .enable_thresh_detect();
 
+        cv::Size size = original_size;
         int cap = param["collage_output"]["qt"]["cap"];
         bool have_texture_path = (param["collage_output"]["qt"]["texture"] != "-1");
-        bool auto_thresh = (pack.thresh == -1);
+        bool auto_thresh = (pack.thresh == AUTO_DETECT);
 
         int reverse = param["collage_output"]["qt"]["reverse"];
         auto thresh_cmp = [&reverse](int val1, int val2) {
@@ -132,24 +127,21 @@ public:
             return val1 < val2;
         };
 
-        Recti boundary(pack.dsize.width / 2, pack.dsize.height / 2, pack.dsize.width / 2, pack.dsize.height / 2);
+        Recti boundary(size.width / 2, size.height / 2, size.width / 2, size.height / 2);
 
         Mat texture;
         if (have_texture_path)
             texture = cv::imread(param["collage_output"]["qt"]["texture"]);
 
         cv::Mat output_mat(original_size, CV_8UC3);
-        if (super::type == VIDEO)
-            super::create_written(original_size);
-
         super::basic_handle(pack, [&]() {
             Qt qt(boundary, cap);
             if (auto_thresh)
                 pack.thresh = mean(super::img).val[0];
 
             output_mat = cv::Scalar(0, 0, 0);
-            for (int i = 0; i < pack.dsize.height; i++) {
-                for (int j = 0; j < pack.dsize.width; j++) {
+            for (int i = 0; i < size.height; i++) {
+                for (int j = 0; j < size.width; j++) {
                     if (thresh_cmp(img.at<uchar>(i, j), pack.thresh)) {
                         qt.insert({j, i}, cap);
                     }

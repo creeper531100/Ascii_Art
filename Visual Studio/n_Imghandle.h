@@ -1,8 +1,13 @@
 ﻿#pragma once
 #include "pch.h"
+#define AUTO_DETECT -1
+#define AUTO_RESIZE -1, -1
+
 
 using namespace std;
 using Json = nlohmann::json;
+
+enum OutputMode { DISABLE = -1, ORIGIN_SIZE = -2 };
 
 inline bool match_string(string keyword, vector<string> arr) {
     return std::find_if(arr.begin(), arr.end(), [&](string index) {
@@ -13,16 +18,18 @@ inline bool match_string(string keyword, vector<string> arr) {
 struct SettingDataPack {
     //TODO: 寫不好
     cv::Size dsize;
+    cv::Size output_size;
     int thresh;
     cv::ColorConversionCodes color;
     Json param;
     string func_name;
 
+
     SettingDataPack(Json param, string func_name) :
-        dsize(cv::Size{-1, -1}),
-        color((cv::ColorConversionCodes)-1),
+        dsize(cv::Size{ AUTO_RESIZE }),
+        color((cv::ColorConversionCodes)AUTO_DETECT),
         param(param),
-        func_name(func_name) {
+        output_size(cv::Size{ AUTO_RESIZE }) {
     }
 
     SettingDataPack& set_color(cv::ColorConversionCodes color) {
@@ -35,6 +42,11 @@ struct SettingDataPack {
         return *this;
     }
 
+    SettingDataPack& set_output_mode(OutputMode mode) {
+        this->output_size.width = (int)mode;
+        return *this;
+    }
+
     SettingDataPack& enable_thresh_detect() {
         this->thresh = param[func_name]["thresh"];
         return *this;
@@ -42,6 +54,7 @@ struct SettingDataPack {
 
     SettingDataPack& set_dsize(const char* mode, cv::Size& original_video_size, cv::Size thumbnail_size = {8, 16},
                                pair<int, int> zoom = {1, 1}) {
+        //dsize 設定圖片縮放尺寸
         /*
          * width除8 => 因為img被resize了，輸出圖像必須被擴充至原始解析度(thumbnail縮圖，乘上縮圖即原始尺寸)
          * width除zoom => 一個文字占據兩格寬度
@@ -49,12 +62,12 @@ struct SettingDataPack {
          * 同理height
          */
         this->dsize = {param[func_name][mode]["width"], param[func_name][mode]["height"]};
-        if (this->dsize.width == -1) {
+        if (this->dsize.width == AUTO_DETECT) {
             this->dsize.width = original_video_size.width / (thumbnail_size.width / zoom.first);
             if (zoom.first != 1)
                 this->dsize.width = (int)(this->dsize.width / thumbnail_size.width) * thumbnail_size.width;
         }
-        if (this->dsize.height == -1) {
+        if (this->dsize.height == AUTO_DETECT) {
             this->dsize.height = original_video_size.height / (thumbnail_size.height / zoom.second);
             if (zoom.second != 1)
                 this->dsize.height = (int)(this->dsize.height / thumbnail_size.height) * thumbnail_size.height;
@@ -108,44 +121,62 @@ public:
 
     void print_output_info(time_t t_start) {
 #ifndef _DEBUG
-        if(type == VIDEO) {
+        if (type == VIDEO) {
             writer.release();
             Sleep(1000);
             system(
-                ("ffmpeg -i tempvideo.mp4 -i " + this->file_path + " -c copy -map 0:v:0 -map 1:a:0 output_video.mp4").
+                ("ffmpeg -i out\\tempvideo.mp4 -i " + this->file_path +
+                    " -c copy -map 0:v:0 -map 1:a:0 out\\output_video.mp4").
                 c_str());
             int totalTime = difftime(time(NULL), t_start);
             printf("\nused %02d:%02d\n", totalTime / 60, totalTime % 60);
-            remove("tempvideo.mp4");
+            remove("out\\tempvideo.mp4");
             system("pause");
         }
 #endif
     }
 
-    void create_written(cv::Size origin_size, cv::Size set_size = {-1, -1}) {
-        if (set_size.height == -1)
-            set_size = origin_size;
-
-        cout << "Resize Size: " << origin_size.width << "x" << origin_size.height << endl;
+    void create_written(cv::Size set_size) {
         cout << "Output Size: " << set_size.width << "x" << set_size.height << endl;
-
-        writer = cv::VideoWriter("tempvideo.mp4", this->encoding, this->frame_FPS, set_size);
+        writer = cv::VideoWriter("out\\tempvideo.mp4", this->encoding, this->frame_FPS, set_size);
     }
 
-    ImageHandle& basic_handle(SettingDataPack pack, function<cv::Mat*()>&& func) {
+    ImageHandle& basic_handle(SettingDataPack& pack, function<cv::Mat*()>&& func) {
         int process = 0;
+        bool enable_array_thresh = (pack.thresh == -2);
         time_t t_start = time(NULL);
+
+        if (enable_array_thresh) {
+            pack.thresh = 0;
+            this->frame_FPS = 30.0;
+            this->encoding = cv::VideoWriter::fourcc('D', 'I', 'V', 'X');
+        }
+
+        if (type == VIDEO || enable_array_thresh) {
+            switch (pack.output_size.width) {
+            case OutputMode::DISABLE:
+                break;
+            case OutputMode::ORIGIN_SIZE:
+                create_written(original_size);
+                break;
+            default:
+                create_written(pack.output_size);
+                break;
+            }
+        }
 
         while (1) {
             if (type == VIDEO)
                 this->cap >> this->orig_img;
 
+            this->orig_img.copyTo(this->img);
             if (this->orig_img.empty())
                 break;
 
-            resize(this->orig_img, this->img, pack.dsize, 0, 0, cv::INTER_CUBIC);
+            if (pack.output_size.width != OutputMode::ORIGIN_SIZE)
+                resize(this->img, this->img, pack.dsize, 0, 0, cv::INTER_CUBIC);
 
-            if (pack.color != -1)
+            if (pack.color != AUTO_DETECT)
                 cv::cvtColor(this->img, this->img, pack.color);
 
             cv::Mat* output_mat = func();
@@ -159,11 +190,15 @@ public:
             }
 
             if (type == IMG) {
-                imwrite("output_pic.png", *output_mat);
+                imwrite("out\\output_pic" + std::to_string(pack.thresh) + ".png", *output_mat);
+                if (enable_array_thresh && pack.thresh <= 255) {
+                    fmt::print(u8"進度: {}%\r", (pack.thresh++ / 256.0) * 100.0);
+                    writer.write(*output_mat);
+                    continue;
+                }
                 break;
             }
-
-            fmt::print("進度: {}%\r", (process++ / frame_total) * 100);
+            fmt::print(u8"進度: {}%\r", (process++ / frame_total) * 100);
             writer.write(*output_mat);
         }
 
