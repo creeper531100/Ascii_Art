@@ -29,7 +29,8 @@ struct SettingDataPack {
         dsize(cv::Size{ AUTO_RESIZE }),
         color((cv::ColorConversionCodes)AUTO_DETECT),
         param(param),
-        output_size(cv::Size{ AUTO_RESIZE }) {
+        output_size(cv::Size{ AUTO_RESIZE }),
+        func_name(func_name) {
     }
 
     SettingDataPack& set_color(cv::ColorConversionCodes color) {

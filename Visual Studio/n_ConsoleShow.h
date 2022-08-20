@@ -17,7 +17,8 @@ public:
         SettingDataPack pack = SettingDataPack::create(param, "console_show")
                                .set_color(cv::COLOR_BGR2GRAY)
                                .set_dsize(mode, this->original_size)
-                               .enable_thresh_detect();
+                               .enable_thresh_detect()
+                               .set_output_mode(OutputMode::DISABLE);
 
         screen = new wchar_t[pack.dsize.area()];
         hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
