@@ -119,14 +119,7 @@ public:
         bool have_texture_path = (param["collage_output"]["qt"]["texture"] != "-1");
         bool auto_thresh = (pack.thresh == AUTO_DETECT);
 
-        int reverse = param["collage_output"]["qt"]["reverse"];
-        auto thresh_cmp = [&reverse](int val1, int val2) {
-            if (reverse) {
-                return val1 > val2;
-            }
-            return val1 < val2;
-        };
-
+        int reverse = param["collage_output"]["reverse"];
         Recti boundary(size.width / 2, size.height / 2, size.width / 2, size.height / 2);
 
         Mat texture;
@@ -142,7 +135,7 @@ public:
             output_mat = cv::Scalar(0, 0, 0);
             for (int i = 0; i < size.height; i++) {
                 for (int j = 0; j < size.width; j++) {
-                    if (thresh_cmp(img.at<uchar>(i, j), pack.thresh)) {
+                    if (thresh_cmp(reverse, img.at<uchar>(i, j), pack.thresh)) {
                         qt.insert({j, i}, cap);
                     }
                 }

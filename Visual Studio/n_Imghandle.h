@@ -182,8 +182,11 @@ public:
 
             cv::Mat* output_mat = func();
 
-            if (!output_mat)
-                continue;
+            if (!output_mat) {
+                if(type == VIDEO)
+                    continue;
+                break;
+            }
 
             if (process % 30 == 0) {
                 cv::imshow("preview", *output_mat);
@@ -207,17 +210,18 @@ public:
         return *this;
     }
 
-    void braille_create2(vector<vector<char>>& deep_arr, int threshold) {
+    void braille_create2(vector<vector<char>>& deep_arr, int threshold, bool rev = 0) {
         for (int i = 0; i < deep_arr.size(); i++) {
             for (int j = 1; j < deep_arr[0].size(); j += 2) {
-                if (this->img.at<uchar>(i, j - 1) > threshold) {
-                    if (this->img.at<uchar>(i, j) > threshold)
+                
+                if (thresh_cmp(rev, this->img.at<uchar>(i, j - 1), threshold)) {
+                    if (thresh_cmp(rev, this->img.at<uchar>(i, j), threshold))
                         deep_arr[i][j / 2] = 'm';
                     else
                         deep_arr[i][j / 2] = 'y';
                 }
                 else {
-                    if (this->img.at<uchar>(i, j) > threshold)
+                    if (thresh_cmp(rev, this->img.at<uchar>(i, j), threshold))
                         deep_arr[i][j / 2] = 'z';
                     else
                         deep_arr[i][j / 2] = 'k';
@@ -225,4 +229,11 @@ public:
             }
         }
     }
+
+    bool thresh_cmp(int reverse, int val1, int val2) {
+        if (reverse) {
+            return val1 > val2;
+        }
+        return val1 < val2;
+    };
 };

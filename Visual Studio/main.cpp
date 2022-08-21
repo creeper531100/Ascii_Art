@@ -1,4 +1,5 @@
-﻿#include <fstream>
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include <fstream>
 
 #include "n_CollageOutput.h"
 #include "pch.h"

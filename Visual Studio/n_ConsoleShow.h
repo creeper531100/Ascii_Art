@@ -20,8 +20,33 @@ public:
                                .enable_thresh_detect()
                                .set_output_mode(OutputMode::DISABLE);
 
-        screen = new wchar_t[pack.dsize.area()];
-        hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+        if (mode == "braille") {
+            pack.output_size = {pack.dsize.width / 2, pack.dsize.height / 4};
+            if (type == IMG) {
+                float set_w = param["console_show"]["char_width"];
+                float zoom = set_w / (float)original_size.width;
+                float set_h = (float)(original_size.height * zoom * 0.5);
+
+                pack.set_dsize({(int)set_w * 2, (int)set_h * 4});
+                pack.output_size = {(int)set_w, (int)set_h};
+            }
+        }
+        else if (mode == "ascii"){
+            pack.output_size = pack.dsize;
+            if (type == IMG) {
+                float set_w = param["console_show"]["char_width"];
+                float zoom = set_w / (float)original_size.width;
+                float set_h = original_size.height * zoom;
+
+                pack.set_dsize({ (int)set_w * 2, (int)set_h });
+                pack.output_size = pack.dsize;
+            }
+        }
+
+        if(type == VIDEO)
+            hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+
+        screen = new wchar_t[pack.output_size.area()];
         return pack;
     }
 
@@ -31,28 +56,54 @@ public:
         *c_start = chrono::system_clock::now();
     }
 
+
+    void written_file(FILE* fLog, const wchar_t* buf, SettingDataPack& pack, cv::Size zoom = {1, 1}) {
+        if (type != IMG) {
+            return;
+        }
+
+        if (!fLog) {
+            return;
+        }
+
+        for (int i = 0; i < pack.output_size.height; i++) {
+            for (int j = 0; j < pack.output_size.width; j++) {
+                const wchar_t buffer[] = {buf[i * pack.output_size.width + j], L'\0'};
+                fwrite(buffer, sizeof(wchar_t), wcslen(buffer), fLog);
+            }
+            fwrite(L"\n", sizeof(wchar_t), wcslen(L"\n"), fLog);
+        }
+    }
+
     void ascii() {
         SettingDataPack pack = console_init("ascii");
         SetConsoleActiveScreenBuffer(hConsole);
+        FILE* fLog = _wfopen(L"out\\output.txt", L"w+, ccs=UTF-16LE");
 
         auto start = chrono::system_clock::now();
         super::basic_handle(pack, [&]() {
-            for (int i = 0; i < pack.dsize.area(); i++) {
+            for (int i = 0; i < pack.output_size.area(); i++) {
                 screen[i] = super::lv[super::img.at<uchar>(i) / 4];
             }
-            WriteConsoleOutputCharacterW(hConsole, screen, pack.dsize.area(), {0, 0}, &dwBytesWritten);
+            if (type == VIDEO)
+                WriteConsoleOutputCharacterW(hConsole, screen, pack.output_size.area(), {0, 0}, &dwBytesWritten);
+
             video_interval(&start);
+            written_file(fLog, screen, pack);
             return nullptr;
         });
+        fclose(fLog);
+
     }
 
     void braille() {
         SettingDataPack pack = console_init("braille");
-        map<string, wchar_t> map_pairs = init_words();
-        vector<vector<char>> braille_string(pack.dsize.height, vector<char>(pack.dsize.width));
-        bool auto_thresh = (pack.thresh == -1);
 
+        map<string, wchar_t> map_pairs = init_words();
+        vector braille_string(pack.dsize.height, vector<char>(pack.dsize.width));
+        bool auto_thresh = (pack.thresh == -1);
         SetConsoleActiveScreenBuffer(hConsole);
+        FILE* fLog = _wfopen(L"out\\output.txt", L"w+, ccs=UTF-16LE");
 
         auto start = chrono::system_clock::now();
         super::basic_handle(pack, [&]() {
@@ -60,20 +111,23 @@ public:
                 pack.thresh = mean(super::img).val[0];
             }
 
-            braille_create2(braille_string, pack.thresh);
-            for (int i = 3, pixel = 0; i < braille_string.size(); i += 4) {
-                for (int j = 0; j < pack.dsize.height; j++, pixel++) {
+            braille_create2(braille_string, pack.thresh, 1);
+            for (int row = 3, i = 0; i < pack.output_size.height; row += 4, i++) {
+                for (int col = 0; col < pack.output_size.width; col++) {
                     string buf = {
-                            braille_string[i - 3][j], braille_string[i - 2][j], braille_string[i - 1][j],
-                            braille_string[i][j]
+                            braille_string[row - 3][col], braille_string[row - 2][col], braille_string[row - 1][col],
+                            braille_string[row][col]
                         };
-                    this->screen[pixel] = map_pairs[buf];
+                    this->screen[i * pack.output_size.width + col] = map_pairs[buf];
                 }
             }
-            WriteConsoleOutputCharacterW(hConsole, screen, pack.dsize.area(), {0, 0}, &dwBytesWritten);
+            if (type == VIDEO)
+                WriteConsoleOutputCharacterW(hConsole, screen, pack.output_size.area(), {0, 0}, &dwBytesWritten);
+            written_file(fLog, screen, pack);
             video_interval(&start);
             return nullptr;
         });
+        fclose(fLog);
     }
 
     ~ConsoleShows() {

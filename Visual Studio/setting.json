@@ -1,6 +1,8 @@
 {
 	"console_show": {
 		"thresh": -1,
+		"reverse": 0,
+		"char_width": 63.0,
 		"ascii": {
 			"width": 237,
 			"height": 64
@@ -11,7 +13,8 @@
 		}
 	},
 	"collage_output": {
-		"thresh": -1,
+		"thresh": -2,
+		"reverse": 0,
 		"ascii": {
 			"width": -1,
 			"height": -1
@@ -22,8 +25,7 @@
 		},
 		"qt": {
 			"texture": "-1",
-			"cap": 7,
-			"reverse": 0
+			"cap": 7
 		}
 	},
 	"quick_output": {
