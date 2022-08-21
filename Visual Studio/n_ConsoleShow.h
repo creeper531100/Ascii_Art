@@ -55,7 +55,7 @@ public:
     }
 
 
-    void written_file(FILE* fLog, const wchar_t* buf, SettingDataPack& pack, cv::Size zoom = {1, 1}) {
+    void written_file(FILE* fLog, SettingDataPack& pack, const wchar_t* buf) {
         if (type != IMG) {
             return;
         }
@@ -87,7 +87,7 @@ public:
                 WriteConsoleOutputCharacterW(hConsole, screen, pack.output_size.area(), {0, 0}, &dwBytesWritten);
 
             video_interval(&start);
-            written_file(fLog, screen, pack);
+            written_file(fLog, pack, screen);
             return nullptr;
         });
         fclose(fLog);
@@ -121,7 +121,7 @@ public:
             }
             if (type == VIDEO)
                 WriteConsoleOutputCharacterW(hConsole, screen, pack.output_size.area(), {0, 0}, &dwBytesWritten);
-            written_file(fLog, screen, pack);
+            written_file(fLog, pack, screen);
             video_interval(&start);
             return nullptr;
         });

@@ -26,10 +26,10 @@ struct SettingDataPack {
 
 
     SettingDataPack(Json param, string func_name) :
-        dsize(cv::Size{ AUTO_RESIZE }),
+        dsize(cv::Size{AUTO_RESIZE}),
         color((cv::ColorConversionCodes)AUTO_DETECT),
         param(param),
-        output_size(cv::Size{ AUTO_RESIZE }),
+        output_size(cv::Size{AUTO_RESIZE}),
         func_name(func_name) {
     }
 
@@ -53,6 +53,7 @@ struct SettingDataPack {
         return *this;
     }
 
+    //TODO: 重寫
     SettingDataPack& set_dsize(const char* mode, cv::Size& original_video_size, cv::Size thumbnail_size = {8, 16},
                                pair<int, int> zoom = {1, 1}) {
         //dsize 設定圖片縮放尺寸
@@ -183,7 +184,7 @@ public:
             cv::Mat* output_mat = func();
 
             if (!output_mat) {
-                if(type == VIDEO)
+                if (type == VIDEO)
                     continue;
                 break;
             }
@@ -213,7 +214,7 @@ public:
     void braille_create2(vector<vector<char>>& deep_arr, int threshold, bool rev = 0) {
         for (int i = 0; i < deep_arr.size(); i++) {
             for (int j = 1; j < deep_arr[0].size(); j += 2) {
-                
+
                 if (thresh_cmp(rev, this->img.at<uchar>(i, j - 1), threshold)) {
                     if (thresh_cmp(rev, this->img.at<uchar>(i, j), threshold))
                         deep_arr[i][j / 2] = 'm';
