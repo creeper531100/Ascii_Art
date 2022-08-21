@@ -22,24 +22,26 @@ public:
 
         float set_w = param["console_show"]["char_width"]; // 63 -> 設定尺寸
         float zoom = set_w / (float)original_size.width; // 63 / 1000 = 0.063 -> 計算縮放比例
-        float set_h = (float)(original_size.height * zoom); // 1376 * 0.063 = 86.688
+        float set_h = (float)(original_size.height * zoom * 0.5); // 1376 * 0.063 = 86.688 (因為文字實際高度比寬度高，所以除以2平衡大小)
 
         if (mode == "braille") {
-            pack.output_size = {pack.dsize.width / 2, pack.dsize.height / 4};
             if (type == IMG) {
-                pack.set_dsize({(int)set_w * 2, (int)(set_h * 4 / 2)}); // 盲文寬度佔據2，長度4，依比例放大 
-                pack.output_size = {(int)set_w, (int)(set_h / 2)}; //因為文字實際高度比寬度高，所以除以2平衡大小
+                pack.set_dsize({(int)set_w * 2, (int)(set_h * 4)}); // 盲文寬度佔據2，長度4，依比例放大 
+                pack.output_size = {(int)set_w, (int)set_h};
             }
+            else
+                pack.output_size = {pack.dsize.width / 2, pack.dsize.height / 4};
         }
-        else if (mode == "ascii"){
-            pack.output_size = pack.dsize;
+        else if (mode == "ascii") {
             if (type == IMG) {
-                pack.set_dsize({ (int)set_w, (int)set_h / 2}); //此處也是，除以2平衡文字大小
+                pack.set_dsize({(int)set_w, (int)set_h});
                 pack.output_size = pack.dsize;
             }
+            else
+                pack.output_size = pack.dsize;
         }
 
-        if(type == VIDEO)
+        if (type == VIDEO)
             hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
 
         screen = new wchar_t[pack.output_size.area()];
