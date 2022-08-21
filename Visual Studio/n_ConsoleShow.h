@@ -20,25 +20,21 @@ public:
                                .enable_thresh_detect()
                                .set_output_mode(OutputMode::DISABLE);
 
+        float set_w = param["console_show"]["char_width"]; // 63 -> 設定尺寸
+        float zoom = set_w / (float)original_size.width; // 63 / 1000 = 0.063 -> 計算縮放比例
+        float set_h = (float)(original_size.height * zoom); // 1376 * 0.063 = 86.688
+
         if (mode == "braille") {
             pack.output_size = {pack.dsize.width / 2, pack.dsize.height / 4};
             if (type == IMG) {
-                float set_w = param["console_show"]["char_width"];
-                float zoom = set_w / (float)original_size.width;
-                float set_h = (float)(original_size.height * zoom * 0.5);
-
-                pack.set_dsize({(int)set_w * 2, (int)set_h * 4});
-                pack.output_size = {(int)set_w, (int)set_h};
+                pack.set_dsize({(int)set_w * 2, (int)(set_h * 4 / 2)}); // 盲文寬度佔據2，長度4，依比例放大 
+                pack.output_size = {(int)set_w, (int)(set_h / 2)}; //因為文字實際高度比寬度高，所以除以2平衡大小
             }
         }
         else if (mode == "ascii"){
             pack.output_size = pack.dsize;
             if (type == IMG) {
-                float set_w = param["console_show"]["char_width"];
-                float zoom = set_w / (float)original_size.width;
-                float set_h = original_size.height * zoom;
-
-                pack.set_dsize({ (int)set_w * 2, (int)set_h });
+                pack.set_dsize({ (int)set_w, (int)set_h / 2}); //此處也是，除以2平衡文字大小
                 pack.output_size = pack.dsize;
             }
         }
