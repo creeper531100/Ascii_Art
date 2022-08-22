@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿#define _CRT_SECURE_NO_WARNINGS
+#pragma once
 #include "pch.h"
 #define AUTO_DETECT -1
 #define AUTO_RESIZE -1, -1
@@ -15,8 +16,16 @@ inline bool match_string(string keyword, vector<string> arr) {
     }) != arr.end();
 }
 
+inline string get_timestamp() {
+    time_t now = time(0);
+    tm tstruct;
+    char buf[80];
+    tstruct = *localtime(&now);
+    strftime(buf, sizeof(buf), "%d_%M_%S", &tstruct);
+    return string(buf);
+}
+
 struct SettingDataPack {
-    //TODO: 寫不好
     cv::Size dsize;
     cv::Size output_size;
     int thresh;
@@ -53,10 +62,16 @@ struct SettingDataPack {
         return *this;
     }
 
-    //TODO: 重寫
+    /**
+     * \brief 設定縮放尺寸
+     * \param mode:                  模式名稱
+     * \param original_video_size:   原始尺寸
+     * \param thumbnail_size:        縮圖尺寸
+     * \param zoom:                  文字寬度比例
+     * \return SettingDataPack&
+     */
     SettingDataPack& set_dsize(const char* mode, cv::Size& original_video_size, cv::Size thumbnail_size = {8, 16},
                                pair<int, int> zoom = {1, 1}) {
-        //dsize 設定圖片縮放尺寸
         /*
          * width除8 => 因為img被resize了，輸出圖像必須被擴充至原始解析度(thumbnail縮圖，乘上縮圖即原始尺寸)
          * width除zoom => 一個文字占據兩格寬度
@@ -64,15 +79,16 @@ struct SettingDataPack {
          * 同理height
          */
         this->dsize = {param[func_name][mode]["width"], param[func_name][mode]["height"]};
-        if (this->dsize.width == AUTO_DETECT) {
+        bool auto_reszie = this->dsize.width == AUTO_DETECT || this->dsize.height == AUTO_DETECT;
+
+        if (auto_reszie) {
             this->dsize.width = original_video_size.width / (thumbnail_size.width / zoom.first);
-            if (zoom.first != 1)
-                this->dsize.width = (int)(this->dsize.width / thumbnail_size.width) * thumbnail_size.width;
-        }
-        if (this->dsize.height == AUTO_DETECT) {
             this->dsize.height = original_video_size.height / (thumbnail_size.height / zoom.second);
-            if (zoom.second != 1)
-                this->dsize.height = (int)(this->dsize.height / thumbnail_size.height) * thumbnail_size.height;
+        }
+
+        if (zoom.first != 1 && auto_reszie) {
+            this->dsize.width = (int)(this->dsize.width / thumbnail_size.width) * thumbnail_size.width;
+            this->dsize.height = (int)(this->dsize.height / thumbnail_size.height) * thumbnail_size.height;
         }
         return *this;
     }
@@ -128,7 +144,7 @@ public:
             Sleep(1000);
             system(
                 ("ffmpeg -i out\\tempvideo.mp4 -i " + this->file_path +
-                    " -c copy -map 0:v:0 -map 1:a:0 out\\output_video.mp4").
+                    " -c copy -map 0:v:0 -map 1:a:0 out\\output_video" + get_timestamp() + ".mp4").
                 c_str());
             int totalTime = difftime(time(NULL), t_start);
             printf("\nused %02d:%02d\n", totalTime / 60, totalTime % 60);
@@ -195,7 +211,7 @@ public:
             }
 
             if (type == IMG) {
-                imwrite("out\\output_pic" + std::to_string(pack.thresh) + ".png", *output_mat);
+                imwrite("out\\output_pic" + get_timestamp() + "-" + std::to_string(pack.thresh) + ".png", *output_mat);
                 if (enable_array_thresh && pack.thresh <= 255) {
                     fmt::print(u8"進度: {}%\r", (pack.thresh++ / 256.0) * 100.0);
                     writer.write(*output_mat);
@@ -214,15 +230,14 @@ public:
     void braille_create2(vector<vector<char>>& deep_arr, int threshold, bool rev = 0) {
         for (int i = 0; i < deep_arr.size(); i++) {
             for (int j = 1; j < deep_arr[0].size(); j += 2) {
-
-                if (thresh_cmp(rev, this->img.at<uchar>(i, j - 1), threshold)) {
-                    if (thresh_cmp(rev, this->img.at<uchar>(i, j), threshold))
+                if (thresh_cmp(rev, threshold, this->img.at<uchar>(i, j - 1))) {
+                    if (thresh_cmp(rev, threshold, this->img.at<uchar>(i, j)))
                         deep_arr[i][j / 2] = 'm';
                     else
                         deep_arr[i][j / 2] = 'y';
                 }
                 else {
-                    if (thresh_cmp(rev, this->img.at<uchar>(i, j), threshold))
+                    if (thresh_cmp(rev, threshold, this->img.at<uchar>(i, j)))
                         deep_arr[i][j / 2] = 'z';
                     else
                         deep_arr[i][j / 2] = 'k';

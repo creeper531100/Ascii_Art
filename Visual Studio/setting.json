@@ -13,7 +13,7 @@
 		}
 	},
 	"collage_output": {
-		"thresh": -2,
+		"thresh": -1,
 		"reverse": 0,
 		"ascii": {
 			"width": -1,

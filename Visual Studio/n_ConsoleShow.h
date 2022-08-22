@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "n_Imghandle.h"
 #include "n_initword.h"
@@ -20,13 +20,13 @@ public:
                                .enable_thresh_detect()
                                .set_output_mode(OutputMode::DISABLE);
 
-        float set_w = param["console_show"]["char_width"]; // 63 -> ³]©w¤Ø¤o
-        float zoom = set_w / (float)original_size.width; // 63 / 1000 = 0.063 -> ­pºâÁY©ñ¤ñ¨Ò
-        float set_h = (float)(original_size.height * zoom * 0.5); // 1376 * 0.063 = 86.688 (¦]¬°¤å¦r¹ê»Ú°ª«×¤ñ¼e«×°ª¡A©Ò¥H°£¥H2¥­¿Å¤j¤p)
+        float set_w = param["console_show"]["char_width"]; // 63 -> è¨­å®šå°ºå¯¸
+        float zoom = set_w / (float)original_size.width; // 63 / 1000 = 0.063 -> è¨ˆç®—ç¸®æ”¾æ¯”ä¾‹
+        float set_h = (float)(original_size.height * zoom * 0.5); // 1376 * 0.063 = 86.688 (å› ç‚ºæ–‡å­—å¯¦éš›é«˜åº¦æ¯”å¯¬åº¦é«˜ï¼Œæ‰€ä»¥é™¤ä»¥2å¹³è¡¡å¤§å°)
 
         if (mode == "braille") {
             if (type == IMG) {
-                pack.set_dsize({(int)set_w * 2, (int)(set_h * 4)}); // ª¼¤å¼e«×¦û¾Ú2¡Aªø«×4¡A¨Ì¤ñ¨Ò©ñ¤j 
+                pack.set_dsize({(int)set_w * 2, (int)(set_h * 4)}); // ç›²æ–‡å¯¬åº¦ä½”æ“š2ï¼Œé•·åº¦4ï¼Œä¾æ¯”ä¾‹æ”¾å¤§ 
                 pack.output_size = {(int)set_w, (int)set_h};
             }
             else
@@ -55,28 +55,28 @@ public:
     }
 
 
-    void written_file(FILE* fLog, SettingDataPack& pack, const wchar_t* buf) {
+    void written_file(FILE* file, SettingDataPack& pack, const wchar_t* buf) {
         if (type != IMG) {
             return;
         }
 
-        if (!fLog) {
+        if (!file) {
             return;
         }
 
         for (int i = 0; i < pack.output_size.height; i++) {
             for (int j = 0; j < pack.output_size.width; j++) {
                 const wchar_t buffer[] = {buf[i * pack.output_size.width + j], L'\0'};
-                fwrite(buffer, sizeof(wchar_t), wcslen(buffer), fLog);
+                fwrite(buffer, sizeof(wchar_t), wcslen(buffer), file);
             }
-            fwrite(L"\n", sizeof(wchar_t), wcslen(L"\n"), fLog);
+            fwrite(L"\n", sizeof(wchar_t), wcslen(L"\n"), file);
         }
     }
 
     void ascii() {
         SettingDataPack pack = console_init("ascii");
         SetConsoleActiveScreenBuffer(hConsole);
-        FILE* fLog = _wfopen(L"out\\output.txt", L"w+, ccs=UTF-16LE");
+        FILE* file = fopen(("out\\output" + get_timestamp() + ".txt").c_str(), "w+, ccs=UTF-16LE");
 
         auto start = chrono::system_clock::now();
         super::basic_handle(pack, [&]() {
@@ -87,21 +87,24 @@ public:
                 WriteConsoleOutputCharacterW(hConsole, screen, pack.output_size.area(), {0, 0}, &dwBytesWritten);
 
             video_interval(&start);
-            written_file(fLog, pack, screen);
+            written_file(file, pack, screen);
             return nullptr;
         });
-        fclose(fLog);
+        fclose(file);
 
     }
 
     void braille() {
         SettingDataPack pack = console_init("braille");
-
         map<string, wchar_t> map_pairs = init_words();
+        if (type == IMG)
+            map_pairs = init_words(L'â ');
+
         vector braille_string(pack.dsize.height, vector<char>(pack.dsize.width));
         bool auto_thresh = (pack.thresh == -1);
+        int reverse = param["console_show"]["reverse"];
         SetConsoleActiveScreenBuffer(hConsole);
-        FILE* fLog = _wfopen(L"out\\output.txt", L"w+, ccs=UTF-16LE");
+        FILE* file = fopen(("out\\output" + get_timestamp() + ".txt").c_str(), "w+, ccs=UTF-16LE");
 
         auto start = chrono::system_clock::now();
         super::basic_handle(pack, [&]() {
@@ -109,7 +112,7 @@ public:
                 pack.thresh = mean(super::img).val[0];
             }
 
-            braille_create2(braille_string, pack.thresh, 1);
+            braille_create2(braille_string, pack.thresh, reverse);
             for (int row = 3, i = 0; i < pack.output_size.height; row += 4, i++) {
                 for (int col = 0; col < pack.output_size.width; col++) {
                     string buf = {
@@ -121,11 +124,11 @@ public:
             }
             if (type == VIDEO)
                 WriteConsoleOutputCharacterW(hConsole, screen, pack.output_size.area(), {0, 0}, &dwBytesWritten);
-            written_file(fLog, pack, screen);
+            written_file(file, pack, screen);
             video_interval(&start);
             return nullptr;
         });
-        fclose(fLog);
+        fclose(file);
     }
 
     ~ConsoleShows() {

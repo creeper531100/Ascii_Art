@@ -29,7 +29,7 @@ int main() {
 
     cin >> sw;
     cout << u8"輸入網址或圖片位置: ";
-    cin >> path;
+    std::getline(std::cin >> std::ws, path);
     if (path.find("https") != std::string::npos) {
         remove("HTC.mp4");
         ::system(("youtube-dl -o HTC.%(ext)s -f mp4 " + path).c_str());

@@ -77,9 +77,10 @@ public:
                                .enable_thresh_detect()
                                .set_dsize("braille", original_size, {8, 16}, {2, 4});
         //輸出解析度放大 480x268 -> 1920x1072
-         
+
         pack.output_size = {pack.dsize.width * (8 / 2), pack.dsize.height * (16 / 4)};
         cv::Mat output_mat(pack.output_size, CV_8UC3);
+        int reverse = param["collage_output"]["reverse"];
 
         vector<vector<char>> braille_string2(pack.dsize.height, vector<char>(pack.dsize.width));
         bool auto_thresh = (pack.thresh == AUTO_DETECT);
@@ -92,7 +93,7 @@ public:
                 pack.thresh = mean(super::img).val[0];
             }
 
-            braille_create2(braille_string2, pack.thresh);
+            braille_create2(braille_string2, pack.thresh, reverse);
             for (int row = 3, i = 0; i < pack.output_size.height; row += 4, i += thumbnail_size.height) {
                 for (int col = 0, j = 0; j < pack.output_size.width; col += 1, j += thumbnail_size.width) {
                     string buf = {
