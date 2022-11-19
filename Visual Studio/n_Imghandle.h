@@ -80,74 +80,6 @@ public:
         writer = cv::VideoWriter("out\\tempvideo.mp4", this->encoding, this->frame_FPS, set_size);
     }
 
-    ImageHandle& basic_handle(SettingDataPack& pack, function<cv::Mat*()>&& func) {
-        int process = 0;
-        time_t t_start = time(NULL);
-
-        if (pack.thresh == -2) {
-            pack.thresh = 0;
-            this->type = FileType::ONE_BY_ONE;
-            this->frame_FPS = 30.0;
-            this->encoding = cv::VideoWriter::fourcc('D', 'I', 'V', 'X');
-        }
-
-        if (type == FileType::VIDEO || type == FileType::ONE_BY_ONE) {
-            switch (pack.output_size.width) {
-            case OutputSizeMode::DISABLE:
-                break;
-            case OutputSizeMode::ORIGIN_SIZE:
-                create_written(original_size);
-                break;
-            default:
-                create_written(pack.output_size);
-                break;
-            }
-        }
-
-        while (1) {
-            if (type == FileType::VIDEO)
-                this->cap >> this->orig_img;
-
-            this->orig_img.copyTo(this->img);
-            if (this->orig_img.empty())
-                break;
-
-            if (pack.output_size.width != OutputSizeMode::ORIGIN_SIZE)
-                resize(this->img, this->img, pack.dsize, 0, 0, cv::INTER_CUBIC);
-
-            if (pack.color != AUTO_DETECT)
-                cv::cvtColor(this->img, this->img, pack.color);
-
-            cv::Mat* output_mat = func();
-
-            if (!output_mat) {
-                if (type == FileType::VIDEO)
-                    continue;
-                break;
-            }
-
-            if (process % 30 == 0) {
-                cv::imshow("preview", *output_mat);
-                cv::waitKey(1);
-            }
-
-            if (type == FileType::IMG || type == FileType::ONE_BY_ONE) {
-                imwrite("out\\output_pic" + get_timestamp() + "-" + std::to_string(pack.thresh) + ".png", *output_mat);
-                if (type == FileType::ONE_BY_ONE && pack.thresh <= 255) {
-                    fmt::print(u8"進度: {}%\r", (pack.thresh++ / 256.0) * 100.0);
-                    writer.write(*output_mat);
-                    continue;
-                }
-                break;
-            }
-            fmt::print(u8"進度: {}%\r", (process++ / frame_total) * 100);
-            writer.write(*output_mat);
-        }
-
-        print_output_info(t_start);
-        return *this;
-    }
-
     void braille_create2(vector<vector<char>>& deep_arr, int threshold, bool rev = 0) {
         for (int i = 0; i < deep_arr.size(); i++) {
             for (int j = 1; j < deep_arr[0].size(); j += 2) {
@@ -182,7 +114,7 @@ public:
         fmt::print(u8"沒有這個功能\n");
     }
 
-    virtual void ascii(int) {
+    virtual void ascii(FillMode mode) {
         fmt::print(u8"沒有這個功能\n");
     }
 

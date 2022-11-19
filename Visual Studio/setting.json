@@ -32,6 +32,8 @@
 		"font_size": 5.0,
 		"h_offset": 3,
 		"fill_char": "@",
+		"thresh": -1,
+		"reverse": -1,
 		"ascii": {
 			"width": -1,
 			"height": -1

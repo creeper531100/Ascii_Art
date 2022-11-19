@@ -27,9 +27,6 @@ int main() {
     cout << u8"(x).輸出浮雕照 (x).函數處理(x).素描(x).描邊 (x).帥臉\n";
     cout << u8"----------------------------------\n選擇功能: ";
 
-    auto a = ConsoleShowPack::create(json_file).set_dsize("ascii");
-    cout << a.dsize << endl;
-
     cin >> sw;
     cout << u8"輸入網址或圖片位置: ";
 
@@ -46,7 +43,6 @@ int main() {
         new CollageOutput(path, json_file),
         new QuickOutput(path, json_file)
     };
-
 
     switch (sw) {
     case 0: {
@@ -70,15 +66,15 @@ int main() {
         break;
     }
     case 5: {
-        img_handle[2]->ascii(QuickOutput::DEFAULT);
+        img_handle[2]->ascii(FillMode::DEFAULT);
         break;
     }
     case 6: {
-        img_handle[2]->ascii(QuickOutput::COLOR);
+        img_handle[2]->ascii(FillMode::COLOR);
         break;
     }
     case 7: {
-        img_handle[2]->ascii(QuickOutput::FILLED);
+        img_handle[2]->ascii(FillMode::FILLED);
         break;
     }
     default:
@@ -91,28 +87,3 @@ int main() {
 
     ::system("pause");
 }
-
-/*case 8: {
-    BasicEffectOutput img_handle(path, json_file);
-    img_handle.relief();
-    break;
-}
-case 9: {
-    BasicEffectOutput img_handle(path, json_file);
-    img_handle.sin_handle();
-    break;
-}
-case 10: {
-    BasicEffectOutput img_handle(path, json_file);
-    img_handle.sketch();
-    break;
-}
-case 11: {
-    BasicEffectOutput img_handle(path, json_file);
-    img_handle.trace();
-    break;
-}
-case 12: {
-    BasicEffectOutput img_handle(path, json_file);
-    img_handle.thresholding();
-}*/

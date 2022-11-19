@@ -11,3 +11,4 @@ enum OutputSizeMode { DISABLE = -1, ORIGIN_SIZE = -2 };
 
 enum class OutputSizeMode2 { DEFAULT = 0, DISABLE = -1, ORIGIN_SIZE = -2 };
 enum class OutputSetting { DEFAULT = 0, AUTO = -1, ONE_BY_ONE = -2 };
+enum class FillMode { DEFAULT, COLOR, FILLED };
