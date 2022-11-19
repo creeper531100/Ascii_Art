@@ -145,3 +145,9 @@ struct ConsoleShowPack : SettingDataPack2<ConsoleShowPack> {
         return param[class_name]["char_width"];
     }
 };
+
+struct CollageOutputPack : SettingDataPack2<ConsoleShowPack> {
+    CollageOutputPack(Json param) : SettingDataPack2(param) {
+        class_name = "collage_output";
+    }
+};

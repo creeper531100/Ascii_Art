@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "pch.h"
 
-inline std::map<std::string, wchar_t> init_words(wchar_t first_chr = L' ') {
+inline std::map<std::string, wchar_t> init_words(wchar_t first_chr) {
     std::map<std::string, wchar_t> map_pairs;
 	map_pairs["kkkk"] = first_chr;
 	map_pairs["ykkk"] = L'⠁';
