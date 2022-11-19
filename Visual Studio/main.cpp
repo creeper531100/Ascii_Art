@@ -27,82 +27,92 @@ int main() {
     cout << u8"(x).輸出浮雕照 (x).函數處理(x).素描(x).描邊 (x).帥臉\n";
     cout << u8"----------------------------------\n選擇功能: ";
 
+    auto a = ConsoleShowPack::create(json_file).set_dsize("ascii");
+    cout << a.dsize << endl;
+
     cin >> sw;
     cout << u8"輸入網址或圖片位置: ";
+
     std::getline(std::cin >> std::ws, path);
+
     if (path.find("https") != std::string::npos) {
         remove("HTC.mp4");
         ::system(("youtube-dl -o HTC.%(ext)s -f mp4 " + path).c_str());
         path = "HTC.mp4";
     }
 
+    ImageHandle *img_handle[] = {
+        new ConsoleShows(path, json_file),
+        new CollageOutput(path, json_file),
+        new QuickOutput(path, json_file)
+    };
+
+
     switch (sw) {
     case 0: {
-        ConsoleShows img_handle(path, json_file);
-        img_handle.ascii();
+        img_handle[0]->ascii();
         break;
     }
     case 1: {
-        ConsoleShows img_handle(path, json_file);
-        img_handle.braille();
+        img_handle[0]->braille();
         break;
     }
     case 2: {
-        CollageOutput img_handle(path, json_file);
-        img_handle.ascii();
+        img_handle[1]->ascii();
         break;
     }
     case 3: {
-        CollageOutput img_handle(path, json_file);
-        img_handle.braille();
+        img_handle[1]->braille();
         break;
     }
     case 4: {
-        CollageOutput img_handle(path, json_file);
-        img_handle.qt();
+        img_handle[1]->qt();
         break;
     }
     case 5: {
-        QuickOutput img_handle(path, json_file);
-        img_handle.ascii(QuickOutput::DEFAULT);
+        img_handle[2]->ascii(QuickOutput::DEFAULT);
         break;
     }
     case 6: {
-        QuickOutput img_handle(path, json_file);
-        img_handle.ascii(QuickOutput::COLOR);
+        img_handle[2]->ascii(QuickOutput::COLOR);
         break;
     }
     case 7: {
-        QuickOutput img_handle(path, json_file);
-        img_handle.ascii(QuickOutput::FILLED);
+        img_handle[2]->ascii(QuickOutput::FILLED);
         break;
     }
-    /*case 8: {
-        BasicEffectOutput img_handle(path, json_file);
-        img_handle.relief();
-        break;
-    }
-    case 9: {
-        BasicEffectOutput img_handle(path, json_file);
-        img_handle.sin_handle();
-        break;
-    }
-    case 10: {
-        BasicEffectOutput img_handle(path, json_file);
-        img_handle.sketch();
-        break;
-    }
-    case 11: {
-        BasicEffectOutput img_handle(path, json_file);
-        img_handle.trace();
-        break;
-    }
-    case 12: {
-        BasicEffectOutput img_handle(path, json_file);
-        img_handle.thresholding();
-    }*/
     default:
         cout << u8"很遺憾失敗了" << endl;
     }
+
+    for (int i = 0; i < 3; ++i) {
+        delete img_handle[i];
+    }
+
     ::system("pause");
 }
+
+/*case 8: {
+    BasicEffectOutput img_handle(path, json_file);
+    img_handle.relief();
+    break;
+}
+case 9: {
+    BasicEffectOutput img_handle(path, json_file);
+    img_handle.sin_handle();
+    break;
+}
+case 10: {
+    BasicEffectOutput img_handle(path, json_file);
+    img_handle.sketch();
+    break;
+}
+case 11: {
+    BasicEffectOutput img_handle(path, json_file);
+    img_handle.trace();
+    break;
+}
+case 12: {
+    BasicEffectOutput img_handle(path, json_file);
+    img_handle.thresholding();
+}*/

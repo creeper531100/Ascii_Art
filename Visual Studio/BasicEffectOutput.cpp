@@ -1,4 +1,4 @@
-﻿#ifdef _DEBUG
+﻿/*#ifdef _DEBUG
 #include "BasicEffectOutput.h"
 void BasicEffectOutput::math_function_handle(function<double(double*)> math_func) {
     double deltaI = (double)super::param["basic_effect"]["math_function_handle"]["deltaI"] / 100;
@@ -139,4 +139,4 @@ void BasicEffectOutput::sketch() {
         return &mm;
     });
 }
-#endif
+#endif*/

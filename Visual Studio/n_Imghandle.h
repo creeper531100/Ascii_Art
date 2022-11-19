@@ -1,14 +1,8 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #pragma once
+#include "header.h"
 #include "pch.h"
-#define AUTO_DETECT -1
-#define AUTO_RESIZE -1, -1
-
-
-using namespace std;
-using Json = nlohmann::json;
-
-enum OutputMode { DISABLE = -1, ORIGIN_SIZE = -2 };
+#include "SettingPack.h"
 
 inline bool match_string(string keyword, vector<string> arr) {
     return std::find_if(arr.begin(), arr.end(), [&](string index) {
@@ -25,79 +19,6 @@ inline string get_timestamp() {
     return string(buf);
 }
 
-struct SettingDataPack {
-    cv::Size dsize;
-    cv::Size output_size;
-    int thresh;
-    cv::ColorConversionCodes color;
-    Json param;
-    string func_name;
-
-
-    SettingDataPack(Json param, string func_name) :
-        dsize(cv::Size{AUTO_RESIZE}),
-        color((cv::ColorConversionCodes)AUTO_DETECT),
-        param(param),
-        output_size(cv::Size{AUTO_RESIZE}),
-        func_name(func_name) {
-    }
-
-    SettingDataPack& set_color(cv::ColorConversionCodes color) {
-        this->color = color;
-        return *this;
-    }
-
-    SettingDataPack& set_dsize(cv::Size dsize) {
-        this->dsize = dsize;
-        return *this;
-    }
-
-    SettingDataPack& set_output_mode(OutputMode mode) {
-        this->output_size.width = (int)mode;
-        return *this;
-    }
-
-    SettingDataPack& enable_thresh_detect() {
-        this->thresh = param[func_name]["thresh"];
-        return *this;
-    }
-
-    /**
-     * \brief 設定縮放尺寸
-     * \param mode:                  模式名稱
-     * \param original_video_size:   原始尺寸
-     * \param thumbnail_size:        縮圖尺寸
-     * \param zoom:                  文字寬度比例
-     * \return SettingDataPack&
-     */
-    SettingDataPack& set_dsize(const char* mode, cv::Size& original_video_size, cv::Size thumbnail_size = {8, 16},
-                               pair<int, int> zoom = {1, 1}) {
-        /*
-         * width除8 => 因為img被resize了，輸出圖像必須被擴充至原始解析度(thumbnail縮圖，乘上縮圖即原始尺寸)
-         * width除zoom => 一個文字占據兩格寬度
-         * width除8再乘8 => 這邊是為了找近似解析度，先除8去掉小數，在乘8回到近似的原始解析度
-         * 同理height
-         */
-        this->dsize = {param[func_name][mode]["width"], param[func_name][mode]["height"]};
-        bool auto_reszie = this->dsize.width == AUTO_DETECT || this->dsize.height == AUTO_DETECT;
-
-        if (auto_reszie) {
-            this->dsize.width = original_video_size.width / (thumbnail_size.width / zoom.first);
-            this->dsize.height = original_video_size.height / (thumbnail_size.height / zoom.second);
-        }
-
-        if (zoom.first != 1 && auto_reszie) {
-            this->dsize.width = (int)(this->dsize.width / thumbnail_size.width) * thumbnail_size.width;
-            this->dsize.height = (int)(this->dsize.height / thumbnail_size.height) * thumbnail_size.height;
-        }
-        return *this;
-    }
-
-    static SettingDataPack create(Json param, string func_name = "") {
-        return SettingDataPack(param, func_name);
-    }
-};
-
 class ImageHandle {
 protected:
     string file_path;
@@ -107,7 +28,7 @@ protected:
     cv::VideoCapture cap;
     cv::VideoWriter writer;
 
-    enum FileType { NONE, IMG, VIDEO } type;
+    enum class FileType { NONE, IMG, VIDEO, ONE_BY_ONE } type;
 
     double frame_FPS;
     double frame_total;
@@ -122,9 +43,9 @@ public:
             //判斷圖片
             this->orig_img = cv::imread(path);
             this->orig_img.copyTo(this->img);
-            cout << "Resize Size: " << this->orig_img.size().height << "x" << this->orig_img.size().width << endl;
-            this->type = IMG;
+            this->type = FileType::IMG;
             this->original_size = img.size();
+            cout << "Resize Size: " << this->orig_img.size().height << "x" << this->orig_img.size().width << endl;
         }
         else if (match_string(path, {".mp4", ".mp3", ".gif"})) {
             this->cap = cv::VideoCapture(path);
@@ -132,14 +53,14 @@ public:
             this->frame_total = this->cap.get(cv::CAP_PROP_FRAME_COUNT);
             this->frame_interval = (int)((1.0 / this->frame_FPS) * 1000000.0);
             this->original_size = cv::Size(cap.get(cv::CAP_PROP_FRAME_WIDTH), cap.get(cv::CAP_PROP_FRAME_HEIGHT));
-            this->type = VIDEO;
+            this->type = FileType::VIDEO;
             this->encoding = cv::VideoWriter::fourcc('D', 'I', 'V', 'X');
         }
     }
 
     void print_output_info(time_t t_start) {
-#ifndef _DEBUG
-        if (type == VIDEO) {
+        #ifndef _DEBUG
+        if (type == FileType::VIDEO) {
             writer.release();
             Sleep(1000);
             system(
@@ -151,7 +72,7 @@ public:
             remove("out\\tempvideo.mp4");
             system("pause");
         }
-#endif
+        #endif
     }
 
     void create_written(cv::Size set_size) {
@@ -161,20 +82,20 @@ public:
 
     ImageHandle& basic_handle(SettingDataPack& pack, function<cv::Mat*()>&& func) {
         int process = 0;
-        bool enable_array_thresh = (pack.thresh == -2);
         time_t t_start = time(NULL);
 
-        if (enable_array_thresh) {
+        if (pack.thresh == -2) {
             pack.thresh = 0;
+            this->type = FileType::ONE_BY_ONE;
             this->frame_FPS = 30.0;
             this->encoding = cv::VideoWriter::fourcc('D', 'I', 'V', 'X');
         }
 
-        if (type == VIDEO || enable_array_thresh) {
+        if (type == FileType::VIDEO || type == FileType::ONE_BY_ONE) {
             switch (pack.output_size.width) {
-            case OutputMode::DISABLE:
+            case OutputSizeMode::DISABLE:
                 break;
-            case OutputMode::ORIGIN_SIZE:
+            case OutputSizeMode::ORIGIN_SIZE:
                 create_written(original_size);
                 break;
             default:
@@ -184,14 +105,14 @@ public:
         }
 
         while (1) {
-            if (type == VIDEO)
+            if (type == FileType::VIDEO)
                 this->cap >> this->orig_img;
 
             this->orig_img.copyTo(this->img);
             if (this->orig_img.empty())
                 break;
 
-            if (pack.output_size.width != OutputMode::ORIGIN_SIZE)
+            if (pack.output_size.width != OutputSizeMode::ORIGIN_SIZE)
                 resize(this->img, this->img, pack.dsize, 0, 0, cv::INTER_CUBIC);
 
             if (pack.color != AUTO_DETECT)
@@ -200,7 +121,7 @@ public:
             cv::Mat* output_mat = func();
 
             if (!output_mat) {
-                if (type == VIDEO)
+                if (type == FileType::VIDEO)
                     continue;
                 break;
             }
@@ -210,9 +131,9 @@ public:
                 cv::waitKey(1);
             }
 
-            if (type == IMG) {
+            if (type == FileType::IMG || type == FileType::ONE_BY_ONE) {
                 imwrite("out\\output_pic" + get_timestamp() + "-" + std::to_string(pack.thresh) + ".png", *output_mat);
-                if (enable_array_thresh && pack.thresh <= 255) {
+                if (type == FileType::ONE_BY_ONE && pack.thresh <= 255) {
                     fmt::print(u8"進度: {}%\r", (pack.thresh++ / 256.0) * 100.0);
                     writer.write(*output_mat);
                     continue;
@@ -251,5 +172,89 @@ public:
             return val1 > val2;
         }
         return val1 < val2;
-    };
+    }
+
+    virtual void ascii() {
+        fmt::print(u8"沒有這個功能\n");
+    }
+
+    virtual void braille() {
+        fmt::print(u8"沒有這個功能\n");
+    }
+
+    virtual void ascii(int) {
+        fmt::print(u8"沒有這個功能\n");
+    }
+
+    virtual void qt() {
+        fmt::print(u8"沒有這個功能\n");
+    }
+
+    ImageHandle& basic_handle2(ConsoleShowPack& pack, function<cv::Mat* ()>&& func) {
+        int process = 0;
+        time_t t_start = time(NULL);
+
+        if (pack.get_mode() == OutputSetting::ONE_BY_ONE) {
+            pack.thresh = 0;
+            this->frame_FPS = 30.0;
+            this->type = FileType::ONE_BY_ONE;
+            this->encoding = cv::VideoWriter::fourcc('D', 'I', 'V', 'X');
+        }
+
+        if (type == FileType::VIDEO || type == FileType::ONE_BY_ONE) {
+            switch (pack.output_mode) {
+            case OutputSizeMode2::DISABLE:
+                break;
+            case OutputSizeMode2::ORIGIN_SIZE:
+                create_written(original_size);
+                break;
+            default:
+                create_written(pack.output_size);
+                break;
+            }
+        }
+
+        while (1) {
+            if (type == FileType::VIDEO)
+                this->cap >> this->orig_img;
+
+            this->orig_img.copyTo(this->img);
+            if (this->orig_img.empty())
+                break;
+
+            if (pack.output_mode != OutputSizeMode2::ORIGIN_SIZE)
+                resize(this->img, this->img, pack.dsize, 0, 0, cv::INTER_CUBIC);
+
+            if (pack.color != (int)OutputSetting::AUTO)
+                cv::cvtColor(this->img, this->img, pack.color);
+
+            cv::Mat* output_mat = func();
+
+            if (!output_mat) {
+                if (type == FileType::VIDEO)
+                    continue;
+                break;
+            }
+
+            if (process % 30 == 0) {
+                cv::imshow("preview", *output_mat);
+                cv::waitKey(1);
+            }
+
+            if (type == FileType::IMG || type == FileType::ONE_BY_ONE) {
+                imwrite("out\\output_pic" + get_timestamp() + "-" + std::to_string(pack.thresh) + ".png", *output_mat);
+                if (type == FileType::ONE_BY_ONE && pack.thresh <= 255) {
+                    fmt::print(u8"進度: {}%\r", (pack.thresh++ / 256.0) * 100.0);
+                    writer.write(*output_mat);
+                    continue;
+                }
+                break;
+            }
+            fmt::print(u8"進度: {}%\r", (process++ / frame_total) * 100);
+            writer.write(*output_mat);
+        }
+
+        print_output_info(t_start);
+        return *this;
+    }
 };

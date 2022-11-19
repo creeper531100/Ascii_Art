@@ -65,5 +65,11 @@
     <ClInclude Include="Qt.h">
       <Filter>來源檔案\Output\CollageOutput</Filter>
     </ClInclude>
+    <ClInclude Include="SettingPack.h">
+      <Filter>來源檔案\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="header.h">
+      <Filter>來源檔案\Core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿/*
+#pragma once
 #ifdef _DEBUG
 #include "n_Imghandle.h"
 #include "pch.h"
@@ -22,3 +23,4 @@ public:
 };
 #endif
 #endif
+*/

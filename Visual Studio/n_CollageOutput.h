@@ -112,7 +112,7 @@ public:
     void qt() {
         SettingDataPack pack = SettingDataPack::create(param, "collage_output")
                                .set_color(cv::COLOR_BGR2GRAY)
-                               .set_output_mode(OutputMode::ORIGIN_SIZE)
+                               .set_output_mode(OutputSizeMode::ORIGIN_SIZE)
                                .enable_thresh_detect();
 
         cv::Size size = original_size;
