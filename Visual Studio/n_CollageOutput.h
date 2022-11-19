@@ -45,7 +45,7 @@ public:
     using super::super;
 
     void ascii() {
-        CollageOutputPack pack = CollageOutputPack::create(param)
+        CollageOutputPack pack = make_pack<CollageOutputPack>(param)
                                  .set_color(cv::COLOR_BGR2GRAY)
                                  .set_dsize("ascii", original_size, { 8, 16 });
 
@@ -72,11 +72,11 @@ public:
      */
 
     void braille() {
-        CollageOutputPack pack = CollageOutputPack::create(param)
-            .set_color(cv::COLOR_BGR2GRAY)
-            .set_dsize("braille", original_size, { 8, 16 }, { 2, 4 });
-        //輸出解析度放大 480x268 -> 1920x1072
+        CollageOutputPack pack = make_pack<CollageOutputPack>(param)
+                                 .set_color(cv::COLOR_BGR2GRAY)
+                                 .set_dsize("braille", original_size, { 8, 16 }, { 2, 4 });
 
+        //輸出解析度放大 480x268 -> 1920x1072
         pack.output_size = { pack.dsize.width * (8 / 2), pack.dsize.height * (16 / 4) };
         cv::Mat output_mat(pack.output_size, CV_8UC3);
 
@@ -107,7 +107,7 @@ public:
     }
 
     void qt() {
-        CollageOutputPack pack = CollageOutputPack::create(param)
+        CollageOutputPack pack = make_pack<CollageOutputPack>(param)
                                  .set_color(cv::COLOR_BGR2GRAY)
                                  .set_output_mode(OutputSizeMode2::ORIGIN_SIZE);
 

@@ -15,8 +15,8 @@ public:
         if (mode != FillMode::DEFAULT) {
             color_conversion_codes = (cv::ColorConversionCodes)AUTO_DETECT;
         }
-
-        QuickOutputPack pack = QuickOutputPack::create(param)
+        
+        QuickOutputPack pack = make_pack<QuickOutputPack>(param)
                                .set_color(color_conversion_codes)
                                .set_dsize("ascii", original_size, thumbnail_size);
 

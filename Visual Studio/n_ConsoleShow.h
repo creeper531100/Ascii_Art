@@ -14,7 +14,7 @@ public:
     using super::super;
 
     ConsoleShowPack console_init2(const char* mode) {
-        ConsoleShowPack pack = ConsoleShowPack::create(param)
+        ConsoleShowPack pack = make_pack<ConsoleShowPack>(param)
                                .set_color(cv::COLOR_BGR2GRAY)
                                .set_output_mode(OutputSizeMode2::DISABLE)
                                .set_dsize(mode);

@@ -7,6 +7,7 @@ struct SettingDataPack2 {
     cv::Size output_size; //影片輸出畫質
     cv::ColorConversionCodes color; //顏色
     string class_name;
+    int reverse;
 
     OutputSizeMode2 output_mode;
     int thresh; //域值
@@ -45,7 +46,8 @@ struct SettingDataPack2 {
          * \param thumbnail_size:        縮圖尺寸
          * \param zoom:                  文字寬度比例
          * \return SettingDataPack&
-         */
+    */
+
     Concrete& set_dsize(const char* mode, cv::Size& original_video_size, cv::Size thumbnail_size = {8, 16},
                                std::pair<int, int> zoom = {1, 1}) {
         /*
@@ -78,19 +80,19 @@ struct SettingDataPack2 {
     }
 
     int get_thresh() {
-        return param[class_name]["thresh"];
+        return thresh;
     }
 
     OutputSetting get_mode() {
-        return (OutputSetting)param[class_name]["thresh"];
+        return (OutputSetting)thresh;
     }
 
     bool is_auto_thresh() {
-        return (OutputSetting)param[class_name]["thresh"] == OutputSetting::AUTO;
+        return (OutputSetting)thresh == OutputSetting::AUTO;
     }
 
     int get_reverse() {
-        return param[class_name]["reverse"];
+        return reverse;
     }
 
     Concrete& self() { return static_cast<Concrete&>(*this); }
@@ -98,35 +100,47 @@ struct SettingDataPack2 {
 };
 
 struct ConsoleShowPack : SettingDataPack2<ConsoleShowPack> {
+    float char_width;
     ConsoleShowPack(Json param) : SettingDataPack2(param) {
         class_name = "console_show";
+        char_width = param[class_name]["char_width"];
     }
 
     float get_char_width() {
-        return param[class_name]["char_width"];
+        return char_width;
     }
 };
 
 struct CollageOutputPack : SettingDataPack2<CollageOutputPack> {
+    string texture;
+    int cap;
     CollageOutputPack(Json param) : SettingDataPack2(param) {
         class_name = "collage_output";
+        texture = param[class_name]["qt"]["texture"];
+        cap = param[class_name]["qt"]["cap"];
     }
 
     string get_qt_texture() {
-        string texture = param[class_name]["qt"]["texture"];
         if (texture == "-1")
             return string();
         return texture;
     }
 
     int get_qt_cap() {
-        return param[class_name]["qt"]["cap"];
+        return cap;
     }
 };
 
 struct QuickOutputPack : SettingDataPack2<QuickOutputPack> {
+    int font_size;
+    int h_offset;
+    string fill_char;
+
     QuickOutputPack(Json param) : SettingDataPack2(param) {
         class_name = "quick_output";
+        h_offset = param[class_name]["font_size"];
+        fill_char = param[class_name]["fill_char"];
+
     }
 
     int get_font_size() {
@@ -134,10 +148,18 @@ struct QuickOutputPack : SettingDataPack2<QuickOutputPack> {
     }
 
     int get_h_offset() {
-        return param[class_name]["h_offset"];
+        return h_offset;
     }
 
     string get_fill_char() {
-        return param[class_name]["fill_char"];
+        return fill_char;
     }
 };
+
+template<typename T>
+T make_pack(Json param) {
+    auto th = T::create(param);
+    th.thresh = th.param[th.class_name]["thresh"];
+    th.reverse = th.param[th.class_name]["reverse"];
+    return th;
+}
