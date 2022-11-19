@@ -190,7 +190,8 @@ public:
         fmt::print(u8"沒有這個功能\n");
     }
 
-    ImageHandle& basic_handle2(ConsoleShowPack& pack, function<cv::Mat* ()>&& func) {
+    template<typename T>
+    ImageHandle& basic_handle2(SettingDataPack2<T>& pack, function<cv::Mat* ()>&& func) {
         int process = 0;
         time_t t_start = time(NULL);
 

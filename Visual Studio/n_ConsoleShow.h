@@ -97,13 +97,12 @@ public:
         map<string, wchar_t> map_pairs = init_words(first_chr);
 
         vector braille_string(pack.dsize.height, vector<char>(pack.dsize.width));
-        bool auto_thresh = (pack.get_mode() == OutputSetting::AUTO);
         SetConsoleActiveScreenBuffer(hConsole);
 
         FILE* file = fopen(("out\\output" + get_timestamp() + ".txt").c_str(), "w+, ccs=UTF-16LE");
         auto start = chrono::system_clock::now();
         super::basic_handle2(pack, [&]() {
-            if (auto_thresh) {
+            if (pack.is_auto_thresh()) {
                 pack.thresh = mean(super::img).val[0];
             }
 
