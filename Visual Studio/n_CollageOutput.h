@@ -45,16 +45,16 @@ public:
     using super::super;
 
     void ascii() {
-        SettingDataPack pack = SettingDataPack::create(param, "collage_output")
-                               .set_color(cv::COLOR_BGR2GRAY)
-                               .set_dsize("ascii", original_size, {8, 16});
+        CollageOutputPack pack = make_pack<CollageOutputPack>(param)
+                                 .set_color(cv::COLOR_BGR2GRAY)
+                                 .set_dsize("ascii", original_size, { 8, 16 });
 
-        pack.output_size = {pack.dsize.width * 8, pack.dsize.height * 16};
+        pack.output_size = { pack.dsize.width * 8, pack.dsize.height * 16 };
         cv::Mat output_mat(pack.output_size, CV_8UC3);
 
         vector<cv::Mat> mats = read_folder_as_list("font\\font\\");
-        cv::Size thumbnail_size = {mats[0].cols, mats[0].rows};
-        super::basic_handle(pack, [&]() {
+        cv::Size thumbnail_size = { mats[0].cols, mats[0].rows };
+        super::basic_handle2(pack, [&]() {
             for (int i = 0, row = 0; i < pack.output_size.height; i += thumbnail_size.height, row++) {
                 for (int j = 0, col = 0; j < pack.output_size.width; j += thumbnail_size.width, col++) {
                     cv::Rect roi(cv::Point(j, i), thumbnail_size);
@@ -72,34 +72,31 @@ public:
      */
 
     void braille() {
-        SettingDataPack pack = SettingDataPack::create(param, "collage_output")
-                               .set_color(cv::COLOR_BGR2GRAY)
-                               .enable_thresh_detect()
-                               .set_dsize("braille", original_size, {8, 16}, {2, 4});
-        //輸出解析度放大 480x268 -> 1920x1072
+        CollageOutputPack pack = make_pack<CollageOutputPack>(param)
+                                 .set_color(cv::COLOR_BGR2GRAY)
+                                 .set_dsize("braille", original_size, { 8, 16 }, { 2, 4 });
 
-        pack.output_size = {pack.dsize.width * (8 / 2), pack.dsize.height * (16 / 4)};
+        //輸出解析度放大 480x268 -> 1920x1072
+        pack.output_size = { pack.dsize.width * (8 / 2), pack.dsize.height * (16 / 4) };
         cv::Mat output_mat(pack.output_size, CV_8UC3);
-        int reverse = param["collage_output"]["reverse"];
 
         vector<vector<char>> braille_string2(pack.dsize.height, vector<char>(pack.dsize.width));
-        bool auto_thresh = (pack.thresh == AUTO_DETECT);
 
         auto mats = read_folder_as_map("font\\braille\\");
-        cv::Size thumbnail_size = {mats.begin()->second.cols, mats.begin()->second.rows};
+        cv::Size thumbnail_size = { mats.begin()->second.cols, mats.begin()->second.rows };
 
-        super::basic_handle(pack, [&]() {
-            if (auto_thresh) {
+        super::basic_handle2(pack, [&]() {
+            if (pack.is_auto_thresh()) {
                 pack.thresh = mean(super::img).val[0];
             }
 
-            braille_create2(braille_string2, pack.thresh, reverse);
+            braille_create2(braille_string2, pack.thresh, pack.get_reverse());
             for (int row = 3, i = 0; i < pack.output_size.height; row += 4, i += thumbnail_size.height) {
                 for (int col = 0, j = 0; j < pack.output_size.width; col += 1, j += thumbnail_size.width) {
                     string buf = {
                             braille_string2[row - 3][col], braille_string2[row - 2][col], braille_string2[row - 1][col],
                             braille_string2[row][col]
-                        };
+                    };
                     cv::Rect roi(cv::Point(j, i), thumbnail_size);
                     cv::Mat symbol = mats[buf + ".png"];
                     symbol.copyTo(output_mat(roi));
@@ -110,42 +107,38 @@ public:
     }
 
     void qt() {
-        SettingDataPack pack = SettingDataPack::create(param, "collage_output")
-                               .set_color(cv::COLOR_BGR2GRAY)
-                               .set_output_mode(OutputMode::ORIGIN_SIZE)
-                               .enable_thresh_detect();
+        CollageOutputPack pack = make_pack<CollageOutputPack>(param)
+                                 .set_color(cv::COLOR_BGR2GRAY)
+                                 .set_output_mode(OutputSizeMode2::ORIGIN_SIZE);
 
         cv::Size size = original_size;
-        int cap = param["collage_output"]["qt"]["cap"];
-        bool have_texture_path = (param["collage_output"]["qt"]["texture"] != "-1");
-        bool auto_thresh = (pack.thresh == AUTO_DETECT);
-
-        int reverse = param["collage_output"]["reverse"];
         Recti boundary(size.width / 2, size.height / 2, size.width / 2, size.height / 2);
-
         Mat texture;
-        if (have_texture_path)
-            texture = cv::imread(param["collage_output"]["qt"]["texture"]);
+
+        bool auto_texture = pack.get_qt_texture().empty();
+        if (!auto_texture)
+            texture = cv::imread(pack.get_qt_texture());
 
         cv::Mat output_mat(original_size, CV_8UC3);
-        super::basic_handle(pack, [&]() {
-            Qt qt(boundary, cap);
-            if (auto_thresh)
+        super::basic_handle2(pack, [&]() {
+            Qt qt(boundary, pack.get_qt_cap());
+            if (pack.is_auto_thresh())
                 pack.thresh = mean(super::img).val[0];
 
             output_mat = cv::Scalar(0, 0, 0);
             for (int i = 0; i < size.height; i++) {
                 for (int j = 0; j < size.width; j++) {
-                    if (thresh_cmp(reverse, img.at<uchar>(i, j), pack.thresh)) {
-                        qt.insert({j, i}, cap);
+                    if (thresh_cmp(pack.get_reverse(), img.at<uchar>(i, j), pack.thresh)) {
+                        qt.insert({ j, i }, pack.get_qt_cap());
                     }
                 }
             }
 
-            if (!have_texture_path) {
+            if (auto_texture) {
                 texture = super::orig_img;
             }
-            qt.show(output_mat, texture, cap, have_texture_path);
+
+            qt.show(output_mat, texture, pack.get_qt_cap(), !auto_texture);
             return &output_mat;
         });
     }

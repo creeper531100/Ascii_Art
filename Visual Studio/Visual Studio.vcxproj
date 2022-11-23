@@ -148,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicEffectOutput.h" />
+    <ClInclude Include="header.h" />
     <ClInclude Include="n_CollageOutput.h" />
     <ClInclude Include="n_ConsoleShow.h" />
     <ClInclude Include="n_initword.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="n_QuickOutput.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Qt.h" />
+    <ClInclude Include="SettingPack.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
