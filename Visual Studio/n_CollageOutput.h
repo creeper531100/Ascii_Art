@@ -122,7 +122,6 @@ public:
         cv::Mat output_mat(original_size, CV_8UC3);
         super::basic_handle2(pack, [&]() {
             Qt qt(boundary, pack.get_qt_cap());
-            cout << pack.is_auto_thresh() << endl;
 
             if (pack.is_auto_thresh()) {
                 pack.thresh = mean(super::img).val[0];
