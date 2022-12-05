@@ -47,13 +47,13 @@ public:
     void ascii() {
         CollageOutputPack pack = make_pack<CollageOutputPack>(param)
                                  .set_color(cv::COLOR_BGR2GRAY)
-                                 .set_dsize("ascii", original_size, { 8, 16 });
+                                 .set_dsize("ascii", original_size, {8, 16});
 
-        pack.output_size = { pack.dsize.width * 8, pack.dsize.height * 16 };
+        pack.output_size = {pack.dsize.width * 8, pack.dsize.height * 16};
         cv::Mat output_mat(pack.output_size, CV_8UC3);
 
         vector<cv::Mat> mats = read_folder_as_list("font\\font\\");
-        cv::Size thumbnail_size = { mats[0].cols, mats[0].rows };
+        cv::Size thumbnail_size = {mats[0].cols, mats[0].rows};
         super::basic_handle2(pack, [&]() {
             for (int i = 0, row = 0; i < pack.output_size.height; i += thumbnail_size.height, row++) {
                 for (int j = 0, col = 0; j < pack.output_size.width; j += thumbnail_size.width, col++) {
@@ -74,16 +74,16 @@ public:
     void braille() {
         CollageOutputPack pack = make_pack<CollageOutputPack>(param)
                                  .set_color(cv::COLOR_BGR2GRAY)
-                                 .set_dsize("braille", original_size, { 8, 16 }, { 2, 4 });
+                                 .set_dsize("braille", original_size, {8, 16}, {2, 4});
 
         //輸出解析度放大 480x268 -> 1920x1072
-        pack.output_size = { pack.dsize.width * (8 / 2), pack.dsize.height * (16 / 4) };
+        pack.output_size = {pack.dsize.width * (8 / 2), pack.dsize.height * (16 / 4)};
         cv::Mat output_mat(pack.output_size, CV_8UC3);
 
         vector<vector<char>> braille_string2(pack.dsize.height, vector<char>(pack.dsize.width));
 
         auto mats = read_folder_as_map("font\\braille\\");
-        cv::Size thumbnail_size = { mats.begin()->second.cols, mats.begin()->second.rows };
+        cv::Size thumbnail_size = {mats.begin()->second.cols, mats.begin()->second.rows};
 
         super::basic_handle2(pack, [&]() {
             if (pack.is_auto_thresh()) {
@@ -96,7 +96,7 @@ public:
                     string buf = {
                             braille_string2[row - 3][col], braille_string2[row - 2][col], braille_string2[row - 1][col],
                             braille_string2[row][col]
-                    };
+                        };
                     cv::Rect roi(cv::Point(j, i), thumbnail_size);
                     cv::Mat symbol = mats[buf + ".png"];
                     symbol.copyTo(output_mat(roi));
@@ -122,14 +122,17 @@ public:
         cv::Mat output_mat(original_size, CV_8UC3);
         super::basic_handle2(pack, [&]() {
             Qt qt(boundary, pack.get_qt_cap());
-            if (pack.is_auto_thresh())
+            cout << pack.is_auto_thresh() << endl;
+
+            if (pack.is_auto_thresh()) {
                 pack.thresh = mean(super::img).val[0];
+            }
 
             output_mat = cv::Scalar(0, 0, 0);
             for (int i = 0; i < size.height; i++) {
                 for (int j = 0; j < size.width; j++) {
                     if (thresh_cmp(pack.get_reverse(), img.at<uchar>(i, j), pack.thresh)) {
-                        qt.insert({ j, i }, pack.get_qt_cap());
+                        qt.insert({j, i}, pack.get_qt_cap());
                     }
                 }
             }

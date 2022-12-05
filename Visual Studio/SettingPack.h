@@ -84,11 +84,13 @@ struct SettingDataPack2 {
     }
 
     OutputSetting get_mode() {
-        return (OutputSetting)thresh;
+        static OutputSetting first = (OutputSetting)thresh;
+        return first;
     }
 
     bool is_auto_thresh() {
-        return (OutputSetting)thresh == OutputSetting::AUTO;
+        static bool first = (OutputSetting)thresh == OutputSetting::AUTO;
+        return first;
     }
 
     int get_reverse() {
