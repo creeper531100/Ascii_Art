@@ -14,7 +14,7 @@ struct Recti {
     }
 
     bool contains(Point p) {
-        return p.x >= west && p.x < east&& p.y >= north && p.y < south;
+        return p.x >= west && p.x < east && p.y >= north && p.y < south;
     }
 
     float cx;
@@ -36,10 +36,12 @@ private:
     cv::Scalar scalar;
 public:
     bool div;
+
     Qt(Recti boundary, int cap) : boundary(boundary), cap(cap) {
         this->div = false;
-        this->scalar = { 0, 0, 0 };
+        this->scalar = {0, 0, 0};
     }
+
     void sub() {
         float cx = boundary.cx;
         float cy = boundary.cy;
@@ -64,7 +66,7 @@ public:
             return false;
         }
 
-        if (points.size() < cap) { //TODO: о─пр
+        if (points.size() < cap) {
             points.push(point);
             return true;
         }
